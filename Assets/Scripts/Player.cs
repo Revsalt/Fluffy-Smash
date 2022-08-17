@@ -51,6 +51,7 @@ public class Player : PlayerController
         }
 
         oldMovementSpeed = movementSpeed;
+        movementSpeed = oldMovementSpeed * 2f;
 
         piviot_M.transform.SetParent(null);
     }

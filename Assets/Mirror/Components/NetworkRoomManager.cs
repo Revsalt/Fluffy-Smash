@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.Serialization;
 
 namespace Mirror
@@ -66,7 +68,11 @@ namespace Mirror
         [Tooltip("Diagnostic flag indicating all players are ready to play")]
         [FormerlySerializedAs("allPlayersReady")]
         [SerializeField] bool _allPlayersReady;
+        [SerializeField] private GameObject roundSystem = null;
+        public static event Action OnServerStopped;
+        public static event Action<NetworkConnection> OnServerReadied;
 
+        public List<GameObject> GamePlayers { get; } = new List<GameObject>();
         /// <summary>
         /// These slots track players that enter the room.
         /// <para>The slotId on players is global to the game - across all players.</para>
@@ -161,6 +167,8 @@ namespace Mirror
                 if (roomPlayer != null && roomPlayer.GetComponent<NetworkRoomPlayer>() != null)
                     SceneLoadedForPlayer(conn, roomPlayer);
             }
+
+            OnServerReadied?.Invoke(conn);
         }
 
         void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
@@ -192,6 +200,7 @@ namespace Mirror
 
             // replace room player with game player
             NetworkServer.ReplacePlayerForConnection(conn, gamePlayer, true);
+            GamePlayers.Add(gamePlayer);
         }
 
         /// <summary>
@@ -370,6 +379,7 @@ namespace Mirror
                         // re-add the room object
                         roomPlayer.GetComponent<NetworkRoomPlayer>().readyToBegin = false;
                         NetworkServer.ReplacePlayerForConnection(identity.connectionToClient, roomPlayer.gameObject);
+                        GamePlayers.Remove(identity.gameObject);
                     }
                 }
 
@@ -432,6 +442,8 @@ namespace Mirror
         /// </summary>
         public override void OnStopServer()
         {
+            OnServerStopped?.Invoke();
+
             roomSlots.Clear();
             OnRoomStopServer();
         }
@@ -555,7 +567,13 @@ namespace Mirror
         /// This is called on the server when a networked scene finishes loading.
         /// </summary>
         /// <param name="sceneName">Name of the new scene.</param>
-        public virtual void OnRoomServerSceneChanged(string sceneName) {}
+        public virtual void OnRoomServerSceneChanged(string sceneName) {
+            if (SceneManager.GetActiveScene().name == "SampleScene")
+            {
+                GameObject roundSystemInstance = Instantiate(roundSystem);
+                NetworkServer.Spawn(roundSystemInstance);
+            }
+        }
 
         /// <summary>
         /// This allows customization of the creation of the room-player object on the server.
