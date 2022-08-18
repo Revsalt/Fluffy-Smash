@@ -171,7 +171,7 @@ namespace Mirror
             OnServerReadied?.Invoke(conn);
         }
 
-        void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
+        public void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
         {
             // Debug.LogFormat(LogType.Log, "NetworkRoom SceneLoadedForPlayer scene: {0} {1}", SceneManager.GetActiveScene().path, conn);
 
@@ -630,7 +630,7 @@ namespace Mirror
         public virtual void OnRoomServerPlayersReady()
         {
             // all players are readyToBegin, start the game
-            ServerChangeScene(GameplayScene);
+            //ServerChangeScene(GameplayScene);
         }
 
         /// <summary>
@@ -704,12 +704,11 @@ namespace Mirror
             {
                 GUILayout.BeginArea(new Rect(Screen.width - 150f, 10f, 140f, 30f));
                 if (GUILayout.Button("Return to Room"))
+                {
                     ServerChangeScene(RoomScene);
+                }
                 GUILayout.EndArea();
             }
-
-            if (IsSceneActive(RoomScene))
-                GUI.Box(new Rect(10f, 180f, 520f, 150f), "PLAYERS");
         }
 
 #endregion

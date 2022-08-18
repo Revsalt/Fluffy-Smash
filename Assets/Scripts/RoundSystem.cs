@@ -1,11 +1,19 @@
-﻿using System.Collections;
+﻿using System;
+using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Mirror;
 
 public class RoundSystem : NetworkBehaviour
 {
     [SerializeField] private Animator animator = null;
+    [SerializeField] private Text countdown = null;
+    [SerializeField] private Text winText = null;
+    [SerializeField] private float roundTimeInMinutes = 2;
+
+    private Player Tagger = null;
 
     private NetworkRoomManager room;
     private NetworkRoomManager Room
@@ -44,6 +52,92 @@ public class RoundSystem : NetworkBehaviour
     public void StartRound()
     {
         RpcStartRound();
+
+        List<Player> AllPlayers = FindObjectsOfType<Player>().ToList();
+        Tagger = AllPlayers[UnityEngine.Random.Range(0, AllPlayers.Count)];
+        Tagger.GetComponent<TagLogic>().isTagger = true;
+
+        StartCoroutine(RoundCountDown());
+    }
+
+    [ServerCallback]
+    public void RoundEnded() // if there is more than one last guy
+    {
+        List<Player> AllPlayers = FindObjectsOfType<Player>().ToList();
+        List<Player> TaggedPlayers = new List<Player>();
+        List<Player> NotTaggedPlayers = new List<Player>();
+
+        foreach (var item in AllPlayers) //assign the winner
+        {
+            if (item.GetComponent<TagLogic>().isTagger)
+            {
+                TaggedPlayers.Add(item);
+            }
+            else
+            {
+                NotTaggedPlayers.Add(item);
+            }
+        }
+
+        //declare the winner
+
+        if (AllPlayers.Count == TaggedPlayers.Count)
+        {
+            StartCoroutine(Delay(delegate { winText.text = "TAGGERS WON!"; }));
+        }
+        else
+        {
+            List<string> names = new List<string>();
+            foreach (var item in NotTaggedPlayers)
+            {
+                names.Add(item.GetComponent<PlayerNetworkManager>().userName);
+            }
+
+            StartCoroutine(Delay(delegate { winText.text = String.Join("," , names.ToArray()) + " WON!"; }));
+        }
+
+        RpcEndRound(winText.text);
+
+        IEnumerator Delay(Action act)
+        {
+            act.Invoke();
+            yield return new WaitForSeconds(3);
+            Room.ServerChangeScene(Room.RoomScene);
+        }
+
+        foreach (var item in AllPlayers)
+        {
+            item.GetComponent<TagLogic>().isTagged = false;
+            item.GetComponent<TagLogic>().isTagger = false;
+        }
+    }
+
+    [ClientRpc]
+    private void RpcEndRound(string winScreen)
+    {
+        winText.text = winScreen;
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isServer && winText.text == String.Empty)
+            return;
+
+        List<Player> AllPlayers = FindObjectsOfType<Player>().ToList();
+        List<Player> TaggedPlayers = new List<Player>();
+
+        foreach (var item in AllPlayers)
+        {
+            if (item.GetComponent<TagLogic>().isTagger)
+            {
+                TaggedPlayers.Add(item);
+            }
+        }
+
+        if (AllPlayers.Count == TaggedPlayers.Count)
+        {
+            RoundEnded();
+        }
     }
 
     [Server]
@@ -81,6 +175,26 @@ public class RoundSystem : NetworkBehaviour
             if (item.GetComponent<NetworkIdentity>().isLocalPlayer)
                 item.GetComponent<Player>().DisableMovment(false);
         }
+
+        StartCoroutine(RoundCountDown());
+    }
+
+    IEnumerator RoundCountDown()
+    {
+        for (int i = 0; i <= roundTimeInMinutes*60; i++)
+        {
+            yield return new WaitForSeconds(1f);
+            TimeSpan t = TimeSpan.FromSeconds(i);
+            string answer = string.Format("{1:D2}:{2:D2}",
+                t.Hours,
+                t.Minutes,
+                t.Seconds,
+                t.Milliseconds);
+
+            countdown.text = answer;
+        }
+
+        RoundEnded();
     }
 
     #endregion

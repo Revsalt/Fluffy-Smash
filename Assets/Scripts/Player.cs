@@ -173,7 +173,7 @@ public class Player : PlayerController
             movementSpeed = oldMovementSpeed * 2f;
         }
 
-        if (Input.GetMouseButton(0) && !GetDisableMovement() && canGrab)
+        if (Input.GetMouseButton(0) && !GetDisableMovement() && canGrab && GetComponent<TagLogic>().isTagger)
         {
 
             StartCoroutine(PersonGrab());

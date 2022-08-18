@@ -18,6 +18,8 @@ namespace Mirror
         [Tooltip("This flag controls whether the default UI is shown for the room player")]
         public bool showRoomGUI = true;
 
+        [SyncVar] public string username = "";
+
         [Header("Diagnostics")]
 
         /// <summary>
@@ -149,14 +151,26 @@ namespace Mirror
 
         void DrawPlayerReadyState()
         {
-            GUILayout.BeginArea(new Rect(20f + (index * 100), 200f, 90f, 130f));
+            GUILayout.BeginArea(new Rect(20f + (index * 300), 180f, 200f, 930f));
 
-            GUILayout.Label($"Player [{index + 1}]");
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("username : ");
+
+            if (isLocalPlayer)
+            {
+                username = GUILayout.TextField(username);
+                if (NetworkClient.ready)
+                    CmdSendUsername(gameObject , username);
+            }
+            else
+                GUILayout.Label(username);
 
             if (readyToBegin)
                 GUILayout.Label("Ready");
             else
                 GUILayout.Label("Not Ready");
+
+            GUILayout.EndHorizontal();
 
             if (((isServer && index > 0) || isServerOnly) && GUILayout.Button("REMOVE"))
             {
@@ -167,6 +181,12 @@ namespace Mirror
             }
 
             GUILayout.EndArea();
+        }
+
+        [Command]
+        void CmdSendUsername(GameObject roomPlayer , string username)
+        {
+            roomPlayer.GetComponent<NetworkRoomPlayer>().username = username;
         }
 
         void DrawPlayerReadyButton()

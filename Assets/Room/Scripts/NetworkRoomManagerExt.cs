@@ -11,7 +11,7 @@ namespace Mirror.Examples.NetworkRoom
         /// <param name="sceneName">Name of the new scene.</param>
         public override void OnRoomServerSceneChanged(string sceneName)
         {
-
+            base.OnRoomServerSceneChanged(sceneName);
         }
 
         /// <summary>
@@ -24,8 +24,11 @@ namespace Mirror.Examples.NetworkRoom
         /// <returns>true unless some code in here decides it needs to abort the replacement</returns>
         public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer)
         {
+            base.OnRoomServerSceneLoadedForPlayer(conn , roomPlayer , gamePlayer);
             //PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
             //playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
+
+            gamePlayer.GetComponent<PlayerNetworkManager>().nrp = roomPlayer.GetComponent<NetworkRoomPlayer>();
             return true;
         }
 
@@ -52,6 +55,7 @@ namespace Mirror.Examples.NetworkRoom
 
         public override void OnRoomServerPlayersReady()
         {
+            base.OnRoomServerPlayersReady();
             // calling the base method calls ServerChangeScene as soon as all players are in Ready state.
 #if UNITY_SERVER
             base.OnRoomServerPlayersReady();
