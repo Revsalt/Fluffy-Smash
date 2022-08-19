@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using Mirror.Examples.NetworkRoom;
 
 public class CharacterSelect : NetworkBehaviour
 {
@@ -12,18 +13,17 @@ public class CharacterSelect : NetworkBehaviour
     [SerializeField] private Transform characterPreviewParent = default;
     [SerializeField] private TextMesh characterNameText = default;
     [SerializeField] private float turnSpeed = 90f;
-    [SerializeField] private Character[] characters = default;
 
     private int currentCharacterIndex = 0;
     private List<GameObject> characterInstances = new List<GameObject>();
 
-    private NetworkRoomManager room;
-    private NetworkRoomManager Room
+    private NetworkRoomManagerExt room;
+    private NetworkRoomManagerExt Room
     {
         get
         {
             if (room != null) { return room; }
-            return room = NetworkManager.singleton as NetworkRoomManager;
+            return room = NetworkManager.singleton as NetworkRoomManagerExt;
         }
     }
 
@@ -43,7 +43,7 @@ public class CharacterSelect : NetworkBehaviour
     {
         if (characterPreviewParent.childCount == 0)
         {
-            foreach (var character in characters)
+            foreach (var character in Room.characters)
             {
                 GameObject characterInstance =
                     Instantiate(character.CharacterPreviewPrefab, characterPreviewParent);
@@ -55,16 +55,22 @@ public class CharacterSelect : NetworkBehaviour
         }
 
         characterInstances[currentCharacterIndex].SetActive(true);
-        characterNameText.text = characters[currentCharacterIndex].CharacterName;
+        characterNameText.text = Room.characters[currentCharacterIndex].CharacterName;
 
         characterSelectDisplay.SetActive(true);
 
         Select();
     }
 
-    public void Select()
+    void Select()
     {
-        Room.myCharacterIndex = currentCharacterIndex;
+        CmdSelect(currentCharacterIndex);
+    }
+
+    [Command(requiresAuthority = false)]
+    public void CmdSelect(int _currentCharacterIndex , NetworkConnectionToClient sender = null)
+    {
+        sender.identity.GetComponent<NetworkRoomPlayer>().Character = _currentCharacterIndex;
     }
 
     private void Update()
@@ -82,7 +88,7 @@ public class CharacterSelect : NetworkBehaviour
         currentCharacterIndex = (currentCharacterIndex + 1) % characterInstances.Count;
 
         characterInstances[currentCharacterIndex].SetActive(true);
-        characterNameText.text = characters[currentCharacterIndex].CharacterName;
+        characterNameText.text = Room.characters[currentCharacterIndex].CharacterName;
 
         Select();
     }
@@ -98,7 +104,7 @@ public class CharacterSelect : NetworkBehaviour
         }
 
         characterInstances[currentCharacterIndex].SetActive(true);
-        characterNameText.text = characters[currentCharacterIndex].CharacterName;
+        characterNameText.text = Room.characters[currentCharacterIndex].CharacterName;
 
         Select();
     }

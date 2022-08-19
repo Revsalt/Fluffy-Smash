@@ -41,7 +41,6 @@ namespace Mirror
         [SerializeField]
         [Tooltip("Prefab to use for the Room Player")]
         public NetworkRoomPlayer roomPlayerPrefab;
-        public int myCharacterIndex;
 
         /// <summary>
         /// The scene to use for the room. This is similar to the offlineScene of the NetworkManager.
@@ -171,36 +170,9 @@ namespace Mirror
             OnServerReadied?.Invoke(conn);
         }
 
-        public void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
+        public virtual void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
         {
-            // Debug.LogFormat(LogType.Log, "NetworkRoom SceneLoadedForPlayer scene: {0} {1}", SceneManager.GetActiveScene().path, conn);
-
-            if (IsSceneActive(RoomScene))
-            {
-                // cant be ready in room, add to ready list
-                PendingPlayer pending;
-                pending.conn = conn;
-                pending.roomPlayer = roomPlayer;
-                pendingPlayers.Add(pending);
-                return;
-            }
-
-            GameObject gamePlayer = OnRoomServerCreateGamePlayer(conn, roomPlayer);
-            if (gamePlayer == null)
-            {
-                // get start position from base class
-                Transform startPos = GetStartPosition();
-                gamePlayer = startPos != null
-                    ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
-                    : Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
-            }
-
-            if (!OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer))
-                return;
-
-            // replace room player with game player
-            NetworkServer.ReplacePlayerForConnection(conn, gamePlayer, true);
-            GamePlayers.Add(gamePlayer);
+            return;
         }
 
         /// <summary>

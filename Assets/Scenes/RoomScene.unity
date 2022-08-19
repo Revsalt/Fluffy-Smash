@@ -318,12 +318,15 @@ MonoBehaviour:
   minPlayers: 1
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
     type: 3}
-  CharacterPrefab: {fileID: 0}
+  myCharacterIndex: 0
   RoomScene: Assets/Scenes/RoomScene.unity
   GameplayScene: Assets/Scenes/SampleScene.unity
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
+  characters:
+  - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
+  - {fileID: 11400000, guid: 2cc186f192dd2834687f8eabf18cbfd7, type: 2}
 --- !u!114 &264944301
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,9 +509,6 @@ MonoBehaviour:
   characterPreviewParent: {fileID: 594340555}
   characterNameText: {fileID: 1777288816}
   turnSpeed: 90
-  characters:
-  - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
-  - {fileID: 11400000, guid: 2cc186f192dd2834687f8eabf18cbfd7, type: 2}
 --- !u!114 &575305674
 MonoBehaviour:
   m_ObjectHideFlags: 0

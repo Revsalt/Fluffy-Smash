@@ -6,6 +6,12 @@ namespace Mirror.Examples.NetworkRoom
     public class NetworkRoomManagerExt : NetworkRoomManager
     {
         /// <summary>
+        /// Adding any character you want
+        /// </summary>
+        [Tooltip("List of All your Characters")]
+        public Character[] characters = default;
+
+        /// <summary>
         /// This is called on the server when a networked scene finishes loading.
         /// </summary>
         /// <param name="sceneName">Name of the new scene.</param>
@@ -28,7 +34,7 @@ namespace Mirror.Examples.NetworkRoom
             //PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
             //playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
 
-            gamePlayer.GetComponent<EmptyPlayer>().nrp = roomPlayer.GetComponent<NetworkRoomPlayer>();
+            gamePlayer.GetComponent<PlayerNetworkManager>().nrp = roomPlayer.GetComponent<NetworkRoomPlayer>();
 
             return true;
         }
@@ -36,6 +42,43 @@ namespace Mirror.Examples.NetworkRoom
         public override void OnRoomStopClient()
         {
             base.OnRoomStopClient();
+        }
+
+        public override void SceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer)
+        {
+            // Debug.LogFormat(LogType.Log, "NetworkRoom SceneLoadedForPlayer scene: {0} {1}", SceneManager.GetActiveScene().path, conn);
+
+            if (IsSceneActive(RoomScene))
+            {
+                // cant be ready in room, add to ready list
+                PendingPlayer pending;
+                pending.conn = conn;
+                pending.roomPlayer = roomPlayer;
+                pendingPlayers.Add(pending);
+                return;
+            }
+
+            GameObject gamePlayer = OnRoomServerCreateGamePlayer(conn, roomPlayer);
+            if (gamePlayer == null)
+            {
+                // get start position from base class
+                Transform startPos = GetStartPosition();
+                gamePlayer = startPos != null
+                    ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
+                    : Instantiate(playerPrefab, Vector3.zero, Quaternion.identity);
+            }
+
+            GameObject gamePlayer_ = Instantiate(characters[roomPlayer.GetComponent<NetworkRoomPlayer>().Character].GameplayCharacterPrefab, GetStartPosition().position, Quaternion.identity);
+            NetworkServer.Spawn(gamePlayer_, conn);
+
+            if (!OnRoomServerSceneLoadedForPlayer(conn, roomPlayer, gamePlayer_))
+                return;
+
+
+            //NetworkServer.ReplacePlayerForConnection(conn, gamePlayer, true);
+
+            NetworkServer.ReplacePlayerForConnection(conn, gamePlayer_, true);
+            GamePlayers.Add(gamePlayer);
         }
 
         public override void OnRoomStopServer()

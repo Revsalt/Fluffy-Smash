@@ -19,6 +19,7 @@ namespace Mirror
         public bool showRoomGUI = true;
 
         [SyncVar] public string username = "";
+        [SyncVar] public int Character = 0;
 
         [Header("Diagnostics")]
 
