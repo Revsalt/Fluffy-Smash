@@ -62,6 +62,13 @@ public class CharacterSelect : NetworkBehaviour
         Select();
     }
 
+    public override void OnStopClient()
+    {
+        base.OnStopClient();
+
+        characterSelectDisplay.SetActive(false);
+    }
+
     void Select()
     {
         CmdSelect(currentCharacterIndex);

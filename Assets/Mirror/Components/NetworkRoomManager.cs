@@ -542,8 +542,8 @@ namespace Mirror
         public virtual void OnRoomServerSceneChanged(string sceneName) {
             if (SceneManager.GetActiveScene().name == "SampleScene")
             {
-                //GameObject roundSystemInstance = Instantiate(Resources.Load("RoundSystem") as GameObject);
-                //NetworkServer.Spawn(roundSystemInstance);
+                GameObject roundSystemInstance = Instantiate(Resources.Load("RoundSystem") as GameObject);
+                NetworkServer.Spawn(roundSystemInstance);
             }
         }
 
