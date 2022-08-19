@@ -24,6 +24,7 @@ public class Player : PlayerController
     [SerializeField] UnityEvent inDashStart;
     [SerializeField] UnityEvent inDashEnd;
     [Header("Other")]
+    [SerializeField] Vector3 wallOffset;
     [SerializeField] CinemachineVirtualCamera cinemachineVirtualCamera;
     [SerializeField] AudioPlayer audioPlayer;
     [SerializeField] float wallJumpForce = 80;
@@ -299,10 +300,13 @@ public class Player : PlayerController
 
             DisableMovment(true);
             ResetPlayerVelocity();
-            transform.position += hit.normal / 2;
+
+            RaycastHit hitLine;
+            Physics.Raycast(playerModel.transform.position, -hit.normal, out hitLine, 3, layerMask);
+            transform.position = hitLine.point + new Vector3(hit.normal.x * wallOffset.x , hit.normal.y * wallOffset.y ,hit.normal.z * wallOffset.z);
 
             wallDirection = hit.normal;
-            transform.rotation = Quaternion.LookRotation(Vector3.up, wallDirection);
+            transform.rotation = Quaternion.FromToRotation(Vector3.up, wallDirection);
 
             if (hit.collider.tag != "Bamboo")
             {
@@ -341,7 +345,7 @@ public class Player : PlayerController
         {
             RaycastHit hit;
             Physics.Raycast(transform.position + new Vector3(0,i * .5f,0), -wallDirection, out hit , 1);
-            Debug.DrawRay(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, Color.blue , 5);
+            //Debug.DrawRay(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, Color.blue , 5);
 
             if (hit.collider != null)
             {

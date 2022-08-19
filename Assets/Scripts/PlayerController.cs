@@ -17,10 +17,13 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]private float sensitvity = 100;
     [Header("Movement")]
     public float movementSpeed = 5;
+    [SerializeField] private float slopeForce;
+    [SerializeField] private float slopeForceRayLength;
     [Header("Jumping")]
     [SerializeField]private float jumpHeight = 5;
     public LayerMask layerMask = 5;
     [SerializeField] private float gravity = 5;
+
 
     public GameObject[] Cameras;
 
@@ -96,6 +99,9 @@ public class PlayerController : NetworkBehaviour
         playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
 
+        if ((move != Vector3.zero) && OnSlope())
+            characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime);
+
         if (Input.GetKeyDown(KeyCode.P))
         {
             Cursor.lockState = CursorLockMode.None;
@@ -166,5 +172,15 @@ public class PlayerController : NetworkBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, hit.point);
+    }
+
+    private bool OnSlope()
+    {
+        RaycastHit hit;
+
+        if (Physics.Raycast(transform.position, Vector3.down, out hit, characterController.height / 2 * slopeForceRayLength))
+            if (hit.normal != Vector3.up)
+                return true;
+        return false;
     }
 }

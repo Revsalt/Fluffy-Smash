@@ -18,5 +18,8 @@ public class PlayerNetworkManager : NetworkBehaviour
     {
         GetComponentInChildren<BillBoard>().GetComponentInChildren<Text>().text = nrp.username;
         gameObject.name = "Player : " + nrp.username;
+
+        if (transform.position.y < -40)
+            GetComponent<PlayerController>().SetPlayerPosition(NetworkRoomManager.singleton.GetStartPosition().position);
     }
 }

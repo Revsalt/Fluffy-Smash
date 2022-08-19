@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -540,7 +541,8 @@ namespace Mirror
         /// </summary>
         /// <param name="sceneName">Name of the new scene.</param>
         public virtual void OnRoomServerSceneChanged(string sceneName) {
-            if (SceneManager.GetActiveScene().name == "SampleScene")
+            Debug.Log(Path.GetFileNameWithoutExtension(GameplayScene));
+            if (SceneManager.GetActiveScene().name == Path.GetFileNameWithoutExtension(GameplayScene))
             {
                 GameObject roundSystemInstance = Instantiate(Resources.Load("RoundSystem") as GameObject);
                 NetworkServer.Spawn(roundSystemInstance);

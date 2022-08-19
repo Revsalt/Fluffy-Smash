@@ -123,6 +123,8 @@ MonoBehaviour:
   playerModel: {fileID: 4235120042563476193}
   sensitvity: 300
   movementSpeed: 7
+  slopeForce: 8
+  slopeForceRayLength: 2
   jumpHeight: 5
   layerMask:
     serializedVersion: 2

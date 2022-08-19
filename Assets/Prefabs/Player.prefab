@@ -4903,6 +4903,8 @@ MonoBehaviour:
   playerModel: {fileID: 1646360426110567441}
   sensitvity: 300
   movementSpeed: 7
+  slopeForce: 8
+  slopeForceRayLength: 1.4
   jumpHeight: 5
   layerMask:
     serializedVersion: 2
@@ -5000,6 +5002,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  wallOffset: {x: 1, y: 0.7, z: 1}
   cinemachineVirtualCamera: {fileID: 1646360426184249717}
   audioPlayer: {fileID: 1646360426086753234}
   wallJumpForce: 120
