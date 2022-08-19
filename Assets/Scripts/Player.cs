@@ -9,8 +9,7 @@ using Mirror;
 
 public class Player : PlayerController
 {
-    [Header("ParticleSystem")]
-    [Header("Movement")]
+    [Header("ParticleSystems")]
     [SerializeField] ParticleSystem movementParticleSystem;
     [SerializeField] UnityEvent movementStart;
     [SerializeField] UnityEvent movementEnd;
@@ -48,9 +47,7 @@ public class Player : PlayerController
     bool canBurstParticels = true;
     bool harshFall = false;
     float time = 0;
-    bool cantrail = false;
     bool canwalk = false;
-    bool canGrab = true;
     Bamboo lastbamboo = null;
 
     new void Update()
@@ -77,19 +74,11 @@ public class Player : PlayerController
         ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
         if (!isGroundeed())
         {
-            if (cantrail)
-            {
-                inAirStart.Invoke();
-                cantrail = false;
-            }
+            inAirStart.Invoke();
         }
         else
         {
-            if (cantrail)
-            {
-                inAirEnd.Invoke();
-                cantrail = true;
-            }
+            inAirEnd.Invoke();
         }
 
         if (isRunning)
@@ -161,34 +150,6 @@ public class Player : PlayerController
             movementSpeed = oldMovementSpeed * 2f;
         }
 
-        if (Input.GetMouseButton(0) && !GetDisableMovement() && canGrab && GetComponent<TagLogic>().isTagger)
-        {
-
-            StartCoroutine(PersonGrab());
-
-            IEnumerator PersonGrab()
-            {
-                canGrab = false;
-                movementSpeed = oldMovementSpeed * 1.3f;
-                animator.SetBool("isPersonGrab", true);
-                GetComponent<TagLogic>().CanTag = true;
-
-                for (float i = 0; i < 2; i += Time.deltaTime) //need to be tested
-                {
-                    if (GetComponent<TagLogic>().CanTag == false)
-                        break;
-                    yield return null;
-                }
-
-                movementSpeed = oldMovementSpeed * 2;
-                animator.SetBool("isPersonGrab", false);
-                GetComponent<TagLogic>().CanTag = false;
-
-                yield return new WaitForSeconds(.8f);
-                canGrab = true;
-            }
-        }
-
         if (Input.GetMouseButton(1) && !GetDisableMovement())
         {
             if (!canDash)
@@ -210,6 +171,7 @@ public class Player : PlayerController
             animator.SetTrigger("isDash");
 
             StartCoroutine(ReChargeDash());
+
         }
 
         if (Input.GetKeyDown(KeyCode.Space) && isGroundeed())
@@ -272,6 +234,11 @@ public class Player : PlayerController
         yield return new WaitForSeconds(.5f);
         inDashEnd.Invoke();
         canDash = true;
+    }
+
+    public void TaggingAnimation(bool t)
+    {
+        animator.SetBool("isPersonGrab",t);
     }
 
     public void ShakeCamera(float intensity , float time)

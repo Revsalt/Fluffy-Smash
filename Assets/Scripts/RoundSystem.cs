@@ -104,7 +104,7 @@ public class RoundSystem : NetworkBehaviour
         IEnumerator Delay(Action act)
         {
             act.Invoke();
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(5);
             Room.ServerChangeScene(Room.RoomScene);
         }
 

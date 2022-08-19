@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using Mirror;
 
 public class TagLogic : NetworkBehaviour
@@ -11,6 +12,12 @@ public class TagLogic : NetworkBehaviour
     public Transform TagPosition;
     public float TagRadius = 2;
 
+    public UnityEvent OnTagged;
+    public UnityEvent OnTaggerTaggingStart;
+    public UnityEvent OnTaggerTaggingEnd;
+
+    bool canGrab = true;
+
     void Update()
     {
         if (!isLocalPlayer)
@@ -18,15 +25,45 @@ public class TagLogic : NetworkBehaviour
 
         if (CanTag)
         {
-            Collider[] players = Physics.OverlapSphere(TagPosition.position , TagRadius);
+            Collider[] players = Physics.OverlapSphere(TagPosition.position, TagRadius);
             foreach (var item in players)
             {
                 if (item.GetComponent<TagLogic>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer)
                 {
                     CmdIsTagged(item.gameObject);
                     CanTag = false;
+                    break;
+                }  
+            }
+        }
+
+        PlayerController myPlayer = GetComponent<PlayerController>();
+
+        if (Input.GetMouseButton(0) && !myPlayer.GetDisableMovement() && canGrab && isTagger)
+        {
+
+            StartCoroutine(PersonGrab());
+
+            IEnumerator PersonGrab()
+            {
+                canGrab = false;
+                myPlayer.movementSpeed = myPlayer.GetOriginalSpeeed() * 1.3f;
+                OnTaggerTaggingStart.Invoke();
+                CanTag = true;
+
+                for (float i = 0; i < 2; i += Time.deltaTime) //need to be tested
+                {
+                    if (CanTag == false)
+                        break;
+                    yield return null;
                 }
-                return;
+
+                myPlayer.movementSpeed = myPlayer.GetOriginalSpeeed() * 2;
+                OnTaggerTaggingEnd.Invoke();
+                CanTag = false;
+
+                yield return new WaitForSeconds(.8f);
+                canGrab = true;
             }
         }
     }
@@ -34,9 +71,16 @@ public class TagLogic : NetworkBehaviour
     [Command]
     public void CmdIsTagged(GameObject item)
     {
+        SendAnimationToAll(item);
         item.GetComponent<TagLogic>().isTagged = true;
         item.GetComponent<TagLogic>().isTagger = true;
         MakeTagger(item.GetComponent<NetworkIdentity>().connectionToClient);
+    }
+
+    [ClientRpc]
+    public void SendAnimationToAll(GameObject item)
+    {
+        item.GetComponent<TagLogic>().OnTagged.Invoke();
     }
 
     [TargetRpc]
@@ -46,9 +90,9 @@ public class TagLogic : NetworkBehaviour
 
         IEnumerator Tag()
         {
-            ntd.identity.GetComponent<Player>().enabled = false;
+            ntd.identity.GetComponent<PlayerController>().enabled = false;
             yield return new WaitForSeconds(2);
-            ntd.identity.GetComponent<Player>().enabled = true;
+            ntd.identity.GetComponent<PlayerController>().enabled = true;
         }
     }
 
@@ -56,6 +100,6 @@ public class TagLogic : NetworkBehaviour
     {
         Gizmos.color = Color.red;
 
-        Gizmos.DrawSphere(TagPosition.position, TagRadius);
+        Gizmos.DrawWireSphere(TagPosition.position, TagRadius);
     }
 }

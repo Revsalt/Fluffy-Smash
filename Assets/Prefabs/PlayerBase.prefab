@@ -54,7 +54,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.3
+  m_StepOffset: 0.4
   m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
   m_Center: {x: 0, y: 0, z: 0}
@@ -119,12 +119,12 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   characterController: {fileID: 3814039662413454326}
-  piviot_M: {fileID: 3814039662847010326}
   playerModel: {fileID: 4235120042563476193}
+  piviot_M: {fileID: 3814039662847010326}
   sensitvity: 300
   movementSpeed: 7
   slopeForce: 4
-  slopeForceRayLength: 1.6
+  slopeForceRayLength: 1.4
   jumpHeight: 5
   layerMask:
     serializedVersion: 2
@@ -151,7 +151,16 @@ MonoBehaviour:
   isTagged: 0
   CanTag: 0
   TagPosition: {fileID: 6653426331873958790}
-  TagRadius: 0.74
+  TagRadius: 2
+  OnTagged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTaggerTaggingStart:
+    m_PersistentCalls:
+      m_Calls: []
+  OnTaggerTaggingEnd:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!114 &2308105511521140730
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5489,8 +5498,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6898099002007171469}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 1.405}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 349799474398741752}

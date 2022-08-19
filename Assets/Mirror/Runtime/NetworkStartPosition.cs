@@ -10,6 +10,9 @@ namespace Mirror
     {
         public void Awake()
         {
+            Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit);
+            transform.position = hit.point + Vector3.up;
+
             NetworkManager.RegisterStartPosition(transform);
         }
 

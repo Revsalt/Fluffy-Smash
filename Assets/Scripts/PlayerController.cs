@@ -6,13 +6,14 @@ using Mirror;
 public class PlayerController : NetworkBehaviour
 {
     [HideInInspector]public CharacterController characterController;
-    public GameObject piviot_M;
     Vector3 playerVelocity = Vector3.zero;
     Vector3 impact = Vector3.zero;
     bool disableMovement = false;
+    float originalMovementSpeed = 0;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
+    public GameObject piviot_M;
     [Header("Camera")]
     [SerializeField]private float sensitvity = 100;
     [Header("Movement")]
@@ -23,10 +24,10 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]private float jumpHeight = 5;
     public LayerMask layerMask = 5;
     [SerializeField] private float gravity = 5;
-
-
+    [Header("Networks")]
     public GameObject[] Cameras;
 
+    
     void OnValidate()
     {
         if (characterController == null)
@@ -35,6 +36,8 @@ public class PlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        originalMovementSpeed = movementSpeed;
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
@@ -100,7 +103,9 @@ public class PlayerController : NetworkBehaviour
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
 
         if ((move != Vector3.zero) && OnSlope())
+        {
             characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime);
+        }
 
         if (Input.GetKeyDown(KeyCode.P))
         {
@@ -118,6 +123,11 @@ public class PlayerController : NetworkBehaviour
     {
         trans.transform.localPosition = Vector3.zero;
         trans.transform.localEulerAngles = Vector3.zero;
+    }
+
+    public float GetOriginalSpeeed()
+    {
+        return originalMovementSpeed;
     }
 
     public void SetPlayerPosition(Vector3 newPosition)
@@ -180,13 +190,18 @@ public class PlayerController : NetworkBehaviour
 
         if (Physics.Raycast(transform.position, Vector3.down, out hit, characterController.height / 2 * slopeForceRayLength))
             if (hit.normal != Vector3.up)
+            {
+                Debug.Log("hit " + hit.collider.name);
                 return true;
+            }
         return false;
     }
 
     public virtual void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
+        if ((characterController.collisionFlags & CollisionFlags.CollidedAbove) != 0)
+        {
             AddImpact(Vector3.up, -10);
+        }
     }
 }
