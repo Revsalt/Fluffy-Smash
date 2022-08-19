@@ -289,12 +289,14 @@ public class Player : PlayerController
         }
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    public override void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        base.OnControllerColliderHit(hit);
+
         if (wallDirection != Vector3.zero)
             return;
 
-        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal))
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && hit.normal.y * 90f >= -20)
         {
             audioPlayer.playSoundWalkFootStep();
 

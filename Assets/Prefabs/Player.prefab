@@ -4903,8 +4903,8 @@ MonoBehaviour:
   playerModel: {fileID: 1646360426110567441}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 8
-  slopeForceRayLength: 1.4
+  slopeForce: 4
+  slopeForceRayLength: 1.6
   jumpHeight: 5
   layerMask:
     serializedVersion: 2
@@ -5210,7 +5210,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e3c430f382484144e925c097c2d33cfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Weight: 0.1
+  m_Weight: 0.247
   m_Data:
     m_ConstrainedObject: {fileID: 4611671307098424681}
     m_SourceObjects:

@@ -183,4 +183,10 @@ public class PlayerController : NetworkBehaviour
                 return true;
         return false;
     }
+
+    public virtual void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if ((characterController.collisionFlags & CollisionFlags.Above) != 0)
+            AddImpact(Vector3.up, -10);
+    }
 }
