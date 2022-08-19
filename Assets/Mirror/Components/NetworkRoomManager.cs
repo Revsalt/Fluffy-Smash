@@ -41,6 +41,7 @@ namespace Mirror
         [SerializeField]
         [Tooltip("Prefab to use for the Room Player")]
         public NetworkRoomPlayer roomPlayerPrefab;
+        public int myCharacterIndex;
 
         /// <summary>
         /// The scene to use for the room. This is similar to the offlineScene of the NetworkManager.
@@ -68,7 +69,6 @@ namespace Mirror
         [Tooltip("Diagnostic flag indicating all players are ready to play")]
         [FormerlySerializedAs("allPlayersReady")]
         [SerializeField] bool _allPlayersReady;
-        [SerializeField] private GameObject roundSystem = null;
         public static event Action OnServerStopped;
         public static event Action<NetworkConnection> OnServerReadied;
 
@@ -379,7 +379,7 @@ namespace Mirror
                         // re-add the room object
                         roomPlayer.GetComponent<NetworkRoomPlayer>().readyToBegin = false;
                         NetworkServer.ReplacePlayerForConnection(identity.connectionToClient, roomPlayer.gameObject);
-                        GamePlayers.Remove(identity.gameObject);
+                        GamePlayers.Remove(identity.gameObject); // sus
                     }
                 }
 
@@ -570,8 +570,8 @@ namespace Mirror
         public virtual void OnRoomServerSceneChanged(string sceneName) {
             if (SceneManager.GetActiveScene().name == "SampleScene")
             {
-                GameObject roundSystemInstance = Instantiate(roundSystem);
-                NetworkServer.Spawn(roundSystemInstance);
+                //GameObject roundSystemInstance = Instantiate(Resources.Load("RoundSystem") as GameObject);
+                //NetworkServer.Spawn(roundSystemInstance);
             }
         }
 

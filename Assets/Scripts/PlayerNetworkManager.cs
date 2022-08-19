@@ -6,16 +6,17 @@ using Mirror;
 
 public class PlayerNetworkManager : NetworkBehaviour
 {
-    public NetworkRoomPlayer nrp;
-    [SyncVar]public string userName;
-    public Text userNameText;
+    [SyncVar]public NetworkRoomPlayer nrp;
 
-    
+
+    private void Start()
+    {
+        Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
+    }
+
     void Update()
     {
-        if (isServer)
-            userName = nrp.username;
-
-        userNameText.text = userName;
+        GetComponentInChildren<BillBoard>().GetComponentInChildren<Text>().text = nrp.username;
+        gameObject.name = "Player : " + nrp.username;
     }
 }

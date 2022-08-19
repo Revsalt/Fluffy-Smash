@@ -22,6 +22,8 @@ public class PlayerController : NetworkBehaviour
     public LayerMask layerMask = 5;
     [SerializeField] private float gravity = 5;
 
+    public GameObject[] Cameras;
+
     void OnValidate()
     {
         if (characterController == null)
@@ -32,11 +34,21 @@ public class PlayerController : NetworkBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        piviot_M.transform.SetParent(null);
     }
 
     float rotX, rotY;
     public void Update()
     {
+        if (!isLocalPlayer)
+            return;
+
+        foreach (var item in Cameras)
+        {
+            item.SetActive(true);
+        }
+        
         Vector3 move = transform.right * Input.GetAxisRaw("Horizontal") +
             transform.forward * Input.GetAxisRaw("Vertical");
 

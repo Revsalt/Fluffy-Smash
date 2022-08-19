@@ -6,6 +6,7 @@ public class BillBoard : MonoBehaviour
 {
     void Update()
     {
-        transform.LookAt(Camera.main.transform.position);
+        if (Camera.main)
+            transform.LookAt(Camera.main.transform.position);
     }
 }

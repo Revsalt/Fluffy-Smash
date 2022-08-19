@@ -13,7 +13,7 @@ public class RoundSystem : NetworkBehaviour
     [SerializeField] private Text winText = null;
     [SerializeField] private float roundTimeInMinutes = 2;
 
-    private Player Tagger = null;
+    private PlayerNetworkManager Tagger = null;
 
     private NetworkRoomManager room;
     private NetworkRoomManager Room
@@ -53,7 +53,7 @@ public class RoundSystem : NetworkBehaviour
     {
         RpcStartRound();
 
-        List<Player> AllPlayers = FindObjectsOfType<Player>().ToList();
+        List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
         Tagger = AllPlayers[UnityEngine.Random.Range(0, AllPlayers.Count)];
         Tagger.GetComponent<TagLogic>().isTagger = true;
 
@@ -63,9 +63,12 @@ public class RoundSystem : NetworkBehaviour
     [ServerCallback]
     public void RoundEnded() // if there is more than one last guy
     {
-        List<Player> AllPlayers = FindObjectsOfType<Player>().ToList();
-        List<Player> TaggedPlayers = new List<Player>();
-        List<Player> NotTaggedPlayers = new List<Player>();
+        if (winText.text != String.Empty)
+            return;
+
+        List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
+        List<PlayerNetworkManager> TaggedPlayers = new List<PlayerNetworkManager>();
+        List<PlayerNetworkManager> NotTaggedPlayers = new List<PlayerNetworkManager>();
 
         foreach (var item in AllPlayers) //assign the winner
         {
@@ -90,7 +93,7 @@ public class RoundSystem : NetworkBehaviour
             List<string> names = new List<string>();
             foreach (var item in NotTaggedPlayers)
             {
-                names.Add(item.GetComponent<PlayerNetworkManager>().userName);
+                names.Add(item.GetComponent<PlayerNetworkManager>().nrp.username);
             }
 
             StartCoroutine(Delay(delegate { winText.text = String.Join("," , names.ToArray()) + " WON!"; }));
@@ -120,11 +123,14 @@ public class RoundSystem : NetworkBehaviour
 
     private void FixedUpdate()
     {
-        if (!isServer && winText.text == String.Empty)
+        if (!isServer)
             return;
 
-        List<Player> AllPlayers = FindObjectsOfType<Player>().ToList();
-        List<Player> TaggedPlayers = new List<Player>();
+        List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
+        List<PlayerNetworkManager> TaggedPlayers = new List<PlayerNetworkManager>();
+
+        if (AllPlayers.Count <= 1)
+            return;
 
         foreach (var item in AllPlayers)
         {
@@ -143,9 +149,9 @@ public class RoundSystem : NetworkBehaviour
     [Server]
     private void CheckToStartRound(NetworkConnection conn)
     {
-        Debug.Log(Room.numPlayers + " || " + FindObjectsOfType<Player>().Length);
+        Debug.Log(Room.numPlayers + " || " + FindObjectsOfType<PlayerNetworkManager>().Length);
 
-        if (Room.numPlayers != FindObjectsOfType<Player>().Length) { return; }
+        if (Room.numPlayers != FindObjectsOfType<PlayerNetworkManager>().Length) { return; }
 
         animator.enabled = true;
 
@@ -160,20 +166,20 @@ public class RoundSystem : NetworkBehaviour
     private void RpcStartCountdown()
     {
         animator.enabled = true;
-        foreach (var item in FindObjectsOfType<Player>())
+        foreach (var item in FindObjectsOfType<PlayerNetworkManager>())
         {
             if (item.GetComponent<NetworkIdentity>().isLocalPlayer)
-                item.GetComponent<Player>().DisableMovment(true);
+                item.GetComponent<PlayerController>().DisableMovment(true);
         }
     }
 
     [ClientRpc]
     private void RpcStartRound()
     {
-        foreach (var item in FindObjectsOfType<Player>())
+        foreach (var item in FindObjectsOfType<PlayerNetworkManager>())
         {
             if (item.GetComponent<NetworkIdentity>().isLocalPlayer)
-                item.GetComponent<Player>().DisableMovment(false);
+                item.GetComponent<PlayerController>().DisableMovment(false);
         }
 
         StartCoroutine(RoundCountDown());

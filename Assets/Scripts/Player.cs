@@ -37,23 +37,10 @@ public class Player : PlayerController
     float oldMovementSpeed = 0;
     bool canDash = true;
 
-    public GameObject[] Cameras;
-
     void Start()
     {
-        if (!isLocalPlayer)
-        {
-            foreach (var item in Cameras)
-            {
-                item.SetActive(false);
-            }
-            return;
-        }
-
         oldMovementSpeed = movementSpeed;
         movementSpeed = oldMovementSpeed * 2f;
-
-        piviot_M.transform.SetParent(null);
     }
 
     float weight = 0;
@@ -272,8 +259,11 @@ public class Player : PlayerController
         else
             playermodelchild.transform.localRotation = Quaternion.identity;
 
-        Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
-        playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        if (Camera.main)
+        {
+            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
+            playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        }
     }
 
     IEnumerator ReChargeDash()

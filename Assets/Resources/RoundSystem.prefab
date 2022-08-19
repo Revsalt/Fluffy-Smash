@@ -473,7 +473,7 @@ MonoBehaviour:
   animator: {fileID: 555757707498637000}
   countdown: {fileID: 7794569440888320936}
   winText: {fileID: 3553751468992670252}
-  roundTimeInMinutes: 0.2
+  roundTimeInMinutes: 2
 --- !u!1 &555757708070758235
 GameObject:
   m_ObjectHideFlags: 0

@@ -28,7 +28,8 @@ namespace Mirror.Examples.NetworkRoom
             //PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
             //playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
 
-            gamePlayer.GetComponent<PlayerNetworkManager>().nrp = roomPlayer.GetComponent<NetworkRoomPlayer>();
+            gamePlayer.GetComponent<EmptyPlayer>().nrp = roomPlayer.GetComponent<NetworkRoomPlayer>();
+
             return true;
         }
 
