@@ -13,8 +13,9 @@ public class TagLogic : NetworkBehaviour
     public float TagRadius = 2;
 
     public UnityEvent OnTagged;
-    public UnityEvent OnTaggerTaggingStart;
-    public UnityEvent OnTaggerTaggingEnd;
+
+    public delegate void isTagging(bool b);
+    public event isTagging onTag;
 
     bool canGrab = true;
 
@@ -48,7 +49,7 @@ public class TagLogic : NetworkBehaviour
             {
                 canGrab = false;
                 myPlayer.movementSpeed = myPlayer.GetOriginalSpeeed() * 1.3f;
-                OnTaggerTaggingStart.Invoke();
+                onTag.Invoke(true);
                 CanTag = true;
 
                 for (float i = 0; i < 2; i += Time.deltaTime) //need to be tested
@@ -59,7 +60,7 @@ public class TagLogic : NetworkBehaviour
                 }
 
                 myPlayer.movementSpeed = myPlayer.GetOriginalSpeeed() * 2;
-                OnTaggerTaggingEnd.Invoke();
+                onTag.Invoke(false);
                 CanTag = false;
 
                 yield return new WaitForSeconds(.8f);

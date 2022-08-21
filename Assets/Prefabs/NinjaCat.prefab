@@ -4841,7 +4841,7 @@ GameObject:
   - component: {fileID: 5701409085117814386}
   - component: {fileID: 6435042394493189592}
   m_Layer: 8
-  m_Name: Player
+  m_Name: NinjaCat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4896,8 +4896,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b577225f2dbb4b74d8266b8f49529dfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
   characterController: {fileID: 2607722591652237485}
   playerModel: {fileID: 1646360426110567441}
   piviot_M: {fileID: 5230716323925670244}
@@ -4913,38 +4911,9 @@ MonoBehaviour:
   Cameras:
   - {fileID: 1646360426184249716}
   - {fileID: 1646360426734641765}
+  moveDirection: {x: 0, y: 0, z: 0}
   movementParticleSystem: {fileID: 1646360427094017721}
-  movementStart:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6843282328107629284}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  movementEnd:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 6843282328107629284}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  hitGroundStart:
+  HitGroundNormal:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1646360426021184015}
@@ -4959,9 +4928,33 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-  hitGroundEnd:
+      - m_Target: {fileID: 1646360426086753234}
+        m_TargetAssemblyTypeName: AudioPlayer, Assembly-CSharp
+        m_MethodName: playSoundLand
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+  HitGroundHarsh:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1646360426086753232}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: isRoll
+          m_BoolArgument: 0
+        m_CallState: 2
   inAirStart:
     m_PersistentCalls:
       m_Calls:
@@ -5081,6 +5074,31 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 1646360426086753234}
+        m_TargetAssemblyTypeName: AudioPlayer, Assembly-CSharp
+        m_MethodName: playSound
+        m_Mode: 2
+        m_Arguments:
+          m_ObjectArgument: {fileID: 8300000, guid: a77b720e4dd80494eb2d1497a355d3bf,
+            type: 3}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+      - m_Target: {fileID: 1646360426086753232}
+        m_TargetAssemblyTypeName: UnityEngine.Animator, UnityEngine
+        m_MethodName: SetTrigger
+        m_Mode: 5
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: isDash
+          m_BoolArgument: 0
+        m_CallState: 2
   inDashEnd:
     m_PersistentCalls:
       m_Calls:
@@ -5099,12 +5117,9 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   wallOffset: {x: 1, y: 0.7, z: 1}
-  cinemachineVirtualCamera: {fileID: 1646360426184249717}
   audioPlayer: {fileID: 1646360426086753234}
   wallJumpForce: 120
   dashForce: 80
-  animator: {fileID: 1646360426086753232}
-  playermodelchild: {fileID: 1880364737530046937}
   playerModelIkTarget: {fileID: 1646360426227162866}
   rigWeight: {fileID: 1646360426870888540}
 --- !u!114 &4097870006058671203
@@ -5126,7 +5141,6 @@ MonoBehaviour:
   CanTag: 0
   TagPosition: {fileID: 2858915597570900423}
   TagRadius: 3
-  players: []
   OnTagged:
     m_PersistentCalls:
       m_Calls:
@@ -5276,7 +5290,7 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  target: {fileID: 1248540983182127971}
+  target: {fileID: 1646360426110567442}
 --- !u!114 &5701409085117814386
 MonoBehaviour:
   m_ObjectHideFlags: 0

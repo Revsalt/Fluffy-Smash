@@ -12,6 +12,14 @@ public class PlayerNetworkManager : NetworkBehaviour
     private void Start()
     {
         Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
+
+        if (isLocalPlayer)
+        {
+            foreach (var item in GetComponent<PlayerController>().Cameras)
+            {
+                item.SetActive(true);
+            }
+        }
     }
 
     void Update()

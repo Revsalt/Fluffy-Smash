@@ -1,0 +1,245 @@
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Animations.Rigging;
+using Cinemachine;
+using UnityEngine.Events;
+using UnityEngine.EventSystems;
+using Mirror;
+
+public class NinjaCat : PlayerController
+{
+    [Header("ParticleSystems")]
+    [SerializeField] ParticleSystem movementParticleSystem;
+    [Header("hitGround")]
+    [SerializeField] UnityEvent HitGroundNormal;
+    [SerializeField] UnityEvent HitGroundHarsh;
+    [Header("inAir")]
+    [SerializeField] UnityEvent inAirStart;
+    [SerializeField] UnityEvent inAirEnd;
+    [Header("inDash")]
+    [SerializeField] UnityEvent inDashStart;
+    [SerializeField] UnityEvent inDashEnd;
+    [Header("Other")]
+    [SerializeField] Vector3 wallOffset;
+    [SerializeField] float wallJumpForce = 80;
+    [SerializeField] float dashForce = 80;
+    [SerializeField] GameObject playerModelIkTarget;
+    [SerializeField] Rig rigWeight;
+
+    Vector3 wallDirection = Vector3.zero;
+    Animator animator;
+
+    void Start()
+    {
+        animator = playerModel.GetComponentInChildren<Animator>();
+
+        movementSpeed = GetOriginalSpeeed() * 2f;
+
+        GetComponent<TagLogic>().onTag += SetTagAnimation;
+
+        void SetTagAnimation(bool b) { animator.SetBool("isPersonGrab", b); }
+
+        onJump += delegate {
+            playerModel.GetComponentInChildren<AudioPlayer>().PlayAirSwooshSound();
+            animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
+        };
+
+        ability0 = new Ability()
+        {
+            ability = delegate
+            {
+                if (moveDirection != Vector3.zero)
+                    AddImpact(moveDirection.normalized, dashForce);
+                else
+                    AddImpact(Vector3.up, dashForce);
+            },
+            coolDown = 0.5f,
+            events = new UnityEvent[2] { inDashStart, inDashEnd }
+        };
+    }
+
+    float weight = 0;
+    bool canBurstParticels = true;
+    bool harshFall = false;
+    float time = 0;
+
+    new void Update()
+    {
+        //Handling Ik
+
+        if (playerModelIkTarget.transform.localPosition.z < 0)
+            weight = 7 + Mathf.RoundToInt(playerModelIkTarget.transform.localPosition.z);
+        else
+            weight = 1;
+
+        rigWeight.weight = weight;
+
+        //ParticleSystem
+
+        var mps = movementParticleSystem.main;
+        mps.simulationSpeed = Mathf.Lerp(animator.GetFloat("runSpeed"), movementSpeed / 8, 5 * Time.deltaTime);
+
+        ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
+
+        if (!isGroundeed())
+        {
+            inAirStart.Invoke();
+            canBurstParticels = true;
+
+            if (wallDirection == Vector3.zero)
+            {
+                time -= Time.deltaTime;
+                if (time < .1f)
+                {
+                    harshFall = true;
+                }
+            }
+        }
+        else
+        {
+            time = 1.2f;
+            inAirEnd.Invoke();
+
+            if (canBurstParticels)
+            {
+                HitGroundNormal.Invoke();
+
+                ShakeCamera(1, .2f);
+
+                canBurstParticels = false;
+
+                if (harshFall)
+                {
+                    HitGroundHarsh.Invoke();
+                    AddImpact(playerModel.transform.forward, 50);
+                    harshFall = false;
+                }
+            }
+        }
+
+        if (!GetComponent<NetworkIdentity>().isLocalPlayer)
+            return;
+
+        base.Update();
+
+        //Animations
+
+        bool isRunning = moveDirection != Vector3.zero;
+        animator.SetBool("isRun", isRunning);
+        animator.SetBool("isJump", !isGroundeed());
+        animator.SetFloat("runSpeed", movementSpeed / 7);
+        
+        //sprinting
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !GetDisableInput())
+        {
+            movementSpeed = GetOriginalSpeeed();
+        }
+        else if (Input.GetKeyUp(KeyCode.LeftShift) && !GetDisableInput())
+        {
+            movementSpeed = GetOriginalSpeeed() * 2f;
+        }
+
+        //wall running
+
+        if (wallDirection != Vector3.zero && Input.GetButtonDown("Jump") && !GetDisableInput())
+        {
+            DisableMovment(false);
+
+            playerModel.GetComponentInChildren<AudioPlayer>().PlayAirSwooshSound();
+            animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
+            animator.SetBool("isWallGrab", false);
+
+            transform.rotation = Quaternion.Euler(Vector3.zero);
+
+            if (Physics.Raycast(transform.position, -wallDirection, 10, layerMask))
+            {
+                if (isRunning)
+                {
+                    AddImpact(Vector3.up, wallJumpForce);
+                    AddImpact(wallDirection, 60);
+                }
+                else
+                {
+                    AddImpact(wallDirection, 20);
+                }
+            }
+
+            wallDirection = Vector3.zero;
+        }
+
+        if (wallDirection == Vector3.zero)
+            playerModel.transform.LookAt(playerModel.transform.position + moveDirection);
+        else
+            playerModel.transform.localRotation = Quaternion.identity;
+
+        if (Camera.main)
+        {
+            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
+            playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        }
+    }
+
+    public override void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        base.OnControllerColliderHit(hit);
+
+        if (wallDirection != Vector3.zero)
+            return;
+
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && hit.normal.y * 90f >= -20)
+        {
+            playerModel.GetComponentInChildren<AudioPlayer>().playSoundWalkFootStep();
+            animator.SetBool("isWallGrab", true);
+
+            DisableMovment(true);
+            ResetPlayerVelocity();
+
+            RaycastHit hitLine;
+            Physics.Raycast(playerModel.transform.position, -hit.normal, out hitLine, 3, layerMask);
+            transform.position = hitLine.point + new Vector3(hit.normal.x * wallOffset.x , hit.normal.y * wallOffset.y ,hit.normal.z * wallOffset.z);
+
+            wallDirection = hit.normal;
+            transform.rotation = Quaternion.FromToRotation(Vector3.up, wallDirection);
+        }
+    }
+
+    void ParticlesSystemEnabled(ParticleSystem ps , bool b)
+    {
+        if (b)
+        {
+            if (!ps.isPlaying)
+                ps.Play();
+        }
+        else
+        {
+            if (ps.isPlaying)
+                ps.Stop();
+        }
+    }
+
+    private bool WallHeightIsEnough(Vector3 wallDirection)
+    {
+        bool condition = false;
+
+        for (int i = 0; i < 2; i++)
+        {
+            RaycastHit hit;
+            Physics.Raycast(transform.position + new Vector3(0,i * .5f,0), -wallDirection, out hit , 1);
+            //Debug.DrawRay(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, Color.blue , 5);
+
+            if (hit.collider != null)
+            {
+                condition = true;
+            }
+            else
+            {
+                condition = false;
+                return false;
+            }
+        }
+
+        return condition;
+    }
+}
