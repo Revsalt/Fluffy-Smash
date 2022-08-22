@@ -1642,6 +1642,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2453380119503521802, guid: de8f4da4bc4688c43a7409d4b9e2f863,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 10388ef5ac2142d4e802358e38ab0c7d, type: 2}
     - target: {fileID: 2762481218985586167, guid: de8f4da4bc4688c43a7409d4b9e2f863,
         type: 3}
       propertyPath: near clip plane
