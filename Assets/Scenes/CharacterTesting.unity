@@ -130,7 +130,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh21408
+  m_Name: pb_Mesh65322
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1642,21 +1642,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 703206986332175356, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 703206986332175356, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 703206986332175356, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -7.670001
-      objectReference: {fileID: 0}
     - target: {fileID: 2762481218985586167, guid: de8f4da4bc4688c43a7409d4b9e2f863,
         type: 3}
       propertyPath: near clip plane
@@ -1680,7 +1665,7 @@ PrefabInstance:
     - target: {fileID: 3814039662413454330, guid: de8f4da4bc4688c43a7409d4b9e2f863,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 3.62
+      value: 0.8
       objectReference: {fileID: 0}
     - target: {fileID: 3814039662413454330, guid: de8f4da4bc4688c43a7409d4b9e2f863,
         type: 3}
@@ -1722,70 +1707,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 3814039662561590344, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_UpdateMethod
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 3814039662561590347, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3814039662561590347, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 3814039662561590347, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: -7.670001
-      objectReference: {fileID: 0}
     - target: {fileID: 3814039662561590350, guid: de8f4da4bc4688c43a7409d4b9e2f863,
         type: 3}
       propertyPath: near clip plane
       value: 0.001
-      objectReference: {fileID: 0}
-    - target: {fileID: 3814039664436481324, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3814039664436481324, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 3814039664436481324, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5426845170533824294, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_UpdateMethod
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6741272824490034519, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: ShoulderOffset.y
-      value: 0.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 8587428711598797148, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0.42000008
-      objectReference: {fileID: 0}
-    - target: {fileID: 8587428711598797148, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0.41000032
-      objectReference: {fileID: 0}
-    - target: {fileID: 8587428711598797148, guid: de8f4da4bc4688c43a7409d4b9e2f863,
-        type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 4.410001
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de8f4da4bc4688c43a7409d4b9e2f863, type: 3}

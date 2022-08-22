@@ -248,9 +248,8 @@ GameObject:
   m_Component:
   - component: {fileID: 264944302}
   - component: {fileID: 264944300}
-  - component: {fileID: 264944299}
   - component: {fileID: 264944303}
-  - component: {fileID: 264944301}
+  - component: {fileID: 264944299}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -267,22 +266,21 @@ MonoBehaviour:
   m_GameObject: {fileID: 264944298}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Port: 7777
-  DualMode: 1
+  port: 25565
   NoDelay: 1
-  Interval: 10
-  Timeout: 10000
-  FastResend: 2
-  CongestionWindow: 0
-  SendWindowSize: 4096
-  ReceiveWindowSize: 4096
-  NonAlloc: 1
-  debugLog: 0
-  statisticsGUI: 0
-  statisticsLog: 0
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000
 --- !u!114 &264944300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -302,7 +300,7 @@ MonoBehaviour:
   serverTickRate: 30
   offlineScene: Assets/Scenes/RoomScene.unity
   onlineScene: 
-  transport: {fileID: 264944299}
+  transport: {fileID: 0}
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
@@ -326,25 +324,6 @@ MonoBehaviour:
   characters:
   - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
   - {fileID: 11400000, guid: 2cc186f192dd2834687f8eabf18cbfd7, type: 2}
---- !u!114 &264944301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 264944298}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96b149f511061407fb54895c057b7736, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wrap: {fileID: 264944299}
-  latencySpikeMultiplier: 1
-  latencySpikeSpeedMultiplier: 6000
-  reliableLatency: 6000
-  unreliableLoss: 0.539
-  unreliableLatency: 6000
-  unreliableScramble: 0.742
 --- !u!4 &264944302
 Transform:
   m_ObjectHideFlags: 0

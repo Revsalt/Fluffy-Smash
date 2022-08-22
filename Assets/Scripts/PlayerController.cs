@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     //events
     public delegate void Jump();
     public event Jump onJump;
-    public Ability ability0;
+    public Ability ability0,ability1;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
@@ -127,9 +127,14 @@ public class PlayerController : MonoBehaviour
 
         //Abilities
 
-        if (Input.GetMouseButton(1) && !GetDisableInput())
+        if (Input.GetMouseButtonDown(1) && !GetDisableInput())
         {
             StartAbility(ability0);
+        }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift) && !GetDisableInput())
+        {
+            StartAbility(ability1);
         }
 
         // Debugging
@@ -189,10 +194,11 @@ public class PlayerController : MonoBehaviour
         return Vector3.Distance(transform.position , hit.point);
     }
 
-    public void AddImpact(Vector3 dir, float force)
+    public void AddImpact(Vector3 dir, float force ,bool reflectOnGround)
     {
         dir.Normalize();
-        if (dir.y < 0) dir.y = -dir.y; // reflect down force on the ground
+        if (reflectOnGround)
+            if (dir.y < 0) dir.y = -dir.y; // reflect down force on the ground
         impact += dir.normalized * force / 3;
     }
 
@@ -207,14 +213,22 @@ public class PlayerController : MonoBehaviour
         return Physics.CheckSphere(transform.position - new Vector3(0, characterController.height / 2, 0), .4f, layerMask);
     }
 
+    bool abilityInProgress = false;
     public void StartAbility(Ability abilityRef)
     {
-        if (!abilityRef.canCast) return;
+        if (!abilityRef.canCast || abilityInProgress) return;
+
+        abilityRef.End += delegate
+        {
+            abilityRef.events[1].Invoke();
+            abilityInProgress = false;
+        };
 
         StartCoroutine(CoolDown());
 
         IEnumerator CoolDown()
         {
+            abilityInProgress = true;
             abilityRef.events[0].Invoke();
             abilityRef.ability.Invoke();
             abilityRef.canCast = false;
@@ -222,7 +236,6 @@ public class PlayerController : MonoBehaviour
             yield return new WaitForSeconds(abilityRef.coolDown);
 
             abilityRef.canCast = true;
-            abilityRef.events[1].Invoke();
         }
     }
 
@@ -257,16 +270,20 @@ public class PlayerController : MonoBehaviour
     {
         if ((characterController.collisionFlags & CollisionFlags.CollidedAbove) != 0)
         {
-            AddImpact(Vector3.up, -10);
+            AddImpact(Vector3.up, -10, true);
         }
     }
 }
 
+/// <summary>
+/// kosomak
+/// </summary>
 public class Ability
 {
     public Action ability;
     public float coolDown;
     public UnityEvent[] events;
+    public Action End;
 
     public bool canCast = true;
 }

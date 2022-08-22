@@ -49,13 +49,48 @@ public class NinjaCat : PlayerController
         {
             ability = delegate
             {
-                if (moveDirection != Vector3.zero)
-                    AddImpact(moveDirection.normalized, dashForce);
-                else
-                    AddImpact(Vector3.up, dashForce);
+                StartCoroutine(Dash());
+
+                IEnumerator Dash()
+                {
+                    if (moveDirection != Vector3.zero)
+                        AddImpact(moveDirection.normalized, dashForce , true);
+                    else
+                        AddImpact(Vector3.up, dashForce, true);
+
+                    yield return new WaitForSeconds(0.1f);
+
+                    ability0.End.Invoke();
+                }
             },
             coolDown = 0.5f,
             events = new UnityEvent[2] { inDashStart, inDashEnd }
+        };
+
+        ability1 = new Ability()
+        {
+            ability = delegate
+            {
+                movementSpeed = GetOriginalSpeeed();
+                Debug.Log("set slow");
+
+                StartCoroutine(Sprint());
+
+                IEnumerator Sprint()
+                {
+                    for (float i = 0; !Input.GetKeyUp(KeyCode.LeftShift); i += Time.deltaTime)
+                    {
+                        yield return null;
+                    }
+
+                    movementSpeed = GetOriginalSpeeed() * 2f;
+                    Debug.Log("set fast");
+
+                    ability1.End.Invoke();
+                }
+            },
+            coolDown = 0,
+            events = new UnityEvent[2] { new UnityEvent() , new UnityEvent()}
         };
     }
 
@@ -112,7 +147,7 @@ public class NinjaCat : PlayerController
                 if (harshFall)
                 {
                     HitGroundHarsh.Invoke();
-                    AddImpact(playerModel.transform.forward, 50);
+                    AddImpact(playerModel.transform.forward, 50, true);
                     harshFall = false;
                 }
             }
@@ -128,18 +163,7 @@ public class NinjaCat : PlayerController
         bool isRunning = moveDirection != Vector3.zero;
         animator.SetBool("isRun", isRunning);
         animator.SetBool("isJump", !isGroundeed());
-        animator.SetFloat("runSpeed", movementSpeed / 7);
-        
-        //sprinting
-
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !GetDisableInput())
-        {
-            movementSpeed = GetOriginalSpeeed();
-        }
-        else if (Input.GetKeyUp(KeyCode.LeftShift) && !GetDisableInput())
-        {
-            movementSpeed = GetOriginalSpeeed() * 2f;
-        }
+        animator.SetFloat("runSpeed", movementSpeed / 7);     
 
         //wall running
 
@@ -157,12 +181,12 @@ public class NinjaCat : PlayerController
             {
                 if (isRunning)
                 {
-                    AddImpact(Vector3.up, wallJumpForce);
-                    AddImpact(wallDirection, 60);
+                    AddImpact(Vector3.up, wallJumpForce , true);
+                    AddImpact(wallDirection, 60, true);
                 }
                 else
                 {
-                    AddImpact(wallDirection, 20);
+                    AddImpact(wallDirection, 20, true);
                 }
             }
 
