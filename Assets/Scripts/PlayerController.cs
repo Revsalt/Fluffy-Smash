@@ -51,7 +51,7 @@ public class PlayerController : MonoBehaviour
     {
         originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
-
+        onJump += delegate { };
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
