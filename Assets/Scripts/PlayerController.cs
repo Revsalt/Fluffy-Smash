@@ -14,12 +14,14 @@ public class PlayerController : MonoBehaviour
     bool disableMovement = false;
     bool disableInput = false;
     float originalMovementSpeed = 0;
+    float originalJumpHeight = 0;
 
     CinemachineVirtualCamera cineCamera;
 
     //events
     public delegate void Jump();
     public event Jump onJump;
+
     public Ability ability0,ability1;
 
     [Header("Default")]
@@ -32,7 +34,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float slopeForce;
     [SerializeField] private float slopeForceRayLength;
     [Header("Jumping")]
-    [SerializeField]private float jumpHeight = 5;
+    public float jumpHeight = 5;
     public LayerMask layerMask = 5;
     [SerializeField] public float gravity = 5;
     [Header("Networks")]
@@ -47,6 +49,7 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
 
         Cursor.lockState = CursorLockMode.Locked;
@@ -151,6 +154,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public float GetOriginalJumpHeight()
+    {
+        return originalJumpHeight;
+    }
+
     public float GetOriginalSpeeed()
     {
         return originalMovementSpeed;
@@ -239,6 +247,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public bool GetIsAnyAbilityInPorgress()
+    {
+        return abilityInProgress;
+    }
+
     public void ShakeCamera(float intensity, float time)
     {
         CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
@@ -268,9 +281,19 @@ public class PlayerController : MonoBehaviour
 
     public virtual void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        Rigidbody rigidbody = hit.collider.attachedRigidbody;
+        if (rigidbody != null)
+        {
+            Vector3 forcedirection = hit.gameObject.transform.position - transform.position;
+            forcedirection.y = 0;
+            forcedirection.Normalize();
+
+            rigidbody.AddForceAtPosition((forcedirection * 25 / rigidbody.mass) * Time.deltaTime , transform.position , ForceMode.Impulse);  
+        }
+
         if ((characterController.collisionFlags & CollisionFlags.CollidedAbove) != 0)
         {
-            AddImpact(Vector3.up, -10, true);
+            AddImpact(Vector3.up, -2, true);
         }
     }
 }

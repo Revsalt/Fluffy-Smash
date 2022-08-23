@@ -5117,7 +5117,6 @@ MonoBehaviour:
           m_BoolArgument: 0
         m_CallState: 2
   wallOffset: {x: 1, y: 0.7, z: 1}
-  audioPlayer: {fileID: 1646360426086753234}
   wallJumpForce: 120
   dashForce: 80
   playerModelIkTarget: {fileID: 1646360426227162866}
@@ -5164,36 +5163,6 @@ MonoBehaviour:
           m_ObjectArgument: {fileID: 8300000, guid: 552403e82256ce646abd44bdd9d627a4,
             type: 3}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  OnTaggerTaggingStart:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1646360425263456798}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: TaggingAnimation
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 1
-        m_CallState: 2
-  OnTaggerTaggingEnd:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 1646360425263456798}
-        m_TargetAssemblyTypeName: Player, Assembly-CSharp
-        m_MethodName: TaggingAnimation
-        m_Mode: 6
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -15590,7 +15559,7 @@ ParticleSystemRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10301, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 3062613153ea47f42a262f065fec69d1, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
