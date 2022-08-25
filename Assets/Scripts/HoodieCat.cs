@@ -263,8 +263,12 @@ public class HoodieCat : PlayerController
                     CrossPointer.SetActive(true);
                     lastHitNormal = hit.normal;
                 }
+                else
+                    CrossPointer.SetActive(false);
             }
-            else { CrossPointer.SetActive(false); }
+            else
+                CrossPointer.SetActive(false);
+
             yield return null;
 
         }
@@ -273,24 +277,29 @@ public class HoodieCat : PlayerController
         {
             DisableInput(true);
             DisableMovment(true);
+
             playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(pointerCastPosition.transform.forward.x, 0, pointerCastPosition.transform.forward.z));
             animator.SetBool("isThrowLoliPop", true);
             yield return new WaitForSeconds(0.2f);
 
+            #region Moving The LoliPop
             TransclucentMode(false);
             LoliPop.transform.SetParent(null);
             Vector3 ThrowDirection = transform.right;
             Vector3 startpos_ = LoliPop.transform.position;
             Vector3 GoToPos_ = CrossPointer.transform.position + (hit.normal * 0.7f);
-            for (float i = 0; Vector3.Distance(LoliPop.transform.position, GoToPos_) > .2f; i += Time.deltaTime)
+
+            for (float i = 0; Vector3.Distance(LoliPop.transform.position, GoToPos_) > 0; i += Time.deltaTime)
             {
                 LoliPop.GetComponent<CapsuleCollider>().enabled = false;
-                LoliPop.transform.position = Bezier2(startpos_, ((startpos_ + GoToPos_) / 2) + ThrowDirection * 2, GoToPos_, i * 2);
+                LoliPop.transform.position = Bezier2(startpos_, ((startpos_ + GoToPos_) / 2) + ThrowDirection * 2, GoToPos_,i * 2);
                 LoliPop.transform.rotation = Quaternion.LookRotation((LoliPop.transform.position - GoToPos_).normalized);
                 yield return null;
             }
             LoliPop.transform.rotation = Quaternion.LookRotation(lastHitNormal);
+            #endregion
 
+            #region Moving The Player
             Vector3 startpos;
             startpos = transform.position;
 
@@ -302,10 +311,12 @@ public class HoodieCat : PlayerController
                 transform.position = Bezier2(startpos, ((startpos + GoToPos) / 2) + Vector3.up * 5, GoToPos, i  * 2);
                 yield return null;
             }
+            #endregion
 
             LoliPop.GetComponent<CapsuleCollider>().enabled = true;
 
             DisableMovment(false);
+            
         }
 
         animator.SetBool("isThrowLoliPop", false);
@@ -337,11 +348,13 @@ public class HoodieCat : PlayerController
 
     public static Vector3 Bezier2(Vector3 p0, Vector3 p1, Vector3 p2, float t)
     {
-        float u = 1 - t;
-        float tt = t * t;
+        var clamped_t = Mathf.Clamp(t, 0, 1);
+
+        float u = 1 - clamped_t;
+        float tt = clamped_t * clamped_t;
         float uu = u * u;
         Vector3 p = uu * p0;
-        p += 2 * u * t * p1;
+        p += 2 * u * clamped_t * p1;
         p += tt * p2;
 
         return p;
