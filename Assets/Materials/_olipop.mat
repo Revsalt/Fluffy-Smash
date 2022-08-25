@@ -59,7 +59,7 @@ Material:
     m_Floats:
     - Boolean_65172BB9: 0
     - Vector1_101BA869: 0.08
-    - Vector1_4A95455B: -0.9973638
+    - Vector1_4A95455B: 1.6944147
     - Vector1_8028E2E1: 30
     - _AdditionalLightIgnoreCelShade: 0.9
     - _AlphaClip: 0
@@ -102,7 +102,7 @@ Material:
     - _WorkflowMode: 1
     - _ZWrite: 1
     m_Colors:
-    - Color_EA4083DE: {r: 3.952941, g: 0, b: 16, a: 0}
+    - Color_EA4083DE: {r: 1.7270259, g: 0, b: 6.8495603, a: 0}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

@@ -180,6 +180,7 @@ public class HoodieCat : PlayerController
     {
         if (!HasLoliPop())
         {
+            ability0.skipNextCoolDown = true;
             ability0.End.Invoke();
             yield break;
         }
@@ -238,6 +239,7 @@ public class HoodieCat : PlayerController
     {
         if (!HasLoliPop())
         {
+            ability1.skipNextCoolDown = true;
             ability1.End.Invoke();
             yield break;
         }
@@ -333,10 +335,16 @@ public class HoodieCat : PlayerController
         }
     }
 
-    public static Vector3 Bezier2(Vector3 s, Vector3 p, Vector3 e, float t)
+    public static Vector3 Bezier2(Vector3 p0, Vector3 p1, Vector3 p2, float t)
     {
-        float rt = 1 - t;
-        return rt * rt * s + 2 * rt * t * p + t * t * e;
+        float u = 1 - t;
+        float tt = t * t;
+        float uu = u * u;
+        Vector3 p = uu * p0;
+        p += 2 * u * t * p1;
+        p += tt * p2;
+
+        return p;
     }
 
     void TransclucentMode(bool b)

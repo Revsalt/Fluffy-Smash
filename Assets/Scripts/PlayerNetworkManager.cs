@@ -3,15 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
+using TMPro;
 
 public class PlayerNetworkManager : NetworkBehaviour
 {
     [SyncVar]public NetworkRoomPlayer nrp;
 
+    [HideInInspector] public TextMeshProUGUI usernametxt;
 
     private void Start()
     {
-        Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
+        GameObject g = (GameObject)Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
+        usernametxt = g.GetComponentInChildren<TextMeshProUGUI>();
 
         if (isLocalPlayer)
         {
@@ -24,7 +27,7 @@ public class PlayerNetworkManager : NetworkBehaviour
 
     void Update()
     {
-        GetComponentInChildren<BillBoard>().GetComponentInChildren<Text>().text = nrp.username;
+        usernametxt.text = nrp.username;
         gameObject.name = "Player : " + nrp.username;
 
         if (transform.position.y < -40)

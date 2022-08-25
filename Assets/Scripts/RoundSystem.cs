@@ -110,7 +110,6 @@ public class RoundSystem : NetworkBehaviour
 
         foreach (var item in AllPlayers)
         {
-            item.GetComponent<TagLogic>().isTagged = false;
             item.GetComponent<TagLogic>().isTagger = false;
         }
     }

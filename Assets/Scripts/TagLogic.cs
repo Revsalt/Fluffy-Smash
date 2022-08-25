@@ -6,8 +6,7 @@ using Mirror;
 
 public class TagLogic : NetworkBehaviour
 {
-    [SyncVar] public bool isTagger = false;
-    [SyncVar]public bool isTagged = false;
+    [SyncVar(hook = nameof(OnChangeTaggerState))] public bool isTagger = false;
     public bool CanTag = false;
     public Transform TagPosition;
     public float TagRadius = 2;
@@ -19,6 +18,17 @@ public class TagLogic : NetworkBehaviour
 
     bool canGrab = true;
 
+    public void OnChangeTaggerState(bool oldb , bool newb)
+    {
+        if (newb)
+            SetTextColor(Color.red);
+    }
+
+    void SetTextColor(Color c)
+    {
+        GetComponent<PlayerNetworkManager>().usernametxt.color = c;
+    }
+
     void Update()
     {
         if (!isLocalPlayer)
@@ -29,7 +39,7 @@ public class TagLogic : NetworkBehaviour
             Collider[] players = Physics.OverlapSphere(TagPosition.position, TagRadius);
             foreach (var item in players)
             {
-                if (item.GetComponent<TagLogic>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer)
+                if (item.GetComponent<TagLogic>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer && !item.GetComponent<TagLogic>().isTagger)
                 {
                     CmdIsTagged(item.gameObject);
                     CanTag = false;
@@ -73,7 +83,6 @@ public class TagLogic : NetworkBehaviour
     public void CmdIsTagged(GameObject item)
     {
         SendAnimationToAll(item);
-        item.GetComponent<TagLogic>().isTagged = true;
         item.GetComponent<TagLogic>().isTagger = true;
         MakeTagger(item.GetComponent<NetworkIdentity>().connectionToClient);
     }

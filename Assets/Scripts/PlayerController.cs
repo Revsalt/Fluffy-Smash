@@ -140,10 +140,19 @@ public class PlayerController : MonoBehaviour
             StartAbility(ability1);
         }
 
-        // Debugging
+    }
+
+    GUIContent content;
+
+    private void OnGUI()
+    {
+        content = new GUIContent("This is a box", "This is a tooltip");
+
+        GUILayout.BeginArea(new Rect((Screen.width / 2) - 50, (Screen.height / 2), 100, 100));
 
         if (Input.GetKeyDown(KeyCode.P))
         {
+            GUI.Box(new Rect(0, 0, 100, 300), content);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -152,6 +161,7 @@ public class PlayerController : MonoBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
+        GUILayout.EndArea();
     }
 
     public float GetOriginalJumpHeight()
@@ -241,7 +251,11 @@ public class PlayerController : MonoBehaviour
             abilityRef.ability.Invoke();
             abilityRef.canCast = false;
 
-            yield return new WaitForSeconds(abilityRef.coolDown);
+            if (!abilityRef.skipNextCoolDown)
+                yield return new WaitForSeconds(abilityRef.coolDown);
+            else
+                abilityRef.skipNextCoolDown = true;
+                yield return null;
 
             abilityRef.canCast = true;
         }
@@ -309,4 +323,6 @@ public class Ability
     public Action End;
 
     public bool canCast = true;
+    public bool skipNextCoolDown = false;
+
 }

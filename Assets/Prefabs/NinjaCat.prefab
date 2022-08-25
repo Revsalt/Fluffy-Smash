@@ -5136,10 +5136,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   isTagger: 0
-  isTagged: 0
   CanTag: 0
   TagPosition: {fileID: 2858915597570900423}
-  TagRadius: 3
+  TagRadius: 2
   OnTagged:
     m_PersistentCalls:
       m_Calls:
@@ -5211,7 +5210,7 @@ MonoBehaviour:
   bufferSizeLimit: 64
   catchupThreshold: 6
   catchupMultiplier: 0.1
-  showGizmos: 0
+  showGizmos: 1
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!114 &7179160013567609580
@@ -5279,7 +5278,7 @@ MonoBehaviour:
   syncPosition: 1
   syncRotation: 0
   syncScale: 0
-  interpolatePosition: 0
+  interpolatePosition: 1
   interpolateRotation: 0
   interpolateScale: 0
   bufferTimeMultiplier: 1
@@ -5305,6 +5304,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   nrp: {fileID: 0}
+  usernametxt: {fileID: 0}
 --- !u!1 &1646360425379016323
 GameObject:
   m_ObjectHideFlags: 0
