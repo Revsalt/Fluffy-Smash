@@ -95,9 +95,7 @@ public class NinjaCat : PlayerController
     }
 
     float weight = 0;
-    bool canBurstParticels = true;
-    bool harshFall = false;
-    float time = 0;
+    bool ranHarshFallFunction = false;
 
     new void Update()
     {
@@ -120,36 +118,32 @@ public class NinjaCat : PlayerController
         if (!isGroundeed())
         {
             inAirStart.Invoke();
-            canBurstParticels = true;
 
-            if (wallDirection == Vector3.zero)
+            if (!ranHarshFallFunction)
+                StartCoroutine(HarshFall());
+
+            IEnumerator HarshFall()
             {
-                time -= Time.deltaTime;
-                if (time < .1f)
+                bool harshFall = false;
+                ranHarshFallFunction = true;
+
+                for (float i = 0; !isGroundeed(); i += Time.deltaTime)
                 {
-                    harshFall = true;
+                    if (i > 1)
+                        harshFall = true;
+                    yield return null;
                 }
-            }
-        }
-        else
-        {
-            time = 1.2f;
-            inAirEnd.Invoke();
 
-            if (canBurstParticels)
-            {
+                inAirEnd.Invoke();
                 HitGroundNormal.Invoke();
-
                 ShakeCamera(1, .2f);
-
-                canBurstParticels = false;
-
                 if (harshFall)
                 {
                     HitGroundHarsh.Invoke();
                     AddImpact(playerModel.transform.forward, 50, true);
-                    harshFall = false;
                 }
+
+                ranHarshFallFunction = false;
             }
         }
 

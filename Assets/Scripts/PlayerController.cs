@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public class PlayerController : MonoBehaviour
 {
-    [HideInInspector]public CharacterController characterController;
+    [HideInInspector] public CharacterController characterController;
     Vector3 playerVelocity = Vector3.zero;
     Vector3 impact = Vector3.zero;
 
@@ -15,6 +15,7 @@ public class PlayerController : MonoBehaviour
     bool disableInput = false;
     float originalMovementSpeed = 0;
     float originalJumpHeight = 0;
+    float descendenceRate = 5;
 
     CinemachineVirtualCamera cineCamera;
 
@@ -22,13 +23,13 @@ public class PlayerController : MonoBehaviour
     public delegate void Jump();
     public event Jump onJump;
 
-    public Ability ability0,ability1;
+    public Ability ability0, ability1;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
     [SerializeField] public GameObject piviot_M;
     [Header("Camera")]
-    [SerializeField]private float sensitvity = 100;
+    [SerializeField] private float sensitvity = 100;
     [Header("Movement")]
     public float movementSpeed = 5;
     [SerializeField] private float slopeForce;
@@ -40,7 +41,7 @@ public class PlayerController : MonoBehaviour
     [Header("Networks")]
     public GameObject[] Cameras;
 
-    
+
     void OnValidate()
     {
         if (characterController == null)
@@ -94,15 +95,15 @@ public class PlayerController : MonoBehaviour
             return;
 
         if (moveDirection != Vector3.zero)
-            transform.rotation = Quaternion.Euler(0,piviot_M.transform.eulerAngles.y , 0);
+            transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
 
         //Movement and impact
 
         Vector3 Result = Vector3.zero;
 
         if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
-         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
-        
+        impact = Vector3.Lerp(impact, Vector3.zero, descendenceRate * Time.deltaTime);
+
 
         if (characterController.isGrounded && playerVelocity.y < 0)
         {
@@ -209,10 +210,10 @@ public class PlayerController : MonoBehaviour
         RaycastHit hit;
         Physics.Raycast(transform.position, -Vector3.up, out hit, layerMask, 99999);
 
-        return Vector3.Distance(transform.position , hit.point);
+        return Vector3.Distance(transform.position, hit.point);
     }
 
-    public void AddImpact(Vector3 dir, float force ,bool reflectOnGround)
+    public void AddImpact(Vector3 dir, float force, bool reflectOnGround)
     {
         dir.Normalize();
         if (reflectOnGround)
@@ -255,7 +256,7 @@ public class PlayerController : MonoBehaviour
                 yield return new WaitForSeconds(abilityRef.coolDown);
             else
                 abilityRef.skipNextCoolDown = true;
-                yield return null;
+            yield return null;
 
             abilityRef.canCast = true;
         }
@@ -264,6 +265,11 @@ public class PlayerController : MonoBehaviour
     public bool GetIsAnyAbilityInPorgress()
     {
         return abilityInProgress;
+    }
+
+    public void SetDescendenceRate(float i)
+    {
+        descendenceRate = i;
     }
 
     public void ShakeCamera(float intensity, float time)

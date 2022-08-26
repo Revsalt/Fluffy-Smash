@@ -5,16 +5,29 @@ using Cinemachine;
 using UnityEngine.Events;
 using Mirror;
 using UnityEngine.EventSystems;
+using UnityEngine.Animations.Rigging;
 
 public class HoodieCat : PlayerController
 {
-    [SerializeField] UnityEvent StartGroundSmash, EndGroundSmash;
-    [SerializeField] UnityEvent StartTeleport, EndTeleport;
+    [Header("hitGround")]
+    [SerializeField] UnityEvent HitGroundNormal;
+    [Header("inAir")]
+    [SerializeField] UnityEvent inAirStart;
+    [SerializeField] UnityEvent inAirEnd;
+    [Header("inGroundSmash")]
+    [SerializeField] UnityEvent StartGroundSmash;
+    [SerializeField] UnityEvent EndGroundSmash;
+    [Header("inTeleport")]
+    [SerializeField] UnityEvent StartTeleport;
+    [SerializeField] UnityEvent EndTeleport;
+    [Header("Other")]
     [SerializeField] CinemachineVirtualCamera zoomCamera;
     [SerializeField] Transform pointerCastPosition , loliPopParent;
     [SerializeField] GameObject pointer, LoliPop;
     [SerializeField] GameObject[] modelHidden, modelNormal;
     [SerializeField] ParticleSystem movementParticleSystem;
+    [SerializeField] GameObject playerModelIkTarget;
+    [SerializeField] Rig rigWeight;
 
     bool canBringLoliPop = true;
     bool loliPopTime = false;
@@ -49,8 +62,46 @@ public class HoodieCat : PlayerController
         };
     }
 
+    float weight = 0;
+    bool ranLandFunction = false;
+
     private void Update()
     {
+        //Handling Ik
+
+        if (playerModelIkTarget.transform.localPosition.z < -2)
+            weight = 1 + Mathf.RoundToInt(playerModelIkTarget.transform.localPosition.z);
+        else
+            weight = 1;
+
+        rigWeight.weight = weight;
+
+        #region OnLand
+        if (!isGroundeed())
+        {
+            inAirStart.Invoke();
+
+            if (!ranLandFunction)
+                StartCoroutine(Land());
+
+            IEnumerator Land()
+            {
+                ranLandFunction = true;
+
+                for (float i = 0; !isGroundeed(); i += Time.deltaTime)
+                {
+                    yield return null;
+                }
+
+                inAirEnd.Invoke();
+                HitGroundNormal.Invoke();
+                ShakeCamera(1, .2f);
+
+                ranLandFunction = false;
+            }
+        }
+        #endregion
+
         base.Update();
 
         animator.SetBool("isMove", moveDirection != Vector3.zero);
@@ -110,6 +161,12 @@ public class HoodieCat : PlayerController
         mps.rateOverDistance = Mathf.Lerp(mps.rateOverDistance.constant, movementSpeed / 1.2f, 5 * Time.deltaTime);
 
         ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
+
+        if (Camera.main)
+        {
+            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
+            playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+        }
     }
 
     public void Drop()
@@ -215,6 +272,7 @@ public class HoodieCat : PlayerController
         {
             if (DistanceBetweenGround() < 5)
                 animator.SetBool("isAttackJump", false);
+
             yield return null;
         }
 
