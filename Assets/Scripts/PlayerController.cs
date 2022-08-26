@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using static UnityEngine.Networking.UnityWebRequest;
 
 public class PlayerController : MonoBehaviour
 {
@@ -144,7 +145,14 @@ public class PlayerController : MonoBehaviour
     }
 
     GUIContent content;
-
+    public Vector3 GradualDeceleration(Vector3 impact_)
+    {
+        if (impact_.magnitude > 0.2)
+        {
+            impact_ = Vector3.Lerp(impact_, Vector3.zero, 5 * Time.deltaTime);
+        }
+        return impact_;
+    }
     private void OnGUI()
     {
         content = new GUIContent("This is a box", "This is a tooltip");

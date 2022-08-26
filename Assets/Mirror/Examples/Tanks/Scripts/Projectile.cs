@@ -6,7 +6,7 @@ namespace Mirror.Examples.Tanks
     {
         public float destroyAfter = 5;
         public Rigidbody rigidBody;
-        public float force = 1000;
+        public float force = 10;
 
         public override void OnStartServer()
         {

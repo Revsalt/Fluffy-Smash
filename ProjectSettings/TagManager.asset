@@ -8,6 +8,7 @@ TagManager:
   - Bamboo
   - Swing
   - Fire
+  - ground
   layers:
   - Default
   - TransparentFX
