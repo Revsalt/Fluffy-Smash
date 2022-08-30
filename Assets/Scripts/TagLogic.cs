@@ -8,7 +8,6 @@ public class TagLogic : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnChangeTaggerState))] public bool isTagger = false;
     public bool CanTag = false;
-    public Transform TagPosition;
     public float TagRadius = 2;
 
     public UnityEvent OnTagged;
@@ -36,7 +35,7 @@ public class TagLogic : NetworkBehaviour
 
         if (CanTag)
         {
-            Collider[] players = Physics.OverlapSphere(TagPosition.position, TagRadius);
+            Collider[] players = Physics.OverlapSphere(Vector3.zero, TagRadius);
             foreach (var item in players)
             {
                 if (item.GetComponent<TagLogic>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer && !item.GetComponent<TagLogic>().isTagger)
@@ -106,10 +105,15 @@ public class TagLogic : NetworkBehaviour
         }
     }
 
+    private void Start()
+    {
+        onTag += delegate { Debug.Log("qweq"); };
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
 
-        Gizmos.DrawWireSphere(TagPosition.position, TagRadius);
+        Gizmos.DrawWireSphere(Vector3.zero, TagRadius);
     }
 }

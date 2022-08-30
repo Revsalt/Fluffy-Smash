@@ -1,0 +1,67 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.Audio;
+
+public partial class AudioManager : MonoBehaviour
+{
+
+    public Sound[] sounds;
+
+    public static AudioManager instance;
+    //AudioManager
+
+    void Awake()
+    {
+
+        if (instance == null)
+            instance = this;
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void Play(string name , Vector3 pos)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.LogWarning("Sound: " + name + " not found");
+            return;
+        }
+
+        GameObject g = new GameObject("Sound" + UnityEngine.Random.Range(0, 8000));
+        g.transform.position = pos;
+
+        AudioSource As = g.AddComponent<AudioSource>();
+
+        As.volume = s.volume;
+        As.pitch = s.pitch;
+        As.loop = s.loop;
+        As.clip = s.clips[UnityEngine.Random.Range(0, s.clips.Length)];
+
+        As.spatialBlend = 1;
+        As.rolloffMode = AudioRolloffMode.Linear;
+        As.maxDistance = s.maxDistance;
+
+        if (s.randompitch)
+            As.pitch = UnityEngine.Random.Range(.9f, 1.1f);
+
+        As.Play();
+
+        Destroy(As.gameObject, As.clip.length);
+    }
+
+    //this addition to the code was made by me, the rest was from Brackeys tutorial
+    public void Stop(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+
+        s.source.Stop();
+    }
+}

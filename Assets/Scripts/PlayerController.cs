@@ -1,4 +1,5 @@
 ﻿using Cinemachine;
+using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,7 +7,10 @@ using UnityEngine;
 using UnityEngine.Events;
 using static UnityEngine.Networking.UnityWebRequest;
 
-public class PlayerController : MonoBehaviour
+/// <summary>
+/// for offline testing use the PlayerControllerOffline 
+/// </summary>
+public class PlayerController : NetworkBehaviour
 {
     [HideInInspector] public CharacterController characterController;
     Vector3 playerVelocity = Vector3.zero;
@@ -16,7 +20,6 @@ public class PlayerController : MonoBehaviour
     bool disableInput = false;
     float originalMovementSpeed = 0;
     float originalJumpHeight = 0;
-    float descendenceRate = 5;
 
     CinemachineVirtualCamera cineCamera;
 
@@ -38,7 +41,7 @@ public class PlayerController : MonoBehaviour
     [Header("Jumping")]
     public float jumpHeight = 5;
     public LayerMask layerMask = 5;
-    [SerializeField] public float gravity = 5;
+    public float gravity = 5;
     [Header("Networks")]
     public GameObject[] Cameras;
 
@@ -103,8 +106,7 @@ public class PlayerController : MonoBehaviour
         Vector3 Result = Vector3.zero;
 
         if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
-        impact = Vector3.Lerp(impact, Vector3.zero, descendenceRate * Time.deltaTime);
-
+        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
 
         if (characterController.isGrounded && playerVelocity.y < 0)
         {
@@ -145,14 +147,7 @@ public class PlayerController : MonoBehaviour
     }
 
     GUIContent content;
-    public Vector3 GradualDeceleration(Vector3 impact_)
-    {
-        if (impact_.magnitude > 0.2)
-        {
-            impact_ = Vector3.Lerp(impact_, Vector3.zero, 5 * Time.deltaTime);
-        }
-        return impact_;
-    }
+
     private void OnGUI()
     {
         content = new GUIContent("This is a box", "This is a tooltip");
@@ -273,11 +268,6 @@ public class PlayerController : MonoBehaviour
     public bool GetIsAnyAbilityInPorgress()
     {
         return abilityInProgress;
-    }
-
-    public void SetDescendenceRate(float i)
-    {
-        descendenceRate = i;
     }
 
     public void ShakeCamera(float intensity, float time)

@@ -28,6 +28,7 @@ public class HoodieCat : PlayerController
     [SerializeField] ParticleSystem movementParticleSystem;
     [SerializeField] GameObject playerModelIkTarget;
     [SerializeField] Rig rigWeight;
+    [SerializeField] GameObject lolipopText;
 
     bool canBringLoliPop = true;
     bool loliPopTime = false;
@@ -69,6 +70,8 @@ public class HoodieCat : PlayerController
     {
         //Handling Ik
 
+        lolipopText.SetActive(!HasLoliPop());
+
         if (playerModelIkTarget.transform.localPosition.z < -2)
             weight = 1 + Mathf.RoundToInt(playerModelIkTarget.transform.localPosition.z);
         else
@@ -102,6 +105,14 @@ public class HoodieCat : PlayerController
         }
         #endregion
 
+        var mps = movementParticleSystem.emission;
+        mps.rateOverDistance = Mathf.Lerp(mps.rateOverDistance.constant, movementSpeed / 1.2f, 5 * Time.deltaTime);
+
+        ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
+
+        if (!isLocalPlayer)
+            return;
+
         base.Update();
 
         animator.SetBool("isMove", moveDirection != Vector3.zero);
@@ -119,12 +130,6 @@ public class HoodieCat : PlayerController
 
         playerModel.transform.LookAt(playerModel.transform.position + moveDirection);
 
-        if (Camera.main)
-        {
-            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
-            //playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
-        }
-
         animator.SetBool("isJump", !isGroundeed());
 
         if (HasLoliPop())
@@ -135,9 +140,9 @@ public class HoodieCat : PlayerController
         if (Input.GetMouseButtonDown(2) && !GetDisableInput() && !GetIsAnyAbilityInPorgress() && canBringLoliPop)
         {
             if (HasLoliPop())
-                Drop();
+                CmdDrop(GetComponent<NetworkIdentity>() , false);
             else
-                PickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3));
+                CmdPickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3) , GetComponent<NetworkIdentity>());
         }
 
         if (!HasLoliPop() && !loliPopTime)
@@ -156,12 +161,6 @@ public class HoodieCat : PlayerController
             }
         }
 
-
-        var mps = movementParticleSystem.emission;
-        mps.rateOverDistance = Mathf.Lerp(mps.rateOverDistance.constant, movementSpeed / 1.2f, 5 * Time.deltaTime);
-
-        ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
-
         if (Camera.main)
         {
             Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
@@ -169,43 +168,83 @@ public class HoodieCat : PlayerController
         }
     }
 
-    public void Drop()
+    #region Drop
+    [Command]
+    void CmdDrop(NetworkIdentity ntd, bool onlyUnparent)
     {
-        LoliPop.transform.SetParent(null);
-        LoliPop.GetComponent<Rigidbody>().isKinematic = false;
-        LoliPop.GetComponent<CapsuleCollider>().enabled = true;
+        Drop(ntd , onlyUnparent);
+        RpcDrop(ntd , onlyUnparent);
     }
 
-    public void PickUp(bool Teleport)
+    [ClientRpc]
+    void RpcDrop(NetworkIdentity ntd, bool onlyUnparent)
     {
+        Drop(ntd , onlyUnparent);
+    }
+
+    public void Drop(NetworkIdentity ntd , bool onlyUnparent)
+    {
+        GameObject lolipop_ = ntd.GetComponent<HoodieCat>().LoliPop;
+
+        lolipop_.transform.SetParent(null);
+        if (onlyUnparent)
+            return;
+
+        lolipop_.GetComponent<Rigidbody>().isKinematic = false;
+        lolipop_.GetComponent<CapsuleCollider>().enabled = true;
+    }
+    #endregion
+
+    #region PickUp
+    [Command]
+    void CmdPickUp(bool Teleport , NetworkIdentity ntd)
+    {
+        PickUp(Teleport , ntd);
+
+        RpcPickUp(Teleport , ntd);
+    }
+
+    [ClientRpc]
+    void RpcPickUp(bool Teleport, NetworkIdentity ntd)
+    {
+        PickUp(Teleport, ntd);
+    }
+
+    void PickUp(bool Teleport, NetworkIdentity ntd)
+    {
+        GameObject lolipop_ = ntd.GetComponent<HoodieCat>().LoliPop;
+
         StartCoroutine(delay());
 
         IEnumerator delay()
         {
             canBringLoliPop = false;
 
+            lolipop_.gameObject.layer = LayerMask.NameToLayer("Default");
+            lolipop_.GetComponent<CapsuleCollider>().enabled = false;
+            lolipop_.GetComponent<Rigidbody>().isKinematic = true;
+
             if (!Teleport)
             {
+
                 for (float i = 0; i <= 3; i += Time.deltaTime)
                 {
-                    foreach (var item in LoliPop.GetComponentsInChildren<MeshRenderer>())
+                    foreach (var item in lolipop_.GetComponentsInChildren<MeshRenderer>())
                     {
-                        item.sharedMaterial.SetFloat("Vector1_4A95455B", i);
+                        item.material.SetFloat("Vector1_4A95455B", i);
                     }
 
                     if (i > .5f)
-                        LoliPop.GetComponent<CapsuleCollider>().enabled = false;
+                        lolipop_.GetComponent<CapsuleCollider>().enabled = false;
 
                     yield return null;
                 }
 
             }
 
-            LoliPop.GetComponent<CapsuleCollider>().enabled = false;
-            LoliPop.GetComponent<Rigidbody>().isKinematic = true;
-            LoliPop.transform.SetParent(loliPopParent);
-            LoliPop.transform.localPosition = Vector3.zero;
-            LoliPop.transform.localRotation = Quaternion.identity;
+            lolipop_.transform.SetParent(ntd.GetComponent<HoodieCat>().loliPopParent);
+            lolipop_.transform.localPosition = Vector3.zero;
+            lolipop_.transform.localRotation = Quaternion.identity;
 
             canBringLoliPop = true;
 
@@ -214,7 +253,7 @@ public class HoodieCat : PlayerController
 
             for (float i = 1; i >= -1; i -= Time.deltaTime)
             {
-                foreach (var item in LoliPop.GetComponentsInChildren<MeshRenderer>())
+                foreach (var item in lolipop_.GetComponentsInChildren<MeshRenderer>())
                 {
                     item.sharedMaterial.SetFloat("Vector1_4A95455B", i);
                 }
@@ -222,6 +261,8 @@ public class HoodieCat : PlayerController
             }
         }
     }
+
+    #endregion
 
     public void ZoomCamera(bool b)
     {
@@ -250,11 +291,12 @@ public class HoodieCat : PlayerController
 
         ResetPlayerVelocity();
         ShakeCamera(2, 0.2f);
+        AudioManager.instance.Play("HoodieCatOffTheGround", transform.position);
         AddImpact(Vector3.up, 100, false);
         gravity = 0.1f;
         ZoomCamera(true);
 
-        for (float i = 0; i < 2; i += Time.deltaTime)
+        for (float i = 0; i < 1.5f; i += Time.deltaTime)
         {
             playerModel.transform.LookAt(playerModel.transform.position + pointerCastPosition.transform.forward * 10);
             if (Input.GetMouseButton(0))
@@ -268,20 +310,16 @@ public class HoodieCat : PlayerController
         gravity = oldGravity;
         AddImpact(pointerCastPosition.transform.forward, 500, false);
 
-        for (float i = 0; !isGroundeed(); i += Time.deltaTime)
+        for (float i = 0; !characterController.isGrounded; i += Time.deltaTime)
         {
-            if (DistanceBetweenGround() < 5)
-                animator.SetBool("isAttackJump", false);
-
             yield return null;
         }
 
         animator.SetBool("isAttackJump", false);
-        Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, layerMask);
-        GameObject Crack = Instantiate(Resources.Load("Crack") as GameObject, hit.point, Quaternion.Euler(90, 0, 0), null);
+        Physics.Raycast(transform.position, Vector3.down, out RaycastHit hit, 5, layerMask);
+        CmdSpawnCrack(hit.point);
         ShakeCamera(4, 0.2f);
         DisableMovment(true);
-        Destroy(Crack, 5);
 
         yield return new WaitForSeconds(.5f);
 
@@ -338,11 +376,12 @@ public class HoodieCat : PlayerController
 
             playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(pointerCastPosition.transform.forward.x, 0, pointerCastPosition.transform.forward.z));
             animator.SetBool("isThrowLoliPop", true);
+            AudioManager.instance.Play("HoodieCatThrowLoliPop", transform.position);
             yield return new WaitForSeconds(0.2f);
 
             #region Moving The LoliPop
             TransclucentMode(false);
-            LoliPop.transform.SetParent(null);
+            CmdDrop(GetComponent<NetworkIdentity>(), true);
             Vector3 ThrowDirection = transform.right;
             Vector3 startpos_ = LoliPop.transform.position;
             Vector3 GoToPos_ = CrossPointer.transform.position + (hit.normal * 0.7f);
@@ -355,6 +394,7 @@ public class HoodieCat : PlayerController
                 yield return null;
             }
             LoliPop.transform.rotation = Quaternion.LookRotation(lastHitNormal);
+            AudioManager.instance.Play("HoodieCatLoliPopStickInWall", LoliPop.transform.position);
             #endregion
 
             #region Moving The Player
@@ -384,6 +424,15 @@ public class HoodieCat : PlayerController
 
         yield return null;
     }
+
+    #region SpawnningCrack
+    [Command]
+    void CmdSpawnCrack(Vector3 pos)
+    {
+        GameObject Crack = Instantiate(Resources.Load("Crack") as GameObject, pos, Quaternion.Euler(90, 0, 0), null);
+        NetworkServer.Spawn(Crack);
+    }
+    #endregion
 
     bool HasLoliPop()
     {

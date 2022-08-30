@@ -41,7 +41,7 @@ public class NinjaCat : PlayerController
         void SetTagAnimation(bool b) { animator.SetBool("isPersonGrab", b); }
 
         onJump += delegate {
-            playerModel.GetComponentInChildren<AudioPlayer>().PlayAirSwooshSound();
+            playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
             animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
         };
 
@@ -147,7 +147,7 @@ public class NinjaCat : PlayerController
             }
         }
 
-        if (!GetComponent<NetworkIdentity>().isLocalPlayer)
+        if (!isLocalPlayer)
             return;
 
         base.Update();
@@ -165,7 +165,7 @@ public class NinjaCat : PlayerController
         {
             DisableMovment(false);
 
-            playerModel.GetComponentInChildren<AudioPlayer>().PlayAirSwooshSound();
+            playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
             animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
             animator.SetBool("isWallGrab", false);
 
@@ -208,7 +208,7 @@ public class NinjaCat : PlayerController
 
         if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && hit.normal.y * 90f >= -20)
         {
-            playerModel.GetComponentInChildren<AudioPlayer>().playSoundWalkFootStep();
+            playerModel.GetComponentInChildren<ModelAnimationSounds>().playSoundWalkFootStep();
             animator.SetBool("isWallGrab", true);
 
             DisableMovment(true);
