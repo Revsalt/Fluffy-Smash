@@ -112,7 +112,6 @@ public class PlayerController : NetworkBehaviour
         {
             playerVelocity.y = 0;
         }
-
         Result += moveDirection * Time.deltaTime * movementSpeed;
 
         if (Input.GetButtonDown("Jump") && isGroundeed() && !GetDisableInput())

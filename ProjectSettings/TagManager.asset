@@ -9,6 +9,7 @@ TagManager:
   - Swing
   - Fire
   - ground
+  - Hook
   layers:
   - Default
   - TransparentFX
@@ -21,7 +22,7 @@ TagManager:
   - Player
   - Arrow
   - PlayerIgnore
-  - 
+  - HookIgnore
   - 
   - 
   - 

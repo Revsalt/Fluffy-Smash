@@ -19,7 +19,7 @@ public class MusicalProjectile : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        OnDrawGizmos();
     }
     
     private void OnCollisionEnter(Collision collision)
@@ -38,7 +38,7 @@ public class MusicalProjectile : MonoBehaviour
     }
     void Explode()
     {
-        Playerobject.GetComponent<beetcatin>().Force(CalculateDirection(), calculateforceimpact());
+       // Playerobject.GetComponent<beetcatin>().Force(CalculateDirection(), calculateforceimpact());
     }
     public float calculateforceimpact()
     {
