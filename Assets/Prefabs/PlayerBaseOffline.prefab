@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3814039662413454326}
   - component: {fileID: 3814039662413454322}
   m_Layer: 8
-  m_Name: Player 2
+  m_Name: PlayerBaseOffline
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,13 +47,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 2
+  m_Height: 1.52
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.4
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0, z: 0}
+  m_StepOffset: 0
+  m_SkinWidth: 0.008
+  m_MinMoveDistance: 0.01
+  m_Center: {x: 0, y: -0.27, z: 0}
 --- !u!114 &3814039662413454322
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -66,6 +66,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a728a7b998a76004c81791ef201814db, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
   characterController: {fileID: 3814039662413454326}
   playerModel: {fileID: 4235120042563476193}
   piviot_M: {fileID: 3814039662847010326}
@@ -73,6 +75,7 @@ MonoBehaviour:
   movementSpeed: 7
   slopeForce: 4
   slopeForceRayLength: 1.4
+  slideFriction: -3
   jumpHeight: 5
   layerMask:
     serializedVersion: 2
@@ -81,6 +84,7 @@ MonoBehaviour:
   Cameras:
   - {fileID: 3814039664436481325}
   - {fileID: 3814039662561590340}
+  moveDirection: {x: 0, y: 0, z: 0}
 --- !u!1 &3814039662561590340
 GameObject:
   m_ObjectHideFlags: 0

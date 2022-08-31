@@ -41,6 +41,7 @@ public class HoodieCat : PlayerController
         oldGravity = gravity;
 
         onJump += delegate { Debug.Log("Jump"); };
+        GetComponent<TagLogic>().onTag += delegate { Debug.Log("qwe"); };
 
         ability0 = new Ability()
         {
@@ -310,7 +311,7 @@ public class HoodieCat : PlayerController
         gravity = oldGravity;
         AddImpact(pointerCastPosition.transform.forward, 500, false);
 
-        for (float i = 0; !characterController.isGrounded; i += Time.deltaTime)
+        for (float i = 0; !isGroundeed(); i += Time.deltaTime)
         {
             yield return null;
         }

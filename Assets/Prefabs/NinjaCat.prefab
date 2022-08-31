@@ -4877,13 +4877,13 @@ CharacterController:
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Height: 1.85
+  m_Height: 1.52
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.4
-  m_SkinWidth: 0.01
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: -0.12, z: 0}
+  m_StepOffset: 0
+  m_SkinWidth: 0.008
+  m_MinMoveDistance: 0.01
+  m_Center: {x: 0, y: -0.27, z: 0}
 --- !u!114 &1646360425263456798
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4903,8 +4903,9 @@ MonoBehaviour:
   piviot_M: {fileID: 5230716323925670244}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 4
-  slopeForceRayLength: 1.4
+  slopeForce: 9
+  slopeForceRayLength: 1.6
+  slideFriction: -0.4
   jumpHeight: 5
   layerMask:
     serializedVersion: 2
@@ -5124,19 +5125,6 @@ MonoBehaviour:
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: isTagged
-          m_BoolArgument: 0
-        m_CallState: 2
-      - m_Target: {fileID: 1646360426086753234}
-        m_TargetAssemblyTypeName: AudioPlayer, Assembly-CSharp
-        m_MethodName: playSound
-        m_Mode: 2
-        m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: 552403e82256ce646abd44bdd9d627a4,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
 --- !u!114 &1373193218838475886
@@ -10800,10 +10788,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CharacterName: NinjaCat
-  AudioLand:
-  - {fileID: 8300000, guid: d34e1a6491fb3eb4f8ddb8b9579dae8a, type: 3}
-  - {fileID: 8300000, guid: 2c3ff60166d59934eaf22181d27cf9cd, type: 3}
-  - {fileID: 8300000, guid: 4df04b7cd9954dd4a9f5f2144291ad32, type: 3}
 --- !u!1 &2218135325878805191
 GameObject:
   m_ObjectHideFlags: 0

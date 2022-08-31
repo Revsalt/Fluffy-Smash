@@ -56,7 +56,7 @@ public class NinjaCat : PlayerController
                     if (moveDirection != Vector3.zero)
                         AddImpact(moveDirection.normalized, dashForce , true);
                     else
-                        AddImpact(Vector3.up, dashForce, true);
+                        AddImpact(Vector3.up, dashForce, false);
 
                     yield return new WaitForSeconds(0.1f);
 

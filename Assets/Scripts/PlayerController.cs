@@ -20,6 +20,7 @@ public class PlayerController : NetworkBehaviour
     bool disableInput = false;
     float originalMovementSpeed = 0;
     float originalJumpHeight = 0;
+    Vector3 groundNormal = Vector3.zero;
 
     CinemachineVirtualCamera cineCamera;
 
@@ -38,6 +39,7 @@ public class PlayerController : NetworkBehaviour
     public float movementSpeed = 5;
     [SerializeField] private float slopeForce;
     [SerializeField] private float slopeForceRayLength;
+    [SerializeField] private float slideFriction;
     [Header("Jumping")]
     public float jumpHeight = 5;
     public LayerMask layerMask = 5;
@@ -108,11 +110,12 @@ public class PlayerController : NetworkBehaviour
         if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
 
-        if (characterController.isGrounded && playerVelocity.y < 0)
+        if (isGroundeed() && playerVelocity.y < 0)
         {
             playerVelocity.y = 0;
         }
-        Result += moveDirection * Time.deltaTime * movementSpeed;
+
+        Result += moveDirection.normalized * Time.deltaTime * movementSpeed;
 
         if (Input.GetButtonDown("Jump") && isGroundeed() && !GetDisableInput())
         {
@@ -123,12 +126,19 @@ public class PlayerController : NetworkBehaviour
             onJump();
         }
 
-        playerVelocity.y += gravity * Time.deltaTime * 3;
+        if (groundNormal != Vector3.zero && characterController.isGrounded)
+        {
+            AddImpact(new Vector3(groundNormal.y, -groundNormal.x, 0), (1f - groundNormal.y) * groundNormal.x * (1f - slideFriction), false);
+            AddImpact(new Vector3(0, -groundNormal.z, groundNormal.y), (1f - groundNormal.y) * groundNormal.z * (1f - slideFriction), false);
+        }
+
+        if (!characterController.isGrounded)
+            playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
 
         if ((moveDirection != Vector3.zero) && OnSlope())
         {
-            characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime);
+            characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime );
         }
 
         //Abilities
@@ -145,17 +155,10 @@ public class PlayerController : NetworkBehaviour
 
     }
 
-    GUIContent content;
-
     private void OnGUI()
     {
-        content = new GUIContent("This is a box", "This is a tooltip");
-
-        GUILayout.BeginArea(new Rect((Screen.width / 2) - 50, (Screen.height / 2), 100, 100));
-
         if (Input.GetKeyDown(KeyCode.P))
         {
-            GUI.Box(new Rect(0, 0, 100, 300), content);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
@@ -164,7 +167,6 @@ public class PlayerController : NetworkBehaviour
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
         }
-        GUILayout.EndArea();
     }
 
     public float GetOriginalJumpHeight()
@@ -310,8 +312,10 @@ public class PlayerController : NetworkBehaviour
 
         if ((characterController.collisionFlags & CollisionFlags.CollidedAbove) != 0)
         {
-            AddImpact(Vector3.up, -2, true);
+            AddImpact(Vector3.up, -1, true);
         }
+
+        groundNormal = hit.normal;
     }
 }
 
