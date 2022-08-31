@@ -35,10 +35,9 @@ public class TagLogic : NetworkBehaviour
 
         if (CanTag)
         {
-            Collider[] players = Physics.OverlapSphere(Vector3.zero, TagRadius);
-            foreach (var item in players)
+            foreach (var item in FindObjectsOfType<TagLogic>())
             {
-                if (item.GetComponent<TagLogic>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer && !item.GetComponent<TagLogic>().isTagger)
+                if (!item.GetComponent<NetworkIdentity>().isLocalPlayer && !item.GetComponent<TagLogic>().isTagger && Vector3.Distance(item.transform.position , transform.position) < TagRadius)
                 {
                     CmdIsTagged(item.gameObject);
                     CanTag = false;

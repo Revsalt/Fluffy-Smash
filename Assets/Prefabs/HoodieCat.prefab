@@ -6483,10 +6483,11 @@ MonoBehaviour:
   syncInterval: 0.1
   isTagger: 0
   CanTag: 0
-  TagRadius: 2
+  TagRadius: 4
   OnTagged:
     m_PersistentCalls:
       m_Calls: []
+  players: []
 --- !u!114 &4684191966329288854
 MonoBehaviour:
   m_ObjectHideFlags: 0
