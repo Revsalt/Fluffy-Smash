@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5891692946032528240}
   m_Layer: 8
-  m_Name: Model
+  m_Name: NinjaCatModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -337,6 +337,11 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: -5975156179121120648, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ced20d4740fbb3643802bd7f789321dc, type: 2}
     - target: {fileID: -5734815345570091929, guid: 569b9dbd52ef84b428295aa4bde5da6d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1042,6 +1047,16 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 77.94161
       objectReference: {fileID: 0}
+    - target: {fileID: 3806685505259782510, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 3824543252266648404, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: 4079743653203401667, guid: 569b9dbd52ef84b428295aa4bde5da6d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1397,6 +1412,26 @@ PrefabInstance:
       propertyPath: m_Layer
       value: 8
       objectReference: {fileID: 0}
+    - target: {fileID: 8127493185663460564, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ced20d4740fbb3643802bd7f789321dc, type: 2}
+    - target: {fileID: 8127493185663460564, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[1]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9a8c9fe79bb603b4f97629e53424c05a, type: 2}
+    - target: {fileID: 8127493185663460564, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[2]
+      value: 
+      objectReference: {fileID: 2100000, guid: 3ea885335cc40df4c9ae0bb983915659, type: 2}
+    - target: {fileID: 8127493185663460564, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+        type: 3}
+      propertyPath: m_Materials.Array.data[3]
+      value: 
+      objectReference: {fileID: 2100000, guid: c5deb578cff1314449c871d6d85a0d25, type: 2}
     - target: {fileID: 8207384219825545691, guid: 569b9dbd52ef84b428295aa4bde5da6d,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

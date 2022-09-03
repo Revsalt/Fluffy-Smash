@@ -7,7 +7,7 @@ public class ModelAnimationSounds : MonoBehaviour
     [SerializeField] string CharacterName = "Character";
     public void playSound(string audioName)
     {
-        AudioManager.instance.Play(audioName, transform.position);
+        AudioManager.instance.Play(audioName, transform.position , null);
     }
 
     public void PlayAirSwooshSound()

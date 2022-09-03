@@ -28,7 +28,7 @@ public class PlayerController : NetworkBehaviour
     public delegate void Jump();
     public event Jump onJump;
 
-    public Ability ability0, ability1;
+    public Ability ability0, ability1 , ability_tag;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
@@ -145,12 +145,17 @@ public class PlayerController : NetworkBehaviour
 
         if (Input.GetMouseButtonDown(1) && !GetDisableInput())
         {
-            StartAbility(ability0);
+            StartAbility(0);
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift) && !GetDisableInput())
         {
-            StartAbility(ability1);
+            StartAbility(1);
+        }
+
+        if (Input.GetMouseButtonDown(0) && !GetDisableInput() && GetComponent<TagLogic>().isTagger)
+        {
+            StartAbility(2);
         }
 
     }
@@ -237,9 +242,13 @@ public class PlayerController : NetworkBehaviour
     }
 
     bool abilityInProgress = false;
-    public void StartAbility(Ability abilityRef)
+    public void StartAbility(int i)
     {
+        Ability abilityRef = new Ability[3] { ability0, ability1, ability_tag }[i];
+
         if (!abilityRef.canCast || abilityInProgress) return;
+
+        CmdStartAbility(i , GetComponent<NetworkIdentity>());
 
         abilityRef.End += delegate
         {
@@ -264,6 +273,18 @@ public class PlayerController : NetworkBehaviour
 
             abilityRef.canCast = true;
         }
+    }
+
+    [Command]
+    void CmdStartAbility(int i , NetworkIdentity ntd)
+    {
+        RpcStartAbility(i , ntd);
+    }
+
+    [ClientRpc]
+    void RpcStartAbility(int i, NetworkIdentity ntd)
+    {
+        ntd.GetComponent<PlayerController>().StartAbility(i);
     }
 
     public bool GetIsAnyAbilityInPorgress()
@@ -319,9 +340,6 @@ public class PlayerController : NetworkBehaviour
     }
 }
 
-/// <summary>
-/// kosomak
-/// </summary>
 public class Ability
 {
     public Action ability;

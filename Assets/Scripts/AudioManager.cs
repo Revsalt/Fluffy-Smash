@@ -26,7 +26,7 @@ public partial class AudioManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    public void Play(string name , Vector3 pos)
+    public void Play(string name , Vector3 pos , Transform childOf)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null)
@@ -37,6 +37,9 @@ public partial class AudioManager : MonoBehaviour
 
         GameObject g = new GameObject("Sound" + UnityEngine.Random.Range(0, 8000));
         g.transform.position = pos;
+
+        if (childOf != null)
+            g.transform.SetParent(childOf);
 
         AudioSource As = g.AddComponent<AudioSource>();
 

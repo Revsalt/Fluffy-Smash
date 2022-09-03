@@ -11,6 +11,7 @@ public class NinjaCat : PlayerController
 {
     [Header("ParticleSystems")]
     [SerializeField] ParticleSystem movementParticleSystem;
+    [SerializeField] ParticleSystem chargeParticleSystem;
     [Header("hitGround")]
     [SerializeField] UnityEvent HitGroundNormal;
     [SerializeField] UnityEvent HitGroundHarsh;
@@ -35,10 +36,6 @@ public class NinjaCat : PlayerController
         animator = playerModel.GetComponentInChildren<Animator>();
 
         movementSpeed = GetOriginalSpeeed() * 2f;
-
-        GetComponent<TagLogic>().onTag += SetTagAnimation;
-
-        void SetTagAnimation(bool b) { animator.SetBool("isPersonGrab", b); }
 
         onJump += delegate {
             playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
@@ -91,6 +88,18 @@ public class NinjaCat : PlayerController
             },
             coolDown = 0,
             events = new UnityEvent[2] { new UnityEvent() , new UnityEvent()}
+        };
+
+        TagLogic taglogic = GetComponent<TagLogic>();
+
+        ability_tag = new Ability()
+        {
+            ability = delegate
+            {
+                StartCoroutine(AttackSequence_tag());
+            },
+            coolDown = .8f,
+            events = new UnityEvent[] { taglogic.StartTag, taglogic.EndTag }
         };
     }
 
@@ -187,16 +196,18 @@ public class NinjaCat : PlayerController
             wallDirection = Vector3.zero;
         }
 
+        if (Camera.main)
+        {
+            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
+            playerModelIkTarget.transform.position = pos;
+        }
+
+        if (GetDisableInput()) return;
+
         if (wallDirection == Vector3.zero)
             playerModel.transform.LookAt(playerModel.transform.position + moveDirection);
         else
             playerModel.transform.localRotation = Quaternion.identity;
-
-        if (Camera.main)
-        {
-            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
-            playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
-        }
     }
 
     public override void OnControllerColliderHit(ControllerColliderHit hit)
@@ -223,6 +234,51 @@ public class NinjaCat : PlayerController
         }
     }
 
+    float originalgravity;
+
+    IEnumerator AttackSequence_tag()
+    {
+        originalgravity = gravity;
+
+        AudioManager.instance.Play("NinjaCatSwordSlash" , transform.position , transform);
+
+        DisableInput(true);
+        gravity = 0; ResetPlayerVelocity();
+
+        playerModel.transform.LookAt(playerModelIkTarget.transform.position);
+        animator.SetBool("isPersonGrab" , true);
+        chargeParticleSystem.Play();
+
+        for (float i = 0; i < 1f; i += Time.deltaTime)
+        {
+            var cps = chargeParticleSystem.main;
+            cps.simulationSpeed = i + 1;
+            yield return null;
+        }
+
+        chargeParticleSystem.Stop();
+        chargeParticleSystem.Clear();
+
+        HidePlayerModel(false);
+        AddImpact(playerModel.transform.forward, 1400, false);
+        ShakeCamera(3, 0.3f);
+
+        GetComponent<TagLogic>().SetCanAttack(true);
+
+        yield return new WaitForSeconds(.04f);
+        HidePlayerModel(true);
+        ResetPlayerVelocity();
+        AddImpact(playerModel.transform.forward, 70, false);
+
+        yield return new WaitForSeconds(.5f);
+        animator.SetBool("isPersonGrab", false);
+        DisableInput(false);
+        gravity = originalgravity;
+        GetComponent<TagLogic>().SetCanAttack(false);
+
+        ability_tag.End.Invoke();
+    }
+
     void ParticlesSystemEnabled(ParticleSystem ps , bool b)
     {
         if (b)
@@ -234,6 +290,14 @@ public class NinjaCat : PlayerController
         {
             if (ps.isPlaying)
                 ps.Stop();
+        }
+    }
+
+    void HidePlayerModel(bool visible)
+    {
+        foreach (var item in playerModel.transform.GetChild(0).GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            item.enabled = visible;
         }
     }
 
