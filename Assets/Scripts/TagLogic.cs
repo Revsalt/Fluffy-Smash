@@ -7,25 +7,19 @@ using Mirror;
 public class TagLogic : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnChangeTaggerState))] public bool isTagger = false;
-    public bool CanTag = false;
+    bool CanAttack = false;
     public float TagRadius = 2;
 
-    public UnityEvent OnTagged;
+    [Header("OnTag")]
+    public UnityEvent StartTag;
+    public UnityEvent EndTag;
 
-    public delegate void isTagging(bool b);
-    public event isTagging onTag;
+    PlayerController myPlayer;
 
-    bool canGrab = true;
-
-    public void OnChangeTaggerState(bool oldb , bool newb)
+    public void SetCanAttack(bool b)
     {
-        if (newb)
-            SetTextColor(Color.red);
-    }
+        if (isLocalPlayer) CanAttack = b;
 
-    void SetTextColor(Color c)
-    {
-        GetComponent<PlayerNetworkManager>().usernametxt.color = c;
     }
 
     void Update()
@@ -33,80 +27,30 @@ public class TagLogic : NetworkBehaviour
         if (!isLocalPlayer)
             return;
 
-        if (CanTag)
+        if (CanAttack)
         {
-            foreach (var item in FindObjectsOfType<TagLogic>())
+            foreach (var player in FindObjectsOfType<TagLogic>())
             {
-                if (!item.GetComponent<NetworkIdentity>().isLocalPlayer && !item.GetComponent<TagLogic>().isTagger && Vector3.Distance(item.transform.position , transform.position) < TagRadius)
+                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && !player.GetComponent<TagLogic>().isTagger && Vector3.Distance(player.transform.position , transform.position) < TagRadius) // if anyone is close to me
                 {
-                    CmdIsTagged(item.gameObject);
-                    CanTag = false;
+                    Kill(player.GetComponent<NetworkIdentity>());
+                    CanAttack = false;
                     break;
                 }  
-            }
-        }
-
-        PlayerController myPlayer = GetComponent<PlayerController>();
-
-        if (Input.GetMouseButton(0) && !myPlayer.GetDisableMovement() && canGrab && isTagger)
-        {
-
-            StartCoroutine(PersonGrab());
-
-            IEnumerator PersonGrab()
-            {
-                canGrab = false;
-                myPlayer.movementSpeed = myPlayer.GetOriginalSpeeed() * 1.3f;
-                onTag.Invoke(true);
-                CanTag = true;
-
-                for (float i = 0; i < 2; i += Time.deltaTime) //need to be tested
-                {
-                    if (CanTag == false)
-                        break;
-                    yield return null;
-                }
-
-                myPlayer.movementSpeed = myPlayer.GetOriginalSpeeed() * 2;
-                onTag.Invoke(false);
-                CanTag = false;
-
-                yield return new WaitForSeconds(.8f);
-                canGrab = true;
             }
         }
     }
 
     [Command]
-    public void CmdIsTagged(GameObject item)
+    public void Kill(NetworkIdentity player)
     {
-        SendAnimationToAll(item);
-        item.GetComponent<TagLogic>().isTagger = true;
-        MakeTagger(item.GetComponent<NetworkIdentity>().connectionToClient);
+        player.GetComponent<TagLogic>().isTagger = true;
     }
 
-    [ClientRpc]
-    public void SendAnimationToAll(GameObject item)
+    public void OnChangeTaggerState(bool oldb, bool newb)
     {
-        item.GetComponent<TagLogic>().OnTagged.Invoke();
-    }
-
-    [TargetRpc]
-    public void MakeTagger(NetworkConnection ntd)
-    {
-        StartCoroutine(Tag());
-
-        IEnumerator Tag()
-        {
-            ntd.identity.GetComponent<PlayerController>().enabled = false;
-            yield return new WaitForSeconds(2);
-            ntd.identity.GetComponent<PlayerController>().enabled = true;
-        }
-    }
-
-    private void Start()
-    {
-        onTag += delegate { Debug.Log("qweq"); };
+        if (newb)
+            GetComponent<PlayerNetworkManager>().usernametxt.color = Color.red;
     }
 
     private void OnDrawGizmos()
