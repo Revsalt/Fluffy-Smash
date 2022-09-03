@@ -13,8 +13,9 @@ public class beetcatin : PlayerController
     [Header("Beat System")]
 
     [SerializeField] float bpm; 
-     private int beat = 1;
-     private bool Onbeat;
+    private int beat = 1;
+    private bool Onbeat;
+    Vector3 NoteDir;
 
     [Header("String Attack")]
     RaycastHit hitpoint;
@@ -24,6 +25,7 @@ public class beetcatin : PlayerController
     [SerializeField] Vector3 Startpos;
     [SerializeField] Vector3 EndPos;
     [SerializeField] int StringHookCount = 12;
+    bool canboost = true;
 
     [Header("UI")]
 
@@ -41,7 +43,7 @@ public class beetcatin : PlayerController
 
     [SerializeField] UnityEvent OnStart, OnEnd;
     void Start()
-    {
+    {        
         StartCoroutine(StartMetronome());
         ability0 = new Ability()
         {
@@ -54,9 +56,10 @@ public class beetcatin : PlayerController
                 else if(!Onbeat) movementSpeed = GetOriginalSpeeed();
                 if (!isGroundeed())
                 {
-                    GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f, new Quaternion(OutRayPos.rotation.x, 0, OutRayPos.rotation.z, 0), null);
+                    GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f, Quaternion.identity, null);
+                    TempBlock.transform.forward = moveDirection;
                     TempBlock.transform.localScale = new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
-                    Destroy(TempBlock, 5f);
+                    Destroy(TempBlock, 6f);
                 }
                 ability0.End.Invoke();                
             }
@@ -102,7 +105,8 @@ public class beetcatin : PlayerController
     // Update is called once per frame
     new void Update()
     {
-        base.Update();        
+        base.Update();
+        NoteDir = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         BeatCounter.text = (beat + "/4");
         Speed.text = (Mathf.RoundToInt(movementSpeed).ToString());
         Shots.text = StringHookCount.ToString();
@@ -168,8 +172,7 @@ public class beetcatin : PlayerController
             {
                 for (int i = 0; i < StringPoints.Count; i++)
                 {
-
-                    if (Physics.Raycast(item.transform.position, StringPoints[i].transform.position - item.transform.position, out RaycastHit hit) && item != StringPoints[i] && !_IsConnected(StringPoints[i]))
+                    if (Physics.Raycast(item.transform.position, StringPoints[i].transform.position - item.transform.position, out RaycastHit hit) && item != StringPoints[i] && !_IsConnected(StringPoints[i]) && StringPoints[i].transform.position.x != item.transform.position.x)
                     {
 
                         if (Vector3.Distance(hit.point, StringPoints[i].transform.position) < 0.5f)
@@ -218,6 +221,29 @@ public class beetcatin : PlayerController
         }
         return false;
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.transform.tag == "String" && canboost == true)
+        {
+            StartCoroutine(BoostCooldown());
+            if (movementSpeed < 20f)
+            {
+                movementSpeed += 5f;
+            }
+            Vector3 movedir = Vector3.up + Vector3.right;
+            if (moveDirection != Vector3.zero)
+            {
+                movedir = moveDirection;
+            }
+            AddImpact(movedir,75f,false);
+        }
+    }
+    IEnumerator BoostCooldown()
+    {
+        canboost = false;
+        yield return new WaitForSeconds(5f);
+        canboost = true;
+    }
 }
 [System.Serializable]
 public class Bonder
@@ -241,7 +267,7 @@ public class Bonder
         {
             GameObject.Destroy(EndObj);
             EndObj = null;
-        }
+        }       
     }
     public void UpdateMesh()
     {
@@ -279,14 +305,14 @@ public class Bonder
         mesh.triangles = triangles;
         mesh.uv = uv;
         GameObject StringMesh = new GameObject("StringWall", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
-        // StringMesh.transform.localScale = new Vector3(30, 30, 1);
+        StringMesh.transform.tag = "String";
         StringMesh.GetComponent<MeshFilter>().mesh = mesh;
         StringMesh.GetComponent<MeshRenderer>().material = StringMat;
         StringMesh.GetComponent<MeshCollider>().sharedMesh = mesh;
         StringMesh.GetComponent<MeshCollider>().convex = true;
+        StringMesh.GetComponent<MeshCollider>().isTrigger = true;
         verticies[0] = p1;
         mesh.vertices = verticies;
-        //  StringMesh.GetComponent<MeshCollider>().isTrigger = true;
         return StringMesh;
     }
 }
