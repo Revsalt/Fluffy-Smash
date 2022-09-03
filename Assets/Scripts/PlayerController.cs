@@ -73,17 +73,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    float rotX, rotY;
-    [HideInInspector] public Vector3 moveDirection = Vector3.zero;
-    public void Update()
+    private void LateUpdate()
     {
-        if (!disableInput)
-        {
-            moveDirection = transform.right * Input.GetAxisRaw("Horizontal") +
-                transform.forward * Input.GetAxisRaw("Vertical");
-        } else { moveDirection = Vector3.zero; }
-
         //CameraPosistionAdjustment
+
         piviot_M.transform.position = transform.position;
 
         //Camera Movement
@@ -94,6 +87,17 @@ public class PlayerController : NetworkBehaviour
         rotY = Mathf.Clamp(rotY, -80f, 80f);
 
         piviot_M.transform.localRotation = Quaternion.Euler(-rotY, rotX, 0f);
+    }
+
+    float rotX, rotY;
+    [HideInInspector] public Vector3 moveDirection = Vector3.zero;
+    public void Update()
+    {
+        if (!disableInput)
+        {
+            moveDirection = transform.right * Input.GetAxisRaw("Horizontal") +
+                transform.forward * Input.GetAxisRaw("Vertical");
+        } else { moveDirection = Vector3.zero; }
 
         //Movement
 

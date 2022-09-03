@@ -10,7 +10,6 @@ TagManager:
   - Fire
   - ground
   - Hook
-  - String
   layers:
   - Default
   - TransparentFX

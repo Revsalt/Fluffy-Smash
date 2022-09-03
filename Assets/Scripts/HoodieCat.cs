@@ -289,6 +289,8 @@ public class HoodieCat : PlayerController
         pointer.SetActive(b);
     }
 
+    bool forceSmashLand = false;
+
     IEnumerator AttackSquence0()
     {
         if (!HasLoliPop())
@@ -314,8 +316,9 @@ public class HoodieCat : PlayerController
         for (float i = 0; i < 1.5f; i += Time.deltaTime)
         {
             playerModel.transform.LookAt(playerModel.transform.position + pointerCastPosition.transform.forward * 10);
-            if (Input.GetMouseButton(0))
-                break;
+
+            if (isLocalPlayer && Input.GetMouseButton(0)) {CmdForceStartSmashLand(GetComponent<NetworkIdentity>()); break;}
+            if (!isLocalPlayer && forceSmashLand) { forceSmashLand = false; break; }
 
             yield return null;
         }
@@ -354,6 +357,8 @@ public class HoodieCat : PlayerController
 
     IEnumerator AttackSequence1()
     {
+        if (!isLocalPlayer) yield break;
+
         if (!HasLoliPop())
         {
             ability1.skipNextCoolDown = true;
@@ -397,7 +402,7 @@ public class HoodieCat : PlayerController
 
             playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(pointerCastPosition.transform.forward.x, 0, pointerCastPosition.transform.forward.z));
             animator.SetBool("isThrowLoliPop", true);
-            AudioManager.instance.Play("HoodieCatThrowLoliPop", transform.position , null);
+            CmdPlayAudio(transform.position);
             yield return new WaitForSeconds(0.2f);
 
             #region Moving The LoliPop
@@ -424,8 +429,8 @@ public class HoodieCat : PlayerController
 
             DisableInput(false);
             animator.SetBool("isThrowLoliPop", false);
-            Vector3 GoToPos = CrossPointer.transform.position + lastHitNormal + Vector3.up* 2;
-            for (float i = 0; Vector3.Distance(transform.position, GoToPos) > .2f; i += Time.deltaTime)
+            Vector3 GoToPos = CrossPointer.transform.position + lastHitNormal + Vector3.up* 1;
+            for (float i = 0; Vector3.Distance(transform.position, GoToPos) > .3f; i += Time.deltaTime)
             {
                 transform.position = Bezier2(startpos, ((startpos + GoToPos) / 2) + Vector3.up * 5, GoToPos, i  * 2);
                 yield return null;
@@ -483,6 +488,30 @@ public class HoodieCat : PlayerController
             yield return new WaitForSeconds(.7f);
             target.identity.GetComponent<PlayerController>().DisableMovment(false);
         }
+    }
+
+    [Command]
+    void CmdForceStartSmashLand(NetworkIdentity ntd)
+    {
+        RpcForceSmashLand(ntd);
+    }
+
+    [ClientRpc]
+    void RpcForceSmashLand(NetworkIdentity ntd)
+    {
+        ntd.GetComponent<HoodieCat>().forceSmashLand = true;
+    }
+
+    [Command]
+    void CmdPlayAudio(Vector3 pos)
+    {
+        RpcPlayAudio(pos);
+    }
+
+    [ClientRpc]
+    void RpcPlayAudio(Vector3 pos)
+    {
+        AudioManager.instance.Play("HoodieCatThrowLoliPop", pos, null);
     }
 
     bool HasLoliPop()
