@@ -37,6 +37,7 @@ public class TagLogic : NetworkBehaviour
                 {
                     Kill(player.GetComponent<NetworkIdentity>());
                     CanAttack = false;
+                    Instantiate(Resources.Load("DeathIcon"));
                     break;
                 }  
             }
