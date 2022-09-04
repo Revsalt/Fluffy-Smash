@@ -252,6 +252,7 @@ GameObject:
   - component: {fileID: 264944301}
   - component: {fileID: 264944299}
   - component: {fileID: 264944304}
+  - component: {fileID: 264944305}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -308,7 +309,7 @@ MonoBehaviour:
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
     type: 3}
   RoomScene: Assets/Scenes/RoomScene.unity
-  GameplayScene: Assets/Scenes/map2.unity
+  GameplayScene: Assets/Scenes/Rings level.unity
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
@@ -353,7 +354,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 264944298}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
@@ -373,6 +374,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttons: {fileID: 922632999}
+--- !u!114 &264944305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 264944298}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  port: 25565
+  NoDelay: 1
+  SendTimeout: 5000
+  ReceiveTimeout: 30000
+  serverMaxMessageSize: 16384
+  serverMaxReceivesPerTick: 10000
+  serverSendQueueLimitPerConnection: 10000
+  serverReceiveQueueLimitPerConnection: 10000
+  clientMaxMessageSize: 16384
+  clientMaxReceivesPerTick: 1000
+  clientSendQueueLimit: 10000
+  clientReceiveQueueLimit: 10000
 --- !u!1 &411641841
 GameObject:
   m_ObjectHideFlags: 0
