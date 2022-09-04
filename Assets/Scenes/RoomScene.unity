@@ -1375,6 +1375,15 @@ MonoBehaviour:
     randompitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: ThemeSong
+    clips:
+    - {fileID: 8300000, guid: 69825302d5b324849874658d33d8faad, type: 3}
+    volume: 0.122
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
 --- !u!1 &1989212262
 GameObject:
   m_ObjectHideFlags: 0

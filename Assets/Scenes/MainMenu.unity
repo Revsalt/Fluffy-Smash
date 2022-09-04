@@ -5398,6 +5398,15 @@ MonoBehaviour:
     randompitch: 1
     loop: 0
     source: {fileID: 0}
+  - name: ThemeSong
+    clips:
+    - {fileID: 8300000, guid: 69825302d5b324849874658d33d8faad, type: 3}
+    volume: 0.122
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
 --- !u!4 &474417312
 Transform:
   m_ObjectHideFlags: 0
@@ -5630,6 +5639,7 @@ GameObject:
   - component: {fileID: 628340698}
   - component: {fileID: 628340697}
   - component: {fileID: 628340699}
+  - component: {fileID: 628340700}
   m_Layer: 0
   m_Name: CM vcam1
   m_TagString: Untagged
@@ -5706,6 +5716,14 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!81 &628340700
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 628340696}
+  m_Enabled: 1
 --- !u!1 &680517753
 GameObject:
   m_ObjectHideFlags: 0
