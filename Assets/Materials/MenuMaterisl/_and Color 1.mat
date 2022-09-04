@@ -110,9 +110,9 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 1.8745098, g: 1.3490196, b: 1.3490196, a: 1}
     - _EmissionMapChannelMask: {r: 1, g: 1, b: 1, a: 0}
-    - _IndirectLightMinColor: {r: 0.5924944, g: 0.5908241, b: 0.6698113, a: 1}
+    - _IndirectLightMinColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
     - _OcclusionMapChannelMask: {r: 1, g: 0, b: 0, a: 0}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _ShadowMapColor: {r: 0, g: 0.01808489, b: 0.3679245, a: 1}
+    - _ShadowMapColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
   m_BuildTextureStacks: []

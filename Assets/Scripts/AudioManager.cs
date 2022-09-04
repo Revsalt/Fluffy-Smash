@@ -84,8 +84,6 @@ public partial class AudioManager : MonoBehaviour
             As.pitch = UnityEngine.Random.Range(.9f, 1.1f);
 
         As.Play();
-
-        Destroy(As.gameObject, As.clip.length);
     }
 
     //this addition to the code was made by me, the rest was from Brackeys tutorial
