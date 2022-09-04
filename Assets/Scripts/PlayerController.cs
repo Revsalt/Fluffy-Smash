@@ -69,6 +69,7 @@ public class PlayerController : NetworkBehaviour
             if (item.GetComponent<CinemachineVirtualCamera>())
             {
                 cineCamera = item.GetComponent<CinemachineVirtualCamera>();
+                return;
             }
         }
     }

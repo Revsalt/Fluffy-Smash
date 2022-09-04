@@ -65,7 +65,7 @@ Material:
     - Vector1_101BA869: 0.08
     - Vector1_4A95455B: -1.07
     - Vector1_8028E2E1: 30
-    - Vector1_B635D125: 0.1
+    - Vector1_B635D125: -1
     - _AdditionalLightIgnoreCelShade: 0.9
     - _AlphaClip: 0
     - _Blend: 0
