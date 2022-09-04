@@ -18,6 +18,41 @@ public class SteamLobby : MonoBehaviour
     protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
     protected Callback<LobbyEnter_t> lobbyEntered;
 
+
+    static private SteamLobby instance;
+
+    static public SteamLobby Instance
+    {
+        get
+        {
+            if(instance == null)
+            {
+                //Add this script to any gameobject to access it
+                return null;
+            }
+            else
+            {
+                return instance;
+            }
+        }
+    }
+
+    [HideInInspector]
+    public bool IsInLobby = false;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void Start()
     {
         networkManager = GetComponent<NetworkManager>();
@@ -37,7 +72,9 @@ public class SteamLobby : MonoBehaviour
 
     public void HostLobby()
     {
-        buttons.SetActive(false);
+        //buttons.SetActive(false);
+
+        Debug.Log("Trying to create a lobby");
 
         SteamMatchmaking.CreateLobby(ELobbyType.k_ELobbyTypePublic, networkManager.maxConnections);
     }
@@ -46,7 +83,8 @@ public class SteamLobby : MonoBehaviour
     {
         if(callback.m_eResult != EResult.k_EResultOK)
         {
-            buttons.SetActive(true);
+            //buttons.SetActive(true);
+            IsInLobby = false;
             return;
         }
 
@@ -57,8 +95,6 @@ public class SteamLobby : MonoBehaviour
             new CSteamID(callback.m_ulSteamIDLobby),
             HostAddressKey,
             SteamUser.GetSteamID().ToString());
-
-
     }
 
     private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
@@ -68,8 +104,10 @@ public class SteamLobby : MonoBehaviour
 
     private void OnLobbyEntered(LobbyEnter_t callback)
     {
+        IsInLobby = true;
+
         //Don't run on server
-        if(NetworkServer.active)
+        if (NetworkServer.active)
         {
             return;
         }
@@ -81,6 +119,6 @@ public class SteamLobby : MonoBehaviour
         networkManager.networkAddress = hostAddress;
         networkManager.StartClient();
 
-        buttons.SetActive(false);
+        //buttons.SetActive(false);
     }
 }
