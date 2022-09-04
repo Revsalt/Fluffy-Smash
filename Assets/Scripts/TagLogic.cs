@@ -10,9 +10,11 @@ public class TagLogic : NetworkBehaviour
     bool CanAttack = false;
     public float TagRadius = 2;
 
-    [Header("OnTag")]
+    [Header("InTag")]
     public UnityEvent StartTag;
     public UnityEvent EndTag;
+    [Header("InDeath")]
+    public UnityEvent OnDeath;
 
     PlayerController myPlayer;
 
@@ -45,6 +47,16 @@ public class TagLogic : NetworkBehaviour
     public void Kill(NetworkIdentity player)
     {
         player.GetComponent<TagLogic>().isTagger = true;
+        RpcKill(player.connectionToClient);
+
+
+    }
+
+    [TargetRpc]
+    void RpcKill(NetworkConnection nc)
+    {
+        nc.identity.GetComponent<TagLogic>().OnDeath.Invoke();
+        nc.identity.GetComponent<PlayerController>().DisableInput(true);
     }
 
     public void OnChangeTaggerState(bool oldb, bool newb)

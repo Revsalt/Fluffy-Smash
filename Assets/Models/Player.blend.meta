@@ -38,7 +38,7 @@ ModelImporter:
     second: TryGrab
   - first:
       74: 6469675164788413233
-    second: Tagged
+    second: Death
   externalObjects: {}
   materials:
     materialImportMode: 1
@@ -415,11 +415,11 @@ ModelImporter:
       maskSource: {instanceID: 0}
       additiveReferencePoseFrame: 1
     - serializedVersion: 16
-      name: Tagged
+      name: Death
       takeName: Scene
       internalID: 0
-      firstFrame: 450
-      lastFrame: 477
+      firstFrame: 500
+      lastFrame: 510
       wrapMode: 0
       orientationOffsetY: 0
       level: 0

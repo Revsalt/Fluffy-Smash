@@ -244,13 +244,12 @@ public class NinjaCat : PlayerController
 
         DisableInput(true);
         gravity = 0; ResetPlayerVelocity();
-
-        playerModel.transform.LookAt(playerModelIkTarget.transform.position);
         animator.SetBool("isPersonGrab" , true);
         chargeParticleSystem.Play();
 
         for (float i = 0; i < 1f; i += Time.deltaTime)
         {
+            playerModel.transform.LookAt(playerModelIkTarget.transform.position);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             yield return null;

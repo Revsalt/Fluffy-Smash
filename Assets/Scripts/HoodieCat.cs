@@ -307,7 +307,7 @@ public class HoodieCat : PlayerController
         yield return new WaitForSeconds(.25f);
 
         ResetPlayerVelocity();
-        ShakeCamera(2, 0.2f);
+        ShakeCamera(2, 0.4f);
         AudioManager.instance.Play("HoodieCatOffTheGround", transform.position , null);
         AddImpact(Vector3.up, 100, false);
         gravity = 0.1f;
@@ -341,7 +341,7 @@ public class HoodieCat : PlayerController
 
         Destroy(Crack.gameObject, 5);
 
-        ShakeCamera(4, 0.2f);
+        ShakeCamera(6, .5f);
         DisableMovment(true);
 
         yield return new WaitForSeconds(.5f);
