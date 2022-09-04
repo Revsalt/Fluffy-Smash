@@ -21,15 +21,15 @@ public class beetcatin : PlayerController
     public List<Bonder> Bonds = new List<Bonder>();
     public List<GameObject> StringPoints = new List<GameObject>();
     [SerializeField] Material StringMat;
-    [SerializeField] Vector3 Startpos;
-    [SerializeField] Vector3 EndPos;
     [SerializeField] int StringHookCount = 12;
+    bool canboost = true;
 
     [Header("UI")]
 
     [SerializeField] TextMeshProUGUI BeatCounter;
     [SerializeField] TextMeshProUGUI Speed;
     [SerializeField] TextMeshProUGUI Shots;
+    [SerializeField] TextMeshProUGUI HoloLvText;
 
     [Header("ObjRef & TransRef")]
 
@@ -40,6 +40,15 @@ public class beetcatin : PlayerController
     [Header("Other")]
 
     [SerializeField] UnityEvent OnStart, OnEnd;
+
+    [Header("RingHolo")]
+
+    int HoloLv = 1;
+    [SerializeField] GameObject HoloRingObj;
+    [SerializeField] float lerpduration = 500f;
+    [SerializeField] float ScaleMulti = 1f;
+    [SerializeField] UnityEvent TagPing;
+    bool canattack;
     void Start()
     {
         StartCoroutine(StartMetronome());
@@ -54,7 +63,8 @@ public class beetcatin : PlayerController
                 else if(!Onbeat) movementSpeed = GetOriginalSpeeed();
                 if (!isGroundeed())
                 {
-                    GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f, new Quaternion(OutRayPos.rotation.x, 0, OutRayPos.rotation.z, 0), null);
+                    GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f,Quaternion.identity, null);
+                    TempBlock.transform.forward = moveDirection;
                     TempBlock.transform.localScale = new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
                     Destroy(TempBlock, 5f);
                 }
@@ -74,7 +84,16 @@ public class beetcatin : PlayerController
                     {
                         StringHookCount--;
                         Vector3 startpos = OutRayPos.position;
-                        Vector3 hitpoint_point = GetHitPoint();
+                        Vector3 hitpoint_point = Vector3.zero;
+                        if (Physics.Raycast(OutRayPos.position, OutRayPos.forward, out hitpoint))
+                        {                         
+                            hitpoint_point = hitpoint.point;
+                        }
+                        else
+                        {
+                            ability1.End.Invoke();
+                            yield break;
+                        }                       
                         GameObject HookObj = Instantiate(Hook, OutRayPos.position, Quaternion.identity, null);
                         HookObj.name = Random.Range(0, 12).ToString();
                         Vector3 ThrowDirection = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
@@ -97,15 +116,63 @@ public class beetcatin : PlayerController
             ,
             events = new UnityEvent[2] { OnStart, OnEnd }
         };
+        TagLogic taglogic = GetComponent<TagLogic>();
+        ability_tag = new Ability()
+        {
+            ability = delegate
+            {
+                if (Onbeat)
+                {
+                    HoloLv++;
+                }
+                else if(!Onbeat)
+                {
+                    HoloLv = 1;                 
+                }
+                if (HoloLv == 3)
+                {
+                    canattack = true;
+                }
+                if (HoloLv != 3 && canattack)
+                {
+                    TagPing.Invoke();
+                    HoloLv = 1;
+                    canattack = false;
+                }
+                StartCoroutine(HoloRing(HoloLv));
+                ability_tag.End.Invoke();
+            }
+            ,coolDown = 0.2f
+            ,events = new UnityEvent[2] {taglogic.StartTag,taglogic.EndTag}
+            
+        };
     }
-    
+    IEnumerator HoloRing(int level)
+    {
+        if (level >= 2)
+        {
+            ScaleMulti += 2;
+        }
+        else if (level == 1)
+        {
+            ScaleMulti = 1f;
+        }
+        for (float i = 0; i < lerpduration; i += Time.deltaTime)
+        {
+            HoloRingObj.transform.localScale = Vector3.Lerp(HoloRingObj.transform.localScale, Vector3.one * ScaleMulti, 5 * Time.deltaTime );
+            yield return null;
+        }      
+        
+    }
     // Update is called once per frame
     new void Update()
     {
         base.Update();        
-        BeatCounter.text = (beat + "/4");
-        Speed.text = (Mathf.RoundToInt(movementSpeed).ToString());
-        Shots.text = StringHookCount.ToString();
+        //BeatCounter.text = (beat + "/4");
+        //Speed.text = (Mathf.RoundToInt(movementSpeed).ToString());
+       // Shots.text = StringHookCount.ToString();
+       // HoloLvText.text = HoloLv.ToString();
+        HoloRingObj.transform.Rotate(Vector3.up * 50 * Time.deltaTime * HoloLv, Space.World);
         if (movementSpeed > 7f)
         {
             movementSpeed -= Time.deltaTime;
@@ -114,14 +181,18 @@ public class beetcatin : PlayerController
         {
             for (int i = 0; i < StringPoints.Count; i++)
             {                
-                if (Vector3.Distance(StringPoints[i].transform.position,this.transform.position) < 1f)
+                if (Vector3.Distance(StringPoints[i].transform.position,this.transform.position) < 2f)
                 {
                     GameObject stringtemp = StringPoints[i];
                     Bonder JamesBond =  GetBondOf(stringtemp);
-                    StringPoints.Remove(stringtemp);
-                    JamesBond.DestroyFromLibrary(stringtemp);
-                    JamesBond.UpdateMesh();
-                    StringHookCount++;
+                    StringPoints.Remove(JamesBond.StartObj);
+                    StringPoints.Remove(JamesBond.EndObj);
+                    DestroyAccorodingly(stringtemp, JamesBond);
+                    if (JamesBond != null)
+                    {
+                        JamesBond.UpdateMesh();
+                    }                    
+                    StringHookCount += 2;                  
                     return;
                 }
             }
@@ -150,15 +221,6 @@ public class beetcatin : PlayerController
         p += tt * p2;
 
         return p;
-    }
-    private Vector3 GetHitPoint()
-    {       
-        Vector3 hitPoint = Vector3.zero;
-        if (Physics.Raycast(OutRayPos.position,OutRayPos.forward,out hitpoint))
-        {
-            hitPoint = hitpoint.point;
-        }
-        return hitPoint;
     }
     public void ChkNeighbors()
     {
@@ -218,6 +280,48 @@ public class beetcatin : PlayerController
         }
         return false;
     }
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.transform.tag == "String" && GetStringBond(other.gameObject).Boostable == true)
+        {
+            StartCoroutine(GetStringBond(other.gameObject).BoostCooldown());
+            if (movementSpeed < 20f)
+            {
+                movementSpeed += 5f;
+            }
+            Vector3 movedir = Vector3.up + Vector3.right;
+            if (moveDirection != Vector3.zero)
+            {
+                movedir = moveDirection;
+            }
+            AddImpact(movedir,75f,false);
+        }
+    }
+    Bonder GetStringBond(GameObject String)
+    {
+        for (int i = 0; i < Bonds.Count; i++)
+        {
+            if (Bonds[i]._Mesh == String)
+            {
+                return Bonds[i];
+            }           
+        }
+        return null;
+    }  
+    void DestroyAccorodingly(GameObject HookPoint,Bonder bond)
+    {       
+        if (!_IsConnected(HookPoint))
+        {
+            Destroy(HookPoint);                      
+        }
+        else
+        {
+            bond.DestroyFromLibrary(bond.StartObj);
+            bond.DestroyFromLibrary(bond.EndObj);
+            Bonds.Remove(bond);          
+        }
+    }
 }
 [System.Serializable]
 public class Bonder
@@ -226,6 +330,8 @@ public class Bonder
     public GameObject EndObj;
     public GameObject _Mesh;
     public Material MeshMat;
+    public bool Boostable = true;
+    float cooldown = 5f;
     public bool IsConnected()
     {
         return (StartObj != null && EndObj != null);
@@ -234,14 +340,13 @@ public class Bonder
     {
         if (hagatanya == StartObj)
         {
-            GameObject.Destroy(StartObj);
             StartObj = null;
         }
         if (hagatanya == EndObj)
-        {
-            GameObject.Destroy(EndObj);
+        {            
             EndObj = null;
         }
+        GameObject.Destroy(hagatanya);
     }
     public void UpdateMesh()
     {
@@ -254,6 +359,12 @@ public class Bonder
         {
            _Mesh = CreateMesh(StartObj.transform.position, StartObj.transform.position + Vector3.up * 2f, EndObj.transform.position, EndObj.transform.position + Vector3.up * 2f,MeshMat);
         }       
+    }
+    public IEnumerator BoostCooldown()
+    {
+        Boostable = false;
+        yield return new WaitForSeconds(cooldown);
+        Boostable = true;
     }
     GameObject CreateMesh(Vector3 p1, Vector3 p2, Vector3 p3, Vector3 p4,Material StringMat)
     {
@@ -279,14 +390,14 @@ public class Bonder
         mesh.triangles = triangles;
         mesh.uv = uv;
         GameObject StringMesh = new GameObject("StringWall", typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
-        // StringMesh.transform.localScale = new Vector3(30, 30, 1);
         StringMesh.GetComponent<MeshFilter>().mesh = mesh;
         StringMesh.GetComponent<MeshRenderer>().material = StringMat;
         StringMesh.GetComponent<MeshCollider>().sharedMesh = mesh;
         StringMesh.GetComponent<MeshCollider>().convex = true;
+        StringMesh.GetComponent<MeshCollider>().isTrigger = true;
+        StringMesh.transform.tag = "String";
         verticies[0] = p1;
         mesh.vertices = verticies;
-        //  StringMesh.GetComponent<MeshCollider>().isTrigger = true;
         return StringMesh;
     }
 }
