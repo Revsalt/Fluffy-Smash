@@ -4903,7 +4903,7 @@ MonoBehaviour:
   piviot_M: {fileID: 5230716323925670244}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 9
+  slopeForce: 100
   slopeForceRayLength: 1.6
   slideFriction: -0.4
   jumpHeight: 5
@@ -16418,7 +16418,7 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 0
-      scalar: -1.1
+      scalar: -2
       minScalar: 5
       maxCurve:
         serializedVersion: 2

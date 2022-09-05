@@ -98,7 +98,7 @@ public class NinjaCat : PlayerController
             {
                 StartCoroutine(AttackSequence_tag());
             },
-            coolDown = .8f,
+            coolDown = 2,
             events = new UnityEvent[] { taglogic.StartTag, taglogic.EndTag }
         };
     }
@@ -166,7 +166,7 @@ public class NinjaCat : PlayerController
         bool isRunning = moveDirection != Vector3.zero;
         animator.SetBool("isRun", isRunning);
         animator.SetBool("isJump", !isGroundeed());
-        animator.SetFloat("runSpeed", movementSpeed / 7);     
+        animator.SetFloat("runSpeed", movementSpeed / 7);
 
         //wall running
 
@@ -217,7 +217,7 @@ public class NinjaCat : PlayerController
         if (wallDirection != Vector3.zero)
             return;
 
-        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && hit.normal.y * 90f >= -20)
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal))
         {
             playerModel.GetComponentInChildren<ModelAnimationSounds>().playSoundWalkFootStep();
             animator.SetBool("isWallGrab", true);
@@ -247,7 +247,7 @@ public class NinjaCat : PlayerController
         animator.SetBool("isPersonGrab" , true);
         chargeParticleSystem.Play();
 
-        for (float i = 0; i < 1f; i += Time.deltaTime)
+        for (float i = 0; i < .5f; i += Time.deltaTime)
         {
             playerModel.transform.LookAt(playerModelIkTarget.transform.position);
             var cps = chargeParticleSystem.main;

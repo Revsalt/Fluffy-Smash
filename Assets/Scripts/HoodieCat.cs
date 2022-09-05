@@ -377,16 +377,11 @@ public class HoodieCat : PlayerController
             Physics.Raycast(pointerCastPosition.position, pointerCastPosition.transform.forward, out hit, 40, layerMask);
             if (hit.collider)
             {
-                if (hit.normal.y * 90f >= -20 && hit.normal.y * 90f == 0)
-                {
-                    CrossPointer.transform.position = hit.point;
-                    CrossPointer.transform.rotation = Quaternion.LookRotation(pointerCastPosition.transform.forward);
+                CrossPointer.transform.position = hit.point;
+                CrossPointer.transform.rotation = Quaternion.LookRotation(pointerCastPosition.transform.forward);
 
-                    CrossPointer.SetActive(true);
-                    lastHitNormal = hit.normal;
-                }
-                else
-                    CrossPointer.SetActive(false);
+                CrossPointer.SetActive(true);
+                lastHitNormal = hit.normal;
             }
             else
                 CrossPointer.SetActive(false);
