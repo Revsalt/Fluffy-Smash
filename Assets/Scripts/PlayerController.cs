@@ -28,7 +28,7 @@ public class PlayerController : NetworkBehaviour
     public delegate void Jump();
     public event Jump onJump;
 
-    public Ability ability0, ability1 , ability_tag;
+    public Ability ability0, ability1, ability_tag;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
@@ -36,6 +36,7 @@ public class PlayerController : NetworkBehaviour
     [Header("Camera")]
     [SerializeField] private float sensitvity = 100;
     [Header("Movement")]
+    bool HasJumped = true;
     public float movementSpeed = 5;
     [SerializeField] private float slopeForce;
     [SerializeField] private float slopeForceRayLength;
@@ -98,7 +99,8 @@ public class PlayerController : NetworkBehaviour
         {
             moveDirection = transform.right * Input.GetAxisRaw("Horizontal") +
                 transform.forward * Input.GetAxisRaw("Vertical");
-        } else { moveDirection = Vector3.zero; }
+        }
+        else { moveDirection = Vector3.zero; }
 
         //Movement
 
@@ -126,9 +128,15 @@ public class PlayerController : NetworkBehaviour
         {
             playerVelocity.y = 0;
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
-
+            StartCoroutine(ChkIfJumped());
             //Callin the event for children classes
             onJump();
+        }
+        IEnumerator ChkIfJumped()
+        {
+            HasJumped = false;
+            yield return new WaitForSeconds(0.2f);
+            HasJumped = true;
         }
 
         if (groundNormal != Vector3.zero && characterController.isGrounded)
@@ -141,9 +149,10 @@ public class PlayerController : NetworkBehaviour
             playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
 
-        if ((moveDirection != Vector3.zero) && OnSlope())
+        if ((moveDirection != Vector3.zero) && OnSlope() && HasJumped)
         {
-            characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime );
+            Debug.Log("on");
+            characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime);
         }
 
         //Abilities
@@ -253,7 +262,7 @@ public class PlayerController : NetworkBehaviour
 
         if (!abilityRef.canCast || abilityInProgress) return;
 
-        CmdStartAbility(i , GetComponent<NetworkIdentity>());
+        CmdStartAbility(i, GetComponent<NetworkIdentity>());
 
         abilityRef.End += delegate
         {
@@ -281,9 +290,9 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    void CmdStartAbility(int i , NetworkIdentity ntd)
+    void CmdStartAbility(int i, NetworkIdentity ntd)
     {
-        RpcStartAbility(i , ntd);
+        RpcStartAbility(i, ntd);
     }
 
     [ClientRpc]
@@ -317,7 +326,7 @@ public class PlayerController : NetworkBehaviour
         RaycastHit hit;
 
         if (Physics.Raycast(transform.position, Vector3.down, out hit, characterController.height / 2 * slopeForceRayLength))
-            if (hit.normal != Vector3.up)
+            if (hit.normal != Vector3.up && hit.collider.tag != "Player")
             {
                 return true;
             }
@@ -333,7 +342,7 @@ public class PlayerController : NetworkBehaviour
             forcedirection.y = 0;
             forcedirection.Normalize();
 
-            rigidbody.AddForceAtPosition((forcedirection * 25 / rigidbody.mass) * Time.deltaTime , transform.position , ForceMode.Impulse);  
+            rigidbody.AddForceAtPosition((forcedirection * 25 / rigidbody.mass) * Time.deltaTime, transform.position, ForceMode.Impulse);
         }
 
         if ((characterController.collisionFlags & CollisionFlags.CollidedAbove) != 0)

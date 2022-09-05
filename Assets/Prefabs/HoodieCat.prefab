@@ -11253,7 +11253,7 @@ MonoBehaviour:
   piviot_M: {fileID: 3814039662847010326}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 9
+  slopeForce: 100
   slopeForceRayLength: 1.6
   slideFriction: -0.4
   jumpHeight: 5
