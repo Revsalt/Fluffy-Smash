@@ -6,8 +6,6 @@ using UnityEngine;
 
 public class SteamLobby : MonoBehaviour
 {
-    [SerializeField] private GameObject buttons = null;
-
     private NetworkManager networkManager;
 
     //Steam data keys
@@ -72,7 +70,6 @@ public class SteamLobby : MonoBehaviour
 
     public void HostLobby()
     {
-        //buttons.SetActive(false);
 
         Debug.Log("Trying to create a lobby");
 
@@ -83,7 +80,6 @@ public class SteamLobby : MonoBehaviour
     {
         if(callback.m_eResult != EResult.k_EResultOK)
         {
-            //buttons.SetActive(true);
             IsInLobby = false;
             return;
         }
@@ -118,7 +114,5 @@ public class SteamLobby : MonoBehaviour
 
         networkManager.networkAddress = hostAddress;
         networkManager.StartClient();
-
-        //buttons.SetActive(false);
     }
 }
