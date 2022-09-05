@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace Mirror
@@ -20,6 +21,8 @@ namespace Mirror
 
         [SyncVar] public string username = "";
         [SyncVar] public int Character = 0;
+
+        [SyncVar] public string ping = "";
 
         [Header("Diagnostics")]
 
@@ -212,5 +215,20 @@ namespace Mirror
         }
 
         #endregion
+
+        private void FixedUpdate()
+        {
+            if (isLocalPlayer)
+            {
+                if (NetworkClient.ready)
+                    CmdSendPing(gameObject, Math.Round(NetworkTime.rtt * 1000).ToString());
+            }
+        }
+
+        [Command]
+        void CmdSendPing(GameObject roomPlayer, string ping)
+        {
+            roomPlayer.GetComponent<NetworkRoomPlayer>().ping = ping;
+        }
     }
 }

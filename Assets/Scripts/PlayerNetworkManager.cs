@@ -10,7 +10,6 @@ public class PlayerNetworkManager : NetworkBehaviour
     [SyncVar]public NetworkRoomPlayer nrp;
 
     [HideInInspector] public TextMeshProUGUI usernametxt;
-
     private void Start()
     {
         GameObject g = (GameObject)Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
