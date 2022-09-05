@@ -5483,6 +5483,15 @@ MonoBehaviour:
     randompitch: 0
     loop: 1
     source: {fileID: 0}
+  - name: DeathAudio
+    clips:
+    - {fileID: 8300000, guid: b67eab87e42c07343aefbe0d947ec322, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
 --- !u!4 &474417312
 Transform:
   m_ObjectHideFlags: 0
