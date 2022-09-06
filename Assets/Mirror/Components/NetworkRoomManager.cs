@@ -546,6 +546,10 @@ namespace Mirror
             {
                 GameObject roundSystemInstance = Instantiate(Resources.Load("RoundSystem") as GameObject);
                 NetworkServer.Spawn(roundSystemInstance);
+
+
+                GameObject chatSystemInstance = Instantiate(Resources.Load("ChatSystem") as GameObject);
+                NetworkServer.Spawn(chatSystemInstance);
             }
         }
 

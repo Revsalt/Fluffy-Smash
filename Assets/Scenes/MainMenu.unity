@@ -5203,7 +5203,7 @@ PrefabInstance:
     - target: {fileID: 5256703680807110627, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.11199951
+      value: -0.11206055
       objectReference: {fileID: 0}
     - target: {fileID: 5256703680807110628, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
@@ -11266,7 +11266,7 @@ PrefabInstance:
     - target: {fileID: 5256703680807110627, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.11199951
+      value: -0.11206055
       objectReference: {fileID: 0}
     - target: {fileID: 5256703680807110628, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
@@ -11664,7 +11664,7 @@ PrefabInstance:
     - target: {fileID: 5256703680807110627, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -0.11199951
+      value: -0.11206055
       objectReference: {fileID: 0}
     - target: {fileID: 5256703680807110628, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
@@ -11909,6 +11909,7 @@ MonoBehaviour:
   - {fileID: 1646360425263456792, guid: 6f71b832f06ab0e4ba3b015b2ea606e2, type: 3}
   - {fileID: 3814039662413454323, guid: a69a9f1048d6b7d4690ead63d2274212, type: 3}
   - {fileID: 3814039662413454323, guid: de8f4da4bc4688c43a7409d4b9e2f863, type: 3}
+  - {fileID: 555757707498637005, guid: 2f93ca67ed60b2544920f6a4cc384e73, type: 3}
   showRoomGUI: 1
   minPlayers: 1
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
