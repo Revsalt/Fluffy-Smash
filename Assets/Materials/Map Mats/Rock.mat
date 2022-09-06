@@ -108,7 +108,7 @@ Material:
     - _UseAlphaClipping: 0
     - _UseEmission: 0
     - _UseOcclusion: 0
-    - _WorkflowMode: 1
+    - _WorkflowMode: 0
     - _ZWrite: 1
     m_Colors:
     - _BaseColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}

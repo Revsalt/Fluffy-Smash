@@ -22,7 +22,6 @@ public class beetcatin : PlayerController
     public List<GameObject> StringPoints = new List<GameObject>();
     [SerializeField] Material StringMat;
     [SerializeField] int StringHookCount = 12;
-    bool canboost = true;
 
     [Header("UI")]
 
@@ -49,9 +48,12 @@ public class beetcatin : PlayerController
     [SerializeField] float ScaleMulti = 1f;
     [SerializeField] UnityEvent TagPing;
     bool canattack;
+
+    Animator animator;
     void Start()
     {
         StartCoroutine(StartMetronome());
+        animator = GetComponent<Animator>();
         ability0 = new Ability()
         {
             ability = delegate
@@ -60,9 +62,14 @@ public class beetcatin : PlayerController
                 {
                     movementSpeed += 2.5f;
                 }
-                else if(!Onbeat) movementSpeed = GetOriginalSpeeed();
+                else if(!Onbeat)
+                {
+                    animator.SetTrigger("FailedBeat");
+                    movementSpeed = GetOriginalSpeeed();
+                }
                 if (!isGroundeed())
                 {
+                    animator.SetTrigger("IsPlatform_Attack");
                     GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f,Quaternion.identity, null);
                     TempBlock.transform.forward = moveDirection;
                     TempBlock.transform.localScale = new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
@@ -93,7 +100,8 @@ public class beetcatin : PlayerController
                         {
                             ability1.End.Invoke();
                             yield break;
-                        }                       
+                        }
+                        animator.SetTrigger("IsThrowing");
                         GameObject HookObj = Instantiate(Hook, OutRayPos.position, Quaternion.identity, null);
                         HookObj.name = Random.Range(0, 12).ToString();
                         Vector3 ThrowDirection = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
@@ -127,7 +135,8 @@ public class beetcatin : PlayerController
                 }
                 else if(!Onbeat)
                 {
-                    HoloLv = 1;                 
+                    HoloLv = 1;
+                    animator.SetTrigger("FailedBeat");                   
                 }
                 if (HoloLv == 3)
                 {
@@ -135,10 +144,12 @@ public class beetcatin : PlayerController
                 }
                 if (HoloLv != 3 && canattack)
                 {
+                    StartCoroutine(AttackPause());
                     TagPing.Invoke();
                     HoloLv = 1;
                     canattack = false;
                 }
+                animator.SetInteger("HoloLv_Attack", HoloLv);
                 StartCoroutine(HoloRing(HoloLv));
                 ability_tag.End.Invoke();
             }
@@ -146,6 +157,16 @@ public class beetcatin : PlayerController
             ,events = new UnityEvent[2] {taglogic.StartTag,taglogic.EndTag}
             
         };
+    }
+    IEnumerator AttackPause()
+    {
+        DisableInput(true);
+        DisableMovment(false);
+        animator.SetBool("AttackReady", true);
+        yield return new WaitForSeconds(3f);
+        DisableInput(false);
+        DisableMovment(true);
+        animator.SetBool("AttackReady", false);
     }
     IEnumerator HoloRing(int level)
     {
@@ -183,6 +204,7 @@ public class beetcatin : PlayerController
             {                
                 if (Vector3.Distance(StringPoints[i].transform.position,this.transform.position) < 2f)
                 {
+                    animator.SetTrigger("IsPickingUp");
                     GameObject stringtemp = StringPoints[i];
                     Bonder JamesBond =  GetBondOf(stringtemp);
                     StringPoints.Remove(JamesBond.StartObj);
@@ -296,6 +318,7 @@ public class beetcatin : PlayerController
                 movedir = moveDirection;
             }
             AddImpact(movedir,75f,false);
+            animator.SetTrigger("IsBoosted");
         }
     }
     Bonder GetStringBond(GameObject String)
