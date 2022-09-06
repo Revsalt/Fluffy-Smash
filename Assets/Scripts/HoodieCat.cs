@@ -317,7 +317,7 @@ public class HoodieCat : PlayerController
         {
             playerModel.transform.LookAt(playerModel.transform.position + pointerCastPosition.transform.forward * 10);
 
-            if (isLocalPlayer && Input.GetMouseButton(0)) {CmdForceStartSmashLand(GetComponent<NetworkIdentity>()); break;}
+            if (isLocalPlayer && Input.GetMouseButtonDown(0)) {CmdForceStartSmashLand(GetComponent<NetworkIdentity>()); break;}
             if (!isLocalPlayer && forceSmashLand) { forceSmashLand = false; break; }
 
             yield return null;

@@ -172,6 +172,8 @@ public class NinjaCat : PlayerController
 
         if (wallDirection != Vector3.zero && Input.GetButtonDown("Jump") && !GetDisableInput())
         {
+            StartCoroutine(ChkIfJumped());
+
             DisableMovment(false);
 
             playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
@@ -217,7 +219,7 @@ public class NinjaCat : PlayerController
         if (wallDirection != Vector3.zero)
             return;
 
-        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal))
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed())
         {
             playerModel.GetComponentInChildren<ModelAnimationSounds>().playSoundWalkFootStep();
             animator.SetBool("isWallGrab", true);

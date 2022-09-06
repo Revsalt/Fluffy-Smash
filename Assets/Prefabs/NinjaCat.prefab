@@ -4904,7 +4904,7 @@ MonoBehaviour:
   sensitvity: 300
   movementSpeed: 7
   slopeForce: 100
-  slopeForceRayLength: 1.6
+  slopeForceRayLength: 2
   slideFriction: -0.4
   jumpHeight: 5
   layerMask:

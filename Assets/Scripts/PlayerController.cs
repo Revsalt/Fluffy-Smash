@@ -132,12 +132,6 @@ public class PlayerController : NetworkBehaviour
             //Callin the event for children classes
             onJump();
         }
-        IEnumerator ChkIfJumped()
-        {
-            HasJumped = false;
-            yield return new WaitForSeconds(0.2f);
-            HasJumped = true;
-        }
 
         if (groundNormal != Vector3.zero && characterController.isGrounded)
         {
@@ -172,6 +166,13 @@ public class PlayerController : NetworkBehaviour
             StartAbility(2);
         }
 
+    }
+
+    public IEnumerator ChkIfJumped()
+    {
+        HasJumped = false;
+        yield return new WaitForSeconds(0.2f);
+        HasJumped = true;
     }
 
     private void OnGUI()
