@@ -48,25 +48,37 @@ public class TagLogic : NetworkBehaviour
     public void Kill(NetworkIdentity player)
     {
         player.GetComponent<TagLogic>().isTagger = true;
-        RpcKill(player.connectionToClient);
+        RpcKill(player);
+    }
 
+    [ClientRpc]
+    void RpcKill(NetworkIdentity nc)
+    {
+        nc.GetComponent<TagLogic>().OnDeath.Invoke();
+        nc.GetComponent<CharacterController>().enabled = false;
+
+        if (nc.isLocalPlayer)
+        {
+            GetComponent<PlayerController>().DisableInput(true);
+            GetComponent<PlayerController>().folllowTarget = GetRandomPlayer();
+        }
 
     }
 
-    [TargetRpc]
-    void RpcKill(NetworkConnection nc)
+    Transform GetRandomPlayer()
     {
-        nc.identity.GetComponent<TagLogic>().OnDeath.Invoke();
-        StartCoroutine(delay());
-
-        IEnumerator delay()
+        foreach (var item in FindObjectsOfType<CharacterController>())
         {
-            nc.identity.GetComponent<PlayerController>().DisableInput(true);
-            yield return new WaitForSeconds(2);
-            nc.identity.GetComponent<PlayerController>().DisableInput(false);
+            if (item.enabled == true)
+                return item.transform;
         }
 
-        
+        return transform;
+    }
+
+    public void SetParentNull(GameObject g)
+    {
+        g.transform.SetParent(null);
     }
 
     public void OnChangeTaggerState(bool oldb, bool newb)

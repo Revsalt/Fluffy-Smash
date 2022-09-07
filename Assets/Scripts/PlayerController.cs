@@ -3,7 +3,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.SceneManagement;
+using UnityEngine.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityStandardAssets.Effects;
@@ -14,6 +14,7 @@ using UnityStandardAssets.Effects;
 public class PlayerController : NetworkBehaviour
 {
     [HideInInspector] public CharacterController characterController;
+    [HideInInspector] public Transform folllowTarget;
     Vector3 playerVelocity = Vector3.zero;
     Vector3 impact = Vector3.zero;
 
@@ -65,6 +66,7 @@ public class PlayerController : NetworkBehaviour
         //platformMovingChild.transform.SetParent(transform);
         //platformMovingChild.transform.position = transform.position;
 
+        folllowTarget = transform;
         originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
         onJump += delegate { };
@@ -87,7 +89,7 @@ public class PlayerController : NetworkBehaviour
     {
         //CameraPosistionAdjustment
 
-        piviot_M.transform.position = transform.position;
+        piviot_M.transform.position = folllowTarget.position;
 
         //Camera Movement
 
@@ -316,8 +318,15 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    [Command]
+
     void CmdStartAbility(int i, NetworkIdentity ntd)
+    {
+        if (isLocalPlayer)
+            StartAbilityCmd(i, ntd);
+    }
+
+    [Command]
+    void StartAbilityCmd(int i, NetworkIdentity ntd)
     {
         RpcStartAbility(i, ntd);
     }
