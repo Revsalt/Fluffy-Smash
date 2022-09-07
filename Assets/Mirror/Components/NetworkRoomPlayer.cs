@@ -12,6 +12,19 @@ namespace Mirror
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-room-player")]
     public class NetworkRoomPlayer : NetworkBehaviour
     {
+        public bool GetUserNameFromPlayer = false;
+
+        public string Username
+        {
+            set
+            {
+                if (isLocalPlayer)
+                {
+                    username = value;
+                }
+            }
+        }
+
         /// <summary>
         /// This flag controls whether the default UI is shown for the room player.
         /// <para>As this UI is rendered using the old GUI system, it is only recommended for testing purposes.</para>
@@ -162,7 +175,10 @@ namespace Mirror
 
             if (isLocalPlayer)
             {
-                username = GUILayout.TextField(username);
+                if (GetUserNameFromPlayer)
+                {
+                    username = GUILayout.TextField(username);
+                }
                 if (NetworkClient.ready)
                     CmdSendUsername(gameObject , username);
             }
