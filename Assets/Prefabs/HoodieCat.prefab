@@ -11189,6 +11189,7 @@ GameObject:
   - component: {fileID: 8043668755012814854}
   - component: {fileID: 7207765004717690563}
   - component: {fileID: 6263585683150627651}
+  - component: {fileID: 565172520331455226}
   m_Layer: 8
   m_Name: HoodieCat
   m_TagString: Untagged
@@ -11253,7 +11254,7 @@ MonoBehaviour:
   piviot_M: {fileID: 3814039662847010326}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 100
+  slopeForce: 12
   slopeForceRayLength: 1.6
   slideFriction: -0.4
   jumpHeight: 5
@@ -11565,6 +11566,20 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 1
   animator: {fileID: 1016402464}
+--- !u!114 &565172520331455226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3814039662413454323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caa313bb2e406e94897111992f1863de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1 &3814039662561590340
 GameObject:
   m_ObjectHideFlags: 0

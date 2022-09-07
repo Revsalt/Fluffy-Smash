@@ -4840,6 +4840,7 @@ GameObject:
   - component: {fileID: 7909071717775516325}
   - component: {fileID: 5701409085117814386}
   - component: {fileID: 6435042394493189592}
+  - component: {fileID: -7452015145682520640}
   m_Layer: 8
   m_Name: NinjaCat
   m_TagString: Untagged
@@ -4903,7 +4904,7 @@ MonoBehaviour:
   piviot_M: {fileID: 5230716323925670244}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 100
+  slopeForce: 12
   slopeForceRayLength: 2
   slideFriction: -0.4
   jumpHeight: 5
@@ -5295,6 +5296,20 @@ MonoBehaviour:
   syncInterval: 0.1
   nrp: {fileID: 0}
   usernametxt: {fileID: 0}
+--- !u!114 &-7452015145682520640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646360425263456792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caa313bb2e406e94897111992f1863de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!1 &1646360425379016323
 GameObject:
   m_ObjectHideFlags: 0

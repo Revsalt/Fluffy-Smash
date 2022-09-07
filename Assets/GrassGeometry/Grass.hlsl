@@ -127,7 +127,7 @@ void geom(uint primitiveID : SV_PrimitiveID, triangle Varyings input[3], inout T
 	
 	#ifdef DISTANCE_DETAIL
 		float3 vtcam = cameraPos - positionWS;
-		float distSqr = dot(vtcam, vtcam);
+		float distSqr = dot(vtcam, vtcam) / 10;
 		int bladeSegments = lerp(BLADE_SEGMENTS, 0, saturate(distSqr * 0.005 - 0.1));
 	#else
 		int bladeSegments = BLADE_SEGMENTS;

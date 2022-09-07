@@ -3,6 +3,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityStandardAssets.Effects;
@@ -34,7 +35,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] public GameObject playerModel;
     [SerializeField] public GameObject piviot_M;
     [Header("Camera")]
-    [SerializeField] private float sensitvity = 100;
+    public float sensitvity = 100;
     [Header("Movement")]
     bool HasJumped = true;
     public float movementSpeed = 5;
@@ -300,7 +301,13 @@ public class PlayerController : NetworkBehaviour
             abilityRef.canCast = false;
 
             if (!abilityRef.skipNextCoolDown)
-                yield return new WaitForSeconds(abilityRef.coolDown);
+            {
+                for (float z = 0; z < abilityRef.coolDown; z += Time.deltaTime)
+                {
+                    abilityRef.coolDown_current_value = z;
+                    yield return null;
+                } 
+            }
             else
                 abilityRef.skipNextCoolDown = true;
             yield return null;
@@ -380,7 +387,12 @@ public class PlayerController : NetworkBehaviour
 public class Ability
 {
     public Action ability;
+
     public float coolDown;
+    public float coolDown_current_value = 0;
+
+    public string abilityName = "NoName (please assign a name)";
+
     public UnityEvent[] events;
     public Action End;
 

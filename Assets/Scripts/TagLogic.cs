@@ -57,7 +57,16 @@ public class TagLogic : NetworkBehaviour
     void RpcKill(NetworkConnection nc)
     {
         nc.identity.GetComponent<TagLogic>().OnDeath.Invoke();
-        nc.identity.GetComponent<PlayerController>().DisableInput(true);
+        StartCoroutine(delay());
+
+        IEnumerator delay()
+        {
+            nc.identity.GetComponent<PlayerController>().DisableInput(true);
+            yield return new WaitForSeconds(2);
+            nc.identity.GetComponent<PlayerController>().DisableInput(false);
+        }
+
+        
     }
 
     public void OnChangeTaggerState(bool oldb, bool newb)

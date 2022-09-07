@@ -61,7 +61,8 @@ public class NinjaCat : PlayerController
                 }
             },
             coolDown = 0.5f,
-            events = new UnityEvent[2] { inDashStart, inDashEnd }
+            events = new UnityEvent[2] { inDashStart, inDashEnd },
+            abilityName = "QuickDash"
         };
 
         ability1 = new Ability()
@@ -87,7 +88,8 @@ public class NinjaCat : PlayerController
                 }
             },
             coolDown = 0,
-            events = new UnityEvent[2] { new UnityEvent() , new UnityEvent()}
+            events = new UnityEvent[2] { new UnityEvent() , new UnityEvent()},
+            abilityName = "Walk"
         };
 
         TagLogic taglogic = GetComponent<TagLogic>();
@@ -99,7 +101,8 @@ public class NinjaCat : PlayerController
                 StartCoroutine(AttackSequence_tag());
             },
             coolDown = 2,
-            events = new UnityEvent[] { taglogic.StartTag, taglogic.EndTag }
+            events = new UnityEvent[] { taglogic.StartTag, taglogic.EndTag },
+            abilityName = "SakuraBreeze"
         };
     }
 
