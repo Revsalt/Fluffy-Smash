@@ -11183,13 +11183,13 @@ GameObject:
   - component: {fileID: 5825491574038173422}
   - component: {fileID: 3295582590447461010}
   - component: {fileID: 4684191966329288854}
+  - component: {fileID: 565172520331455226}
   - component: {fileID: 6014317564716403604}
   - component: {fileID: 7028284753930226414}
   - component: {fileID: 4799665472818364254}
   - component: {fileID: 8043668755012814854}
   - component: {fileID: 7207765004717690563}
   - component: {fileID: 6263585683150627651}
-  - component: {fileID: 565172520331455226}
   m_Layer: 8
   m_Name: HoodieCat
   m_TagString: Untagged
@@ -11411,13 +11411,13 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 1
         m_CallState: 2
-      - m_Target: {fileID: 6074537790492552764}
-        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
-        m_MethodName: SetActive
-        m_Mode: 6
+      - m_Target: {fileID: 3295582590447461010}
+        m_TargetAssemblyTypeName: TagLogic, Assembly-CSharp
+        m_MethodName: DisableChildrensMeshRenders
+        m_Mode: 2
         m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_ObjectArgument: {fileID: 6074537790492552764}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -11439,6 +11439,20 @@ MonoBehaviour:
   syncInterval: 0.1
   nrp: {fileID: 0}
   usernametxt: {fileID: 0}
+--- !u!114 &565172520331455226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3814039662413454323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caa313bb2e406e94897111992f1863de, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!114 &6014317564716403604
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -11591,20 +11605,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 1
   animator: {fileID: 1016402464}
---- !u!114 &565172520331455226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3814039662413454323}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caa313bb2e406e94897111992f1863de, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
 --- !u!1 &3814039662561590340
 GameObject:
   m_ObjectHideFlags: 0

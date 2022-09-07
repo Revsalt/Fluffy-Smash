@@ -38,7 +38,7 @@ public class NinjaCat : PlayerController
         movementSpeed = GetOriginalSpeeed() * 2f;
 
         onJump += delegate {
-            playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
+            if (playerModel.GetComponentInChildren<ModelAnimationSounds>() != null) playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
             animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
         };
 

@@ -12,31 +12,33 @@ public class VisualizeAbilites : NetworkBehaviour
 
     PlayerController pc;
 
-    List<AbilityDisplayBoard> abilities = new List<AbilityDisplayBoard>(); 
+    List<AbilityDisplayBoard> abilities = new List<AbilityDisplayBoard>();
 
     void Start()
     {
-        enabled = isLocalPlayer;
+        if (!isLocalPlayer) { Destroy(this); return; }
 
         pc = GetComponent<PlayerController>();
 
         GameObject t = (GameObject)Instantiate(Resources.Load("AbilityVisualization"), Vector3.zero, Quaternion.identity, null);
 
-        foreach (var item in new Ability[3] { pc.ability0 , pc.ability1 , pc.ability_tag})
+        foreach (var item in new Ability[3] { pc.ability0, pc.ability1, pc.ability_tag })
         {
             item.coolDown_current_value = item.coolDown;
 
             GameObject ab = (GameObject)Instantiate(Resources.Load("AbilityDisplay"), t.transform.GetChild(0).transform);
 
-            AbilityDisplayBoard adb = new AbilityDisplayBoard {
+            AbilityDisplayBoard adb = new AbilityDisplayBoard
+            {
                 ab = item,
                 coolDown_ = ab.transform.GetChild(0).GetComponent<Text>(),
                 name_ = ab.transform.GetChild(1).GetComponent<Text>(),
                 coolDownSlider_ = ab.transform.GetChild(2).GetComponent<Transform>()
-        };
+            };
 
             abilities.Add(adb);
         }
+
     }
 
     void Update()
