@@ -179,6 +179,10 @@ namespace Mirror
                 {
                     username = GUILayout.TextField(username);
                 }
+                else
+                {
+                    GUILayout.Label(username);
+                }
                 if (NetworkClient.ready)
                     CmdSendUsername(gameObject , username);
             }
