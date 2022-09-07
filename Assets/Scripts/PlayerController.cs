@@ -5,7 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.Networking.UnityWebRequest;
+using UnityStandardAssets.Effects;
 
 /// <summary>
 /// for offline testing use the PlayerControllerOffline 
@@ -48,6 +48,8 @@ public class PlayerController : NetworkBehaviour
     [Header("Networks")]
     public GameObject[] Cameras;
 
+    //GameObject platformMovingChild = null;
+
 
     void OnValidate()
     {
@@ -57,6 +59,11 @@ public class PlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        //platformMovingChild = new GameObject("platformMovingChild");
+
+        //platformMovingChild.transform.SetParent(transform);
+        //platformMovingChild.transform.position = transform.position;
+
         originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
         onJump += delegate { };
@@ -97,15 +104,23 @@ public class PlayerController : NetworkBehaviour
     {
         if (!disableInput)
         {
-            moveDirection = transform.right * Input.GetAxisRaw("Horizontal") +
-                transform.forward * Input.GetAxisRaw("Vertical");
+            moveDirection = new Vector3(cineCamera.transform.right.x , 0 , cineCamera.transform.right.z).normalized * Input.GetAxisRaw("Horizontal") +
+                new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z).normalized * Input.GetAxisRaw("Vertical");
         }
         else { moveDirection = Vector3.zero; }
 
         //Movement
 
         if (disableMovement)
+        {
+            //Vector3 _translation = platformMovingChild.transform.position - transform.position;
+
+            //characterController.Move(_translation);
+
+            //platformMovingChild.transform.position = transform.position;
+
             return;
+        }
 
         if (moveDirection != Vector3.zero)
             transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
@@ -139,9 +154,13 @@ public class PlayerController : NetworkBehaviour
             AddImpact(new Vector3(0, -groundNormal.z, groundNormal.y), (1f - groundNormal.y) * groundNormal.z * (1f - slideFriction), false);
         }
 
+        //Vector3 translation = platformMovingChild.transform.position - transform.position;
+
         if (!characterController.isGrounded)
             playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
+
+        //platformMovingChild.transform.position = transform.position;
 
         if ((moveDirection != Vector3.zero) && OnSlope() && HasJumped)
         {
@@ -336,6 +355,9 @@ public class PlayerController : NetworkBehaviour
 
     public virtual void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        //platformMovingChild.transform.parent = hit.transform;
+        //platformMovingChild.transform.position = transform.position;
+
         Rigidbody rigidbody = hit.collider.attachedRigidbody;
         if (rigidbody != null)
         {
