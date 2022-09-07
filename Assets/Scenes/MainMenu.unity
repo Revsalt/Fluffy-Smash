@@ -11915,7 +11915,7 @@ MonoBehaviour:
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
     type: 3}
   RoomScene: Assets/Scenes/RoomScene.unity
-  GameplayScene: Assets/Scenes/New Map.unity
+  GameplayScene: Assets/Scenes/Rings level.unity
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
@@ -11923,6 +11923,9 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
   - {fileID: 11400000, guid: 0852f0cec818ab740abb5a0fb0b7920a, type: 2}
   - {fileID: 11400000, guid: 2cc186f192dd2834687f8eabf18cbfd7, type: 2}
+  GameScenes:
+  - Assets/Scenes/Rings level.unity
+  - Assets/Scenes/New Map.unity
 --- !u!4 &1763280529
 Transform:
   m_ObjectHideFlags: 0
