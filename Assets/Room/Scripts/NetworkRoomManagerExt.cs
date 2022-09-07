@@ -11,6 +11,10 @@ namespace Mirror.Examples.NetworkRoom
         [Tooltip("List of All your Characters")]
         public Character[] characters = default;
 
+
+        [Scene]
+        public string[] GameScenes = default;
+
         /// <summary>
         /// This is called on the server when a networked scene finishes loading.
         /// </summary>
@@ -116,6 +120,8 @@ namespace Mirror.Examples.NetworkRoom
             {
                 // set to false to hide it in the game scene
                 showStartButton = false;
+
+                GameplayScene = GameScenes[Random.Range(0, GameScenes.Length)];
 
                 ServerChangeScene(GameplayScene);
             }

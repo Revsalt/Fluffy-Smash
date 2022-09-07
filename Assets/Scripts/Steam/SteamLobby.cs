@@ -16,6 +16,9 @@ public class SteamLobby : MonoBehaviour
     protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
     protected Callback<LobbyEnter_t> lobbyEntered;
 
+    //SteamCallresults
+    private CallResult<LobbyMatchList_t> lobbyMatchList;
+
 
     static private SteamLobby instance;
 
@@ -66,6 +69,8 @@ public class SteamLobby : MonoBehaviour
         lobbyEntered = Callback<LobbyEnter_t>.Create(OnLobbyEntered);
 
 
+        lobbyMatchList = CallResult<LobbyMatchList_t>.Create(OnFoundLobbies);
+
     }
 
     public void HostLobby()
@@ -114,5 +119,28 @@ public class SteamLobby : MonoBehaviour
 
         networkManager.networkAddress = hostAddress;
         networkManager.StartClient();
+    }
+
+    private void FindLobby()
+    {
+        if(!SteamManager.Initialized)
+        {
+            return;
+        }
+
+        SteamAPICall_t handle = SteamMatchmaking.RequestLobbyList();
+        lobbyMatchList.Set(handle);
+
+    }
+
+    private void OnFoundLobbies(LobbyMatchList_t callback, bool bIOFailure)
+    {
+        if (bIOFailure)
+        {
+            Debug.Log("Failed to get match list");
+            return;
+        }
+        
+        //SteamMatchmaking.GetLobbyByIndex()
     }
 }
