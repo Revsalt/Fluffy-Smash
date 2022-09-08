@@ -28,13 +28,13 @@ public partial class AudioManager : MonoBehaviour
         Play2D("ThemeSong");
     }
 
-    public void Play(string name , Vector3 pos , Transform childOf)
+    public AudioSource Play(string name , Vector3 pos , Transform childOf)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null)
         {
             Debug.LogWarning("Sound: " + name + " not found");
-            return;
+            return null;
         }
 
         GameObject g = new GameObject("Sound" + UnityEngine.Random.Range(0, 8000));
@@ -60,6 +60,7 @@ public partial class AudioManager : MonoBehaviour
         As.Play();
 
         Destroy(As.gameObject, As.clip.length);
+        return As;
     }
 
     public void Play2D(string name)

@@ -5096,6 +5096,8 @@ MonoBehaviour:
   dashForce: 80
   playerModelIkTarget: {fileID: 1646360426227162866}
   rigWeight: {fileID: 1646360426870888540}
+  StandDuration: 0
+  distanceduration: 0
 --- !u!114 &4097870006058671203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12209,7 +12211,7 @@ ParticleSystem:
     rateOverDistance:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 12
       minScalar: 0
       maxCurve:
         serializedVersion: 2
@@ -16365,7 +16367,7 @@ ParticleSystem:
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 2
+      scalar: 3
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -17225,7 +17227,7 @@ ParticleSystem:
       countCurve:
         serializedVersion: 2
         minMaxState: 0
-        scalar: 40
+        scalar: 75
         minScalar: 30
         maxCurve:
           serializedVersion: 2

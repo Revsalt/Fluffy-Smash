@@ -27,7 +27,8 @@ public class NinjaCat : PlayerController
     [SerializeField] float dashForce = 80;
     [SerializeField] GameObject playerModelIkTarget;
     [SerializeField] Rig rigWeight;
-
+    [SerializeField] float StandDuration;
+    [SerializeField] float distanceduration;
     Vector3 wallDirection = Vector3.zero;
     Animator animator;
 
@@ -102,10 +103,8 @@ public class NinjaCat : PlayerController
             events = new UnityEvent[] { taglogic.StartTag, taglogic.EndTag }
         };
     }
-
     float weight = 0;
     bool ranHarshFallFunction = false;
-
     new void Update()
     {
         //Handling Ik
@@ -241,22 +240,24 @@ public class NinjaCat : PlayerController
     IEnumerator AttackSequence_tag()
     {
         originalgravity = gravity;
-
-        AudioManager.instance.Play("NinjaCatSwordSlash" , transform.position , transform);
-
+        AudioSource audiosouce = null;
+        
         DisableInput(true);
         gravity = 0; ResetPlayerVelocity();
         animator.SetBool("isPersonGrab" , true);
         chargeParticleSystem.Play();
-
-        for (float i = 0; i < .5f; i += Time.deltaTime)
+        float DistanceDuration = 0.1f;
+        for (float i = 0; Input.GetKey(KeyCode.Mouse0) && i < 1f; i += Time.deltaTime)
         {
+            audiosouce =
+            AudioManager.instance.Play("SwordWindUp", transform.position, transform);
             playerModel.transform.LookAt(playerModelIkTarget.transform.position);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
+            DistanceDuration = i * 0.1f;
             yield return null;
         }
-
+        audiosouce.Stop();        
         chargeParticleSystem.Stop();
         chargeParticleSystem.Clear();
 
@@ -266,7 +267,8 @@ public class NinjaCat : PlayerController
 
         GetComponent<TagLogic>().SetCanAttack(true);
 
-        yield return new WaitForSeconds(.04f);
+        yield return new WaitForSeconds(DistanceDuration);
+        AudioManager.instance.Play("SwordSlash", transform.position, transform);
         HidePlayerModel(true);
         ResetPlayerVelocity();
         AddImpact(playerModel.transform.forward, 70, false);

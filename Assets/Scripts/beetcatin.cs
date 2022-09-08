@@ -53,7 +53,7 @@ public class beetcatin : PlayerController
     void Start()
     {
         StartCoroutine(StartMetronome());
-        animator = GetComponent<Animator>();
+        animator = playerModel.GetComponentInChildren<Animator>();
         ability0 = new Ability()
         {
             ability = delegate
@@ -71,7 +71,14 @@ public class beetcatin : PlayerController
                 {
                     animator.SetTrigger("IsPlatform_Attack");
                     GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f,Quaternion.identity, null);
-                    TempBlock.transform.forward = moveDirection;
+                    if (moveDirection == Vector3.zero)
+                    {
+                        TempBlock.transform.forward = playerModel.transform.forward;
+                    }
+                    else
+                    {
+                        TempBlock.transform.forward = moveDirection;
+                    }                    
                     TempBlock.transform.localScale = new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
                     Destroy(TempBlock, 5f);
                 }
@@ -161,11 +168,11 @@ public class beetcatin : PlayerController
     IEnumerator AttackPause()
     {
         DisableInput(true);
-        DisableMovment(false);
+        DisableMovment(true);
         animator.SetBool("AttackReady", true);
         yield return new WaitForSeconds(3f);
         DisableInput(false);
-        DisableMovment(true);
+        DisableMovment(false);
         animator.SetBool("AttackReady", false);
     }
     IEnumerator HoloRing(int level)
@@ -188,11 +195,18 @@ public class beetcatin : PlayerController
     // Update is called once per frame
     new void Update()
     {
-        base.Update();        
+        base.Update();
         //BeatCounter.text = (beat + "/4");
         //Speed.text = (Mathf.RoundToInt(movementSpeed).ToString());
-       // Shots.text = StringHookCount.ToString();
-       // HoloLvText.text = HoloLv.ToString();
+        // Shots.text = StringHookCount.ToString();
+        // HoloLvText.text = HoloLv.ToString();
+        bool isRunning = moveDirection != Vector3.zero;
+        animator.SetBool("IsWalk", isRunning);
+        animator.SetBool("IsJump", !isGroundeed());
+        if (moveDirection != Vector3.zero)
+        {
+            playerModel.transform.forward = moveDirection;
+        }       
         HoloRingObj.transform.Rotate(Vector3.up * 50 * Time.deltaTime * HoloLv, Space.World);
         if (movementSpeed > 7f)
         {
