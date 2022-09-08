@@ -252,15 +252,15 @@ public class NinjaCat : PlayerController
         float DistanceDuration = 0.1f;
         for (float i = 0; Input.GetKey(KeyCode.Mouse0) && i < 1f; i += Time.deltaTime)
         {
-            audiosouce =
-            AudioManager.instance.Play("SwordWindUp", transform.position, transform);
+            //audiosouce = AudioManager.instance.Play("SwordWindUp", transform.position, transform);
             playerModel.transform.LookAt(playerModelIkTarget.transform.position);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             DistanceDuration = i * 0.1f;
             yield return null;
         }
-        audiosouce.Stop();        
+
+        //audiosouce.Stop();        
         chargeParticleSystem.Stop();
         chargeParticleSystem.Clear();
 

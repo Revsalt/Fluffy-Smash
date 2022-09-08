@@ -211,8 +211,8 @@ public class HoodieCat : PlayerController
     {
         GameObject lolipop_ = ntd.GetComponent<HoodieCat>().LoliPop;
 
-        lolipop_.gameObject.layer = LayerMask.NameToLayer("PlayerIgnore");
         lolipop_.transform.SetParent(null);
+        lolipop_.gameObject.layer = LayerMask.NameToLayer("PlayerIgnore");
         if (onlyUnparent)
             return;
 
@@ -378,7 +378,11 @@ public class HoodieCat : PlayerController
 
     IEnumerator AttackSequence1()
     {
-        if (!isLocalPlayer) yield break;
+        if (!isLocalPlayer)
+        {
+            ability0.End.Invoke();
+            yield break;
+        }
 
         if (!HasLoliPop())
         {
@@ -432,18 +436,21 @@ public class HoodieCat : PlayerController
 
             #region Moving The LoliPop
             TransclucentMode(false);
+            Drop(GetComponent<NetworkIdentity>(), true);
             CmdDrop(GetComponent<NetworkIdentity>(), true);
+
             Vector3 ThrowDirection = transform.right;
             Vector3 startpos_ = LoliPop.transform.position;
             Vector3 GoToPos_ = CrossPointer.transform.position + (hit.normal * 0.7f);
 
-            for (float i = 0; Vector3.Distance(LoliPop.transform.position, GoToPos_) > 0; i += Time.deltaTime)
+            for (float i = 0; Vector3.Distance(LoliPop.transform.position, GoToPos_) >= 0.1f; i += Time.deltaTime)
             {
                 LoliPop.GetComponent<CapsuleCollider>().enabled = false;
                 LoliPop.transform.position = Bezier2(startpos_, ((startpos_ + GoToPos_) / 2) + ThrowDirection * 2, GoToPos_,i * 2);
                 LoliPop.transform.rotation = Quaternion.LookRotation((LoliPop.transform.position - GoToPos_).normalized);
                 yield return null;
             }
+
             LoliPop.gameObject.layer = LayerMask.NameToLayer("Default");
             LoliPop.transform.rotation = Quaternion.LookRotation(lastHitNormal);
             AudioManager.instance.Play("HoodieCatLoliPopStickInWall", LoliPop.transform.position, null);
