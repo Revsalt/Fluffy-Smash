@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fa674b7bcad234f4395a5940a71002b1, type: 3}
-  m_Name: NinjaCat (PlaceHolder)
+  m_Name: Lolicat
   m_EditorClassIdentifier: 
-  characterName: NinjaCat (PlaceHolder)
-  characterPreviewPrefab: {fileID: 5891692946032528243, guid: 3b00ce9a8fa2b7d45a710bfe2069ef3e,
+  characterName: Lolicat
+  characterPreviewPrefab: {fileID: 4148815538700329035, guid: be0ae887679531449b7e5fa39a6e9f10,
     type: 3}
-  gameplayCharacterPrefab: {fileID: 1646360425263456792, guid: 6f71b832f06ab0e4ba3b015b2ea606e2,
+  gameplayCharacterPrefab: {fileID: 3814039662413454323, guid: de8f4da4bc4688c43a7409d4b9e2f863,
     type: 3}

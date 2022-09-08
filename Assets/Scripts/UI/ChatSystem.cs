@@ -30,16 +30,26 @@ public class ChatSystem : NetworkBehaviour
     {
         if(Input.GetKeyDown(KeyCode.Return))
         {
-            if(!inputField.gameObject.activeSelf)
+            if (inputField.gameObject.activeSelf)
             {
-                inputField.gameObject.SetActive(true);
-            }
+                //Close input field
+                inputField.gameObject.SetActive(false);
 
-            if (!inputField.isFocused)
+                //Send msg
+                SendMessageClient(inputField.text);
+
+                //Clear msg
+                inputField.text = "";
+            }
+            else
             {
-                
-                inputField.ActivateInputField();
-                inputField.Select();
+                //Open input field
+                inputField.gameObject.SetActive(true);
+                if (!inputField.isFocused)
+                {
+                    inputField.ActivateInputField();
+                    inputField.Select();
+                }
             }
         }
 
@@ -54,24 +64,23 @@ public class ChatSystem : NetworkBehaviour
 
     public void OnSubmit(string msg)
     {
-        if(inputField.text == "")
+
+    }
+
+    void SendMessageClient(string msg)
+    {
+        if(msg == "")
         {
-            //Empty message, close the input
-            inputField.gameObject.SetActive(false);
             return;
         }
-
-        //Non empty message, proceed to send it
-
-        inputField.text = "";
 
         List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
 
         string username = "unkown";
 
-        foreach(PlayerNetworkManager player in AllPlayers)
+        foreach (PlayerNetworkManager player in AllPlayers)
         {
-            if(player.isLocalPlayer)
+            if (player.isLocalPlayer)
             {
                 username = player.nrp.username;
                 break;
