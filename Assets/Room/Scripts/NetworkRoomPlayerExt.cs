@@ -1,3 +1,4 @@
+using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,7 +9,7 @@ namespace Mirror.Examples.NetworkRoom
     {
         public override void OnStartClient()
         {
-            //Debug.Log($"OnStartClient {gameObject}");
+            //Debug.Log($"OnStartClient {gameObject}")
         }
 
         public override void OnClientEnterRoom()
@@ -34,6 +35,16 @@ namespace Mirror.Examples.NetworkRoom
         public override void OnGUI()
         {
             base.OnGUI();
+        }
+
+
+        public void Update()
+        {
+            if(SteamManager.Initialized)
+            {
+                GetUserNameFromPlayer = false;
+                Username = SteamFriends.GetPersonaName();
+            }
         }
     }
 }

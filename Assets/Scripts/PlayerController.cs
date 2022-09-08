@@ -3,9 +3,10 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+//using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEngine.Networking.UnityWebRequest;
+using UnityStandardAssets.Effects;
 
 /// <summary>
 /// for offline testing use the PlayerControllerOffline 
@@ -13,6 +14,7 @@ using static UnityEngine.Networking.UnityWebRequest;
 public class PlayerController : NetworkBehaviour
 {
     [HideInInspector] public CharacterController characterController;
+    [HideInInspector] public Transform folllowTarget;
     Vector3 playerVelocity = Vector3.zero;
     Vector3 impact = Vector3.zero;
 
@@ -34,7 +36,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] public GameObject playerModel;
     [SerializeField] public GameObject piviot_M;
     [Header("Camera")]
-    [SerializeField] private float sensitvity = 100;
+    public float sensitvity = 100;
     [Header("Movement")]
     bool HasJumped = true;
     public float movementSpeed = 5;
@@ -48,6 +50,8 @@ public class PlayerController : NetworkBehaviour
     [Header("Networks")]
     public GameObject[] Cameras;
 
+    //GameObject platformMovingChild = null;
+
 
     void OnValidate()
     {
@@ -57,6 +61,12 @@ public class PlayerController : NetworkBehaviour
 
     private void Awake()
     {
+        //platformMovingChild = new GameObject("platformMovingChild");
+
+        //platformMovingChild.transform.SetParent(transform);
+        //platformMovingChild.transform.position = transform.position;
+
+        folllowTarget = transform;
         originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
         onJump += delegate { };
@@ -79,7 +89,7 @@ public class PlayerController : NetworkBehaviour
     {
         //CameraPosistionAdjustment
 
-        piviot_M.transform.position = transform.position;
+        piviot_M.transform.position = folllowTarget.position;
 
         //Camera Movement
 
@@ -97,15 +107,23 @@ public class PlayerController : NetworkBehaviour
     {
         if (!disableInput)
         {
-            moveDirection = transform.right * Input.GetAxisRaw("Horizontal") +
-                transform.forward * Input.GetAxisRaw("Vertical");
+            moveDirection = new Vector3(cineCamera.transform.right.x , 0 , cineCamera.transform.right.z).normalized * Input.GetAxisRaw("Horizontal") +
+                new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z).normalized * Input.GetAxisRaw("Vertical");
         }
         else { moveDirection = Vector3.zero; }
 
         //Movement
 
         if (disableMovement)
+        {
+            //Vector3 _translation = platformMovingChild.transform.position - transform.position;
+
+            //characterController.Move(_translation);
+
+            //platformMovingChild.transform.position = transform.position;
+
             return;
+        }
 
         if (moveDirection != Vector3.zero)
             transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
@@ -139,9 +157,13 @@ public class PlayerController : NetworkBehaviour
             AddImpact(new Vector3(0, -groundNormal.z, groundNormal.y), (1f - groundNormal.y) * groundNormal.z * (1f - slideFriction), false);
         }
 
+        //Vector3 translation = platformMovingChild.transform.position - transform.position;
+
         if (!characterController.isGrounded)
             playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
+
+        //platformMovingChild.transform.position = transform.position;
 
         if ((moveDirection != Vector3.zero) && OnSlope() && HasJumped)
         {
@@ -281,7 +303,13 @@ public class PlayerController : NetworkBehaviour
             abilityRef.canCast = false;
 
             if (!abilityRef.skipNextCoolDown)
-                yield return new WaitForSeconds(abilityRef.coolDown);
+            {
+                for (float z = 0; z < abilityRef.coolDown; z += Time.deltaTime)
+                {
+                    abilityRef.coolDown_current_value = z;
+                    yield return null;
+                } 
+            }
             else
                 abilityRef.skipNextCoolDown = true;
             yield return null;
@@ -290,8 +318,15 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    [Command]
+
     void CmdStartAbility(int i, NetworkIdentity ntd)
+    {
+        if (isLocalPlayer)
+            StartAbilityCmd(i, ntd);
+    }
+
+    [Command]
+    void StartAbilityCmd(int i, NetworkIdentity ntd)
     {
         RpcStartAbility(i, ntd);
     }
@@ -336,6 +371,9 @@ public class PlayerController : NetworkBehaviour
 
     public virtual void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        //platformMovingChild.transform.parent = hit.transform;
+        //platformMovingChild.transform.position = transform.position;
+
         Rigidbody rigidbody = hit.collider.attachedRigidbody;
         if (rigidbody != null)
         {
@@ -358,7 +396,12 @@ public class PlayerController : NetworkBehaviour
 public class Ability
 {
     public Action ability;
+
     public float coolDown;
+    public float coolDown_current_value = 0;
+
+    public string abilityName = "NoName (please assign a name)";
+
     public UnityEvent[] events;
     public Action End;
 
