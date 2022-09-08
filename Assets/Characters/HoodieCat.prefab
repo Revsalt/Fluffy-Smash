@@ -5326,7 +5326,7 @@ GameObject:
   - component: {fileID: 1818073407}
   - component: {fileID: 1818073406}
   - component: {fileID: 2965431395071215566}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LoliPop
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -5822,6 +5822,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8587428711598797148}
   - component: {fileID: 185727195095510814}
+  - component: {fileID: 3316316986694925482}
   m_Layer: 8
   m_Name: CM Zoom
   m_TagString: Untagged
@@ -5879,6 +5880,36 @@ MonoBehaviour:
         m_Calls: []
   m_LegacyBlendHint: 0
   m_ComponentOwner: {fileID: 4631561134267397617}
+--- !u!114 &3316316986694925482
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 799727359954698237}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e501d18bb52cf8c40b1853ca4904654f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_CollideAgainst:
+    serializedVersion: 2
+    m_Bits: 1
+  m_IgnoreTag: Player
+  m_TransparentLayers:
+    serializedVersion: 2
+    m_Bits: 256
+  m_MinimumDistanceFromTarget: 0.1
+  m_AvoidObstacles: 1
+  m_DistanceLimit: 0
+  m_MinimumOcclusionTime: 0
+  m_CameraRadius: 0.1
+  m_Strategy: 0
+  m_MaximumEffort: 4
+  m_SmoothingTime: 0
+  m_Damping: 0
+  m_DampingWhenOccluded: 0
+  m_OptimalTargetDistance: 0
 --- !u!1 &1070406696657262230
 GameObject:
   m_ObjectHideFlags: 0
@@ -11256,7 +11287,7 @@ MonoBehaviour:
   sensitvity: 300
   movementSpeed: 7
   slopeForce: 12
-  slopeForceRayLength: 1.6
+  slopeForceRayLength: 2
   slideFriction: -0.4
   jumpHeight: 5
   layerMask:
@@ -26981,7 +27012,7 @@ GameObject:
   - component: {fileID: 5343607915039789724}
   - component: {fileID: 5212916688367788909}
   - component: {fileID: 5725532016327275668}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LolipopIcon
   m_TagString: Untagged
   m_Icon: {fileID: 0}

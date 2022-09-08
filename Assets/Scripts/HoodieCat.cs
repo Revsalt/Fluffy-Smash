@@ -32,7 +32,6 @@ public class HoodieCat : PlayerController
     [SerializeField] GameObject lolipopText;
 
     bool canBringLoliPop = true;
-    bool loliPopTime = false;
     Animator animator;
     float oldGravity;
 
@@ -48,20 +47,20 @@ public class HoodieCat : PlayerController
         {
             ability = delegate
             {
-                StartCoroutine(AttackSequence2());
+                StartCoroutine(AttackSequence1());
             },
-            coolDown = 1, // 8
-            events = new UnityEvent[2] { StartStun, EndStun }
+            coolDown = 1f,
+            events = new UnityEvent[2] { StartTeleport, EndTeleport }
         };
 
         ability1 = new Ability()
         {
             ability = delegate
             {
-                StartCoroutine(AttackSequence1());
+                StartCoroutine(AttackSequence2());
             },
-            coolDown = 1f,
-            events = new UnityEvent[2] { StartTeleport, EndTeleport }
+            coolDown = 1, // 8
+            events = new UnityEvent[2] { StartStun, EndStun }
         };
 
 
@@ -80,6 +79,8 @@ public class HoodieCat : PlayerController
 
     float weight = 0;
     bool ranLandFunction = false;
+    bool canPickUp = true;
+
 
     private void Update()
     {
@@ -152,29 +153,37 @@ public class HoodieCat : PlayerController
         else 
             jumpHeight = GetOriginalJumpHeight() + GetOriginalJumpHeight() / 1.4f; 
 
-        if (Input.GetMouseButtonDown(2) && !GetDisableInput() && !GetIsAnyAbilityInPorgress() && canBringLoliPop)
+        if (Input.GetKeyDown(KeyCode.E) && !GetDisableInput() && !GetIsAnyAbilityInPorgress() && canBringLoliPop)
         {
             if (HasLoliPop())
-                CmdDrop(GetComponent<NetworkIdentity>() , false);
-            else
-                CmdPickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3) , GetComponent<NetworkIdentity>());
-        }
-
-        if (!HasLoliPop() && !loliPopTime)
-        {
-            loliPopTime = true;
-            StartCoroutine(_LoliPopTime());
-            IEnumerator _LoliPopTime()
             {
-                for (float i = 0; !HasLoliPop(); i += Time.deltaTime)
-                {
-                    movementSpeed = Mathf.Clamp(movementSpeed - i, 2 , 20);               
-                    yield return null;
-                }
+                CmdDrop(GetComponent<NetworkIdentity>(), false);
+                Drop(GetComponent<NetworkIdentity>(), false);
+                canPickUp = false;
+            }
+            else if (canPickUp)
+            {
+                CmdPickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3), GetComponent<NetworkIdentity>());
+                PickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3), GetComponent<NetworkIdentity>());
 
-                loliPopTime = false;
             }
         }
+
+        //if (!HasLoliPop() && !loliPopTime)
+        //{
+        //    loliPopTime = true;
+        //    StartCoroutine(_LoliPopTime());
+        //    IEnumerator _LoliPopTime()
+        //    {
+        //        for (float i = 0; !HasLoliPop(); i += Time.deltaTime)
+        //        {
+        //            movementSpeed = Mathf.Clamp(movementSpeed - i, 2 , 20);               
+        //            yield return null;
+        //        }
+
+        //        loliPopTime = false;
+        //    }
+        //}
 
         if (Camera.main)
         {
@@ -194,6 +203,7 @@ public class HoodieCat : PlayerController
     [ClientRpc]
     void RpcDrop(NetworkIdentity ntd, bool onlyUnparent)
     {
+        if (ntd.isLocalPlayer) return;
         Drop(ntd , onlyUnparent);
     }
 
@@ -201,12 +211,21 @@ public class HoodieCat : PlayerController
     {
         GameObject lolipop_ = ntd.GetComponent<HoodieCat>().LoliPop;
 
+        lolipop_.gameObject.layer = LayerMask.NameToLayer("PlayerIgnore");
         lolipop_.transform.SetParent(null);
         if (onlyUnparent)
             return;
 
         lolipop_.GetComponent<Rigidbody>().isKinematic = false;
         lolipop_.GetComponent<CapsuleCollider>().enabled = true;
+
+        StartCoroutine(delay());
+
+        IEnumerator delay()
+        {
+            yield return new WaitForSeconds(0.5f);
+            canPickUp = true;
+        }
     }
     #endregion
 
@@ -222,6 +241,7 @@ public class HoodieCat : PlayerController
     [ClientRpc]
     void RpcPickUp(bool Teleport, NetworkIdentity ntd)
     {
+        if (ntd.isLocalPlayer) return;
         PickUp(Teleport, ntd);
     }
 
@@ -235,14 +255,14 @@ public class HoodieCat : PlayerController
         {
             canBringLoliPop = false;
 
-            lolipop_.gameObject.layer = LayerMask.NameToLayer("Default");
+            lolipop_.gameObject.layer = LayerMask.NameToLayer("PlayerIgnore");
             lolipop_.GetComponent<CapsuleCollider>().enabled = false;
             lolipop_.GetComponent<Rigidbody>().isKinematic = true;
 
             if (!Teleport)
             {
 
-                for (float i = 0; i <= 3; i += Time.deltaTime)
+                for (float i = 0; i <= 1; i += Time.deltaTime * 5)
                 {
                     foreach (var item in lolipop_.GetComponentsInChildren<MeshRenderer>())
                     {
@@ -256,6 +276,7 @@ public class HoodieCat : PlayerController
                 }
 
             }
+            else { AddImpact(moveDirection, 50, false); }
 
             lolipop_.transform.SetParent(ntd.GetComponent<HoodieCat>().loliPopParent);
             lolipop_.transform.localPosition = Vector3.zero;
@@ -266,7 +287,7 @@ public class HoodieCat : PlayerController
             if (Teleport)
                 yield break;
 
-            for (float i = 1; i >= -1; i -= Time.deltaTime)
+            for (float i = 1; i >= -1; i -= Time.deltaTime * 5)
             {
                 foreach (var item in lolipop_.GetComponentsInChildren<MeshRenderer>())
                 {
@@ -361,8 +382,8 @@ public class HoodieCat : PlayerController
 
         if (!HasLoliPop())
         {
-            ability1.skipNextCoolDown = true;
-            ability1.End.Invoke();
+            ability0.skipNextCoolDown = true;
+            ability0.End.Invoke();
             yield break;
         }
 
@@ -372,8 +393,16 @@ public class HoodieCat : PlayerController
         RaycastHit hit = new RaycastHit();
         Vector3 lastHitNormal = Vector3.zero;
 
-        for (float i = 0; !Input.GetKeyUp(KeyCode.LeftShift); i += Time.deltaTime)
+        ZoomCamera(true);
+        for (float i = 0; !Input.GetMouseButtonDown(0); i += Time.deltaTime)
         {
+            if (Input.GetMouseButtonUp(1))
+            {
+                CrossPointer.SetActive(false);
+                ability0.End.Invoke();
+                break;
+            }
+
             Physics.Raycast(pointerCastPosition.position, pointerCastPosition.transform.forward, out hit, 40, layerMask);
             if (hit.collider)
             {
@@ -389,6 +418,7 @@ public class HoodieCat : PlayerController
             yield return null;
 
         }
+        ZoomCamera(false);
 
         if (lastHitNormal != Vector3.zero && CrossPointer.activeSelf)
         {
@@ -414,6 +444,7 @@ public class HoodieCat : PlayerController
                 LoliPop.transform.rotation = Quaternion.LookRotation((LoliPop.transform.position - GoToPos_).normalized);
                 yield return null;
             }
+            LoliPop.gameObject.layer = LayerMask.NameToLayer("Default");
             LoliPop.transform.rotation = Quaternion.LookRotation(lastHitNormal);
             AudioManager.instance.Play("HoodieCatLoliPopStickInWall", LoliPop.transform.position, null);
             #endregion
@@ -441,7 +472,7 @@ public class HoodieCat : PlayerController
         animator.SetBool("isThrowLoliPop", false);
         Destroy(CrossPointer);
         TransclucentMode(false);
-        ability1.End.Invoke();
+        ability0.End.Invoke();
 
         yield return null;
     }
@@ -463,7 +494,7 @@ public class HoodieCat : PlayerController
         }
 
         //animator.SetBool("isStunAttack", false);
-        ability0.End.Invoke();
+        ability1.End.Invoke();
     }
 
     [Command]
