@@ -11,6 +11,7 @@ TagManager:
   - ground
   - Hook
   - String
+  - PowerUp
   layers:
   - Default
   - TransparentFX

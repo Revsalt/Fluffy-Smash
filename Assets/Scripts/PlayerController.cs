@@ -3,6 +3,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 //using UnityEditor.Experimental.GraphView;
 //using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -18,6 +19,7 @@ public class PlayerController : NetworkBehaviour
     [HideInInspector] public Transform folllowTarget;
     Vector3 playerVelocity = Vector3.zero;
     Vector3 impact = Vector3.zero;
+    float CoolDownReducer = 1f;
 
     bool disableMovement = false;
     bool disableInput = false;
@@ -53,7 +55,7 @@ public class PlayerController : NetworkBehaviour
 
     //GameObject platformMovingChild = null;
 
-
+    bool HasJumpUp = false, HasSpeedUp = false, HasCoolUp = false;
     void OnValidate()
     {
         if (characterController == null)
@@ -319,7 +321,7 @@ public class PlayerController : NetworkBehaviour
 
             if (!abilityRef.skipNextCoolDown)
             {
-                for (float z = 0; z < abilityRef.coolDown; z += Time.deltaTime)
+                for (float z = 0; z < abilityRef.coolDown*CoolDownReducer; z += Time.deltaTime)
                 {
                     abilityRef.coolDown_current_value = z;
                     yield return null;
@@ -405,6 +407,45 @@ public class PlayerController : NetworkBehaviour
         }
 
         groundNormal = hit.normal;
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.tag == "PowerUp")
+        {           
+            BasePowerUp OtherPowerup = other.GetComponent<PowerUp>().GetPowerUp();
+            switch (OtherPowerup.PowerupEffect)
+            {
+                case BasePowerUp.effect.Speed:if (HasSpeedUp == false) { StartCoroutine(SpeedUp(OtherPowerup.EffectDuration)); Destroy(other.gameObject); } break;
+                case BasePowerUp.effect.Jump:if (HasJumpUp == false) { StartCoroutine(JumpUp(OtherPowerup.EffectDuration)); Destroy(other.gameObject); } break;
+                case BasePowerUp.effect.Cooldown: if (HasCoolUp == false) { StartCoroutine(CoolDownUp(OtherPowerup.EffectDuration)); Destroy(other.gameObject); } break;
+            }            
+        }
+    }
+    private IEnumerator SpeedUp(float duration)
+    {
+        HasSpeedUp = true;
+        movementSpeed += 5f;
+        yield return new WaitForSeconds(duration);
+        HasSpeedUp = false;
+        movementSpeed -= 5f;
+    }
+    private IEnumerator JumpUp(float duration)
+    {
+        HasJumpUp = true;
+        jumpHeight += 5f;
+        gravity = -5f;
+        yield return new WaitForSeconds(duration);
+        HasJumpUp = false;
+        jumpHeight -= 5f;
+        gravity = -9.8f;
+    }
+    private IEnumerator CoolDownUp(float duration)
+    {
+        HasCoolUp = true;
+        CoolDownReducer = 0.5f;
+        yield return new WaitForSeconds(duration);
+        HasCoolUp = false;
+        CoolDownReducer = 1f;
     }
 }
 
