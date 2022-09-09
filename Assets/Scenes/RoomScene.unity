@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -97,8 +97,10 @@ LightmapSettings:
     m_ExportTrainingData: 0
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
-  m_LightingDataAsset: {fileID: 0}
-  m_LightingSettings: {fileID: 0}
+  m_LightingDataAsset: {fileID: 112000000, guid: 3c5ee37c06c77344bb8252be0fcace73,
+    type: 2}
+  m_LightingSettings: {fileID: 4890085278179872738, guid: e9f326231c8f1ec4aacb6c85acd4f88b,
+    type: 2}
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -954,7 +956,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &922633000
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -984,10 +986,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 108}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -1028,7 +1030,7 @@ RectTransform:
   m_Children:
   - {fileID: 821094998}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -1804,158 +1806,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1838298302}
   m_CullTransparentMesh: 0
---- !u!1 &1878665352
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1878665353}
-  - component: {fileID: 1878665354}
-  m_Layer: 0
-  m_Name: AudioManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1878665353
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1878665352}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1878665354
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1878665352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e1b723f89be48274f8c879b3c89a4d9a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  sounds:
-  - name: HoodieCatFootSteps
-    clips:
-    - {fileID: 8300000, guid: b8c54fd3790e33a419ea5c46edfb98aa, type: 3}
-    - {fileID: 8300000, guid: 09407ed045089bd4190321bc37f4769c, type: 3}
-    volume: 0.846
-    pitch: 1
-    maxDistance: 14.35
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: NinjaCatFootSteps
-    clips:
-    - {fileID: 8300000, guid: e525b7638d6eb2f429f0f78b9eb056d5, type: 3}
-    - {fileID: 8300000, guid: 40c044c9447b13d42b7114f0f6f82bfc, type: 3}
-    - {fileID: 8300000, guid: 077c06456061b1244bfec2cf173afaca, type: 3}
-    - {fileID: 8300000, guid: 9ec0ff9ff40b4b146ad2b4e0279ccab2, type: 3}
-    - {fileID: 8300000, guid: d34e1a6491fb3eb4f8ddb8b9579dae8a, type: 3}
-    - {fileID: 8300000, guid: 2c3ff60166d59934eaf22181d27cf9cd, type: 3}
-    - {fileID: 8300000, guid: 4df04b7cd9954dd4a9f5f2144291ad32, type: 3}
-    volume: 0.675
-    pitch: 1
-    maxDistance: 10
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: NinjaCatLand
-    clips:
-    - {fileID: 8300000, guid: d34e1a6491fb3eb4f8ddb8b9579dae8a, type: 3}
-    - {fileID: 8300000, guid: 2c3ff60166d59934eaf22181d27cf9cd, type: 3}
-    - {fileID: 8300000, guid: 4df04b7cd9954dd4a9f5f2144291ad32, type: 3}
-    volume: 0.675
-    pitch: 1
-    maxDistance: 10
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: HoodieCatThrowLoliPop
-    clips:
-    - {fileID: 8300000, guid: 49c404dc57c8be64caa67edba9424493, type: 3}
-    volume: 0.98
-    pitch: 1
-    maxDistance: 15
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: HoodieCatLoliPopStickInWall
-    clips:
-    - {fileID: 8300000, guid: 85166ccc0610e6343aff5bb26a6c3424, type: 3}
-    volume: 0.235
-    pitch: 1
-    maxDistance: 30
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: HoodieCatOffTheGround
-    clips:
-    - {fileID: 8300000, guid: d5d2c4c202524e740a81cd18ec219462, type: 3}
-    volume: 0.731
-    pitch: 1
-    maxDistance: 14
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: Dash
-    clips:
-    - {fileID: 8300000, guid: a77b720e4dd80494eb2d1497a355d3bf, type: 3}
-    volume: 0.544
-    pitch: 1
-    maxDistance: 10.97
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: AirSwoosh
-    clips:
-    - {fileID: 8300000, guid: 52b5034d1f03d294799de6ebff049b63, type: 3}
-    volume: 0.514
-    pitch: 1
-    maxDistance: 12.28
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: NinjaCatSwordSlash
-    clips:
-    - {fileID: 8300000, guid: f9d65e8efdb3cd740834b9605c90ad73, type: 3}
-    volume: 0.514
-    pitch: 1
-    maxDistance: 15.23
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: HoodieCatStunCircleGrow
-    clips:
-    - {fileID: 8300000, guid: 673eb145a6f31b445afdda2d0d2662a6, type: 3}
-    volume: 0.514
-    pitch: 1
-    maxDistance: 15.23
-    randompitch: 1
-    loop: 0
-    source: {fileID: 0}
-  - name: ThemeSong
-    clips:
-    - {fileID: 8300000, guid: 69825302d5b324849874658d33d8faad, type: 3}
-    volume: 0.122
-    pitch: 1
-    maxDistance: 13.8
-    randompitch: 0
-    loop: 1
-    source: {fileID: 0}
 --- !u!1 &1989212262
 GameObject:
   m_ObjectHideFlags: 0

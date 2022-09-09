@@ -21,6 +21,15 @@ namespace Mirror
             manager = GetComponent<NetworkManager>();
         }
 
+        private void Update()
+        {
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                enabled = false;
+            }
+
+        }
+
         void OnGUI()
         {
             GUILayout.BeginArea(new Rect(10 + offsetX, 40 + offsetY, 215, 9999));

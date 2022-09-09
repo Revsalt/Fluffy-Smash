@@ -65,6 +65,17 @@ public class VisualizeAbilites : NetworkBehaviour
                 item.coolDown_.text = "NO COOlDOWN";
         }
     }
+
+    private void OnGUI()
+    {
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            foreach (var item in abilities)
+            {
+                item.coolDown_.transform.parent.gameObject.SetActive(false);
+            }
+        }
+    }
 }
 
 class AbilityDisplayBoard

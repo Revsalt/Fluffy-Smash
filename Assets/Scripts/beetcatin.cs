@@ -23,12 +23,6 @@ public class beetcatin : PlayerController
     [SerializeField] Material StringMat;
     [SerializeField] int StringHookCount = 12;
 
-    [Header("UI")]
-
-    [SerializeField] TextMeshProUGUI BeatCounter;
-    [SerializeField] TextMeshProUGUI Speed;
-    [SerializeField] TextMeshProUGUI Shots;
-    [SerializeField] TextMeshProUGUI HoloLvText;
 
     [Header("ObjRef & TransRef")]
 
@@ -67,6 +61,7 @@ public class beetcatin : PlayerController
                     animator.SetTrigger("FailedBeat");
                     movementSpeed = GetOriginalSpeeed();
                 }
+
                 if (!isGroundeed())
                 {
                     animator.SetTrigger("IsPlatform_Attack");
@@ -78,7 +73,7 @@ public class beetcatin : PlayerController
                     else
                     {
                         TempBlock.transform.forward = moveDirection;
-                    }                    
+                    }
                     TempBlock.transform.localScale = new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
                     Destroy(TempBlock, 5f);
                 }
@@ -203,6 +198,7 @@ public class beetcatin : PlayerController
         bool isRunning = moveDirection != Vector3.zero;
         animator.SetBool("IsWalk", isRunning);
         animator.SetBool("IsJump", !isGroundeed());
+        animator.SetFloat("runSpeed", movementSpeed / 7);
         if (moveDirection != Vector3.zero)
         {
             playerModel.transform.forward = moveDirection;
@@ -292,7 +288,7 @@ public class beetcatin : PlayerController
     }    
     IEnumerator StartMetronome()
     {
-        if (beat == 4 || beat == 2) Onbeat = true;
+        if (beat == 4 || beat == 2) { Onbeat = true;  AudioManager.instance.Play("HiHat", transform.position, transform); }
         else Onbeat = false;
         yield return new WaitForSeconds(60/bpm);        
         if (beat > 3)

@@ -116,6 +116,12 @@ namespace Mirror.Examples.NetworkRoom
         {
             base.OnGUI();
 
+
+            if (Input.GetKeyDown(KeyCode.L))
+            {
+                showRoomGUI = false;
+            }
+
             if (allPlayersReady && showStartButton && GUI.Button(new Rect(150, 300, 120, 20), "START GAME"))
             {
                 // set to false to hide it in the game scene

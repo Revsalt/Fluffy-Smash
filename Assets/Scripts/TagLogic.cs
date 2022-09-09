@@ -98,7 +98,7 @@ public class TagLogic : NetworkBehaviour
 
     public void OnChangeTaggerState(bool oldb, bool newb)
     {
-        if (newb)
+        if (newb && GetComponent<PlayerNetworkManager>().usernametxt)
             GetComponent<PlayerNetworkManager>().usernametxt.color = Color.red;
     }
 

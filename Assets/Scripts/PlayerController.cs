@@ -3,6 +3,7 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+//using UnityEditor.Experimental.GraphView;
 //using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
@@ -99,6 +100,20 @@ public class PlayerController : NetworkBehaviour
         rotY = Mathf.Clamp(rotY, -80f, 80f);
 
         piviot_M.transform.localRotation = Quaternion.Euler(-rotY, rotX, 0f);
+
+        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+        {
+            sensitvity += 15;
+        }
+        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
+        {
+            sensitvity -= 15;
+        }
+
+        if (Input.GetKeyDown(KeyCode.F11))
+        {
+            Screen.fullScreen = true;
+        }
     }
 
     float rotX, rotY;

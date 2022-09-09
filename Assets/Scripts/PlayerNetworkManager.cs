@@ -12,9 +12,6 @@ public class PlayerNetworkManager : NetworkBehaviour
     [HideInInspector] public TextMeshProUGUI usernametxt;
     private void Start()
     {
-        GameObject g = (GameObject)Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
-        usernametxt = g.GetComponentInChildren<TextMeshProUGUI>();
-
         if (isLocalPlayer)
         {
             foreach (var item in GetComponent<PlayerController>().Cameras)
@@ -22,12 +19,18 @@ public class PlayerNetworkManager : NetworkBehaviour
                 item.SetActive(true);
             }
         }
+        else
+        {
+            GameObject g = (GameObject)Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
+            usernametxt = g.GetComponentInChildren<TextMeshProUGUI>();
+        }
     }
 
     void Update()
     {
-        usernametxt.text = nrp.username;
+        if (!isLocalPlayer) usernametxt.text = nrp.username;
         gameObject.name = "Player : " + nrp.username;
+
 
         if (transform.position.y < -40)
             GetComponent<PlayerController>().SetPlayerPosition(NetworkRoomManager.singleton.GetStartPosition().position);

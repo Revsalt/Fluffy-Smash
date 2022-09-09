@@ -5492,6 +5492,15 @@ MonoBehaviour:
     randompitch: 0
     loop: 0
     source: {fileID: 0}
+  - name: HiHat
+    clips:
+    - {fileID: 8300000, guid: edd58d6a44cfd66468e97c1eea08b5de, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
 --- !u!4 &474417312
 Transform:
   m_ObjectHideFlags: 0
@@ -11815,7 +11824,6 @@ GameObject:
   - component: {fileID: 1763280526}
   - component: {fileID: 1763280525}
   - component: {fileID: 1763280524}
-  - component: {fileID: 1763280530}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -11871,7 +11879,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1763280523}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
@@ -11897,7 +11905,7 @@ MonoBehaviour:
   serverTickRate: 30
   offlineScene: Assets/Scenes/MainMenu.unity
   onlineScene: Assets/Scenes/RoomScene.unity
-  transport: {fileID: 1763280530}
+  transport: {fileID: 1763280526}
   networkAddress: localhost
   maxConnections: 100
   authenticator: {fileID: 0}
@@ -11911,6 +11919,7 @@ MonoBehaviour:
   - {fileID: 3814039662413454323, guid: a69a9f1048d6b7d4690ead63d2274212, type: 3}
   - {fileID: 3814039662413454323, guid: de8f4da4bc4688c43a7409d4b9e2f863, type: 3}
   - {fileID: 555757707498637005, guid: 2f93ca67ed60b2544920f6a4cc384e73, type: 3}
+  - {fileID: 8206218320700091574, guid: d623042aa73b8f840950ef026100f45c, type: 3}
   showRoomGUI: 1
   minPlayers: 1
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
@@ -11923,7 +11932,7 @@ MonoBehaviour:
   characters:
   - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
   - {fileID: 11400000, guid: 0852f0cec818ab740abb5a0fb0b7920a, type: 2}
-  - {fileID: 11400000, guid: 2cc186f192dd2834687f8eabf18cbfd7, type: 2}
+  - {fileID: 11400000, guid: ec0fe7a38730f2648b39c0f080e4a1bd, type: 2}
   GameScenes:
   - Assets/Scenes/Rings level.unity
   - Assets/Scenes/New Map.unity
@@ -11941,30 +11950,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1763280530
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1763280523}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7424c1070fad4ba2a7a96b02fbeb4bb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  port: 7777
-  NoDelay: 1
-  SendTimeout: 5000
-  ReceiveTimeout: 30000
-  serverMaxMessageSize: 16384
-  serverMaxReceivesPerTick: 10000
-  serverSendQueueLimitPerConnection: 10000
-  serverReceiveQueueLimitPerConnection: 10000
-  clientMaxMessageSize: 16384
-  clientMaxReceivesPerTick: 1000
-  clientSendQueueLimit: 10000
-  clientReceiveQueueLimit: 10000
 --- !u!1 &1906952439
 GameObject:
   m_ObjectHideFlags: 0
