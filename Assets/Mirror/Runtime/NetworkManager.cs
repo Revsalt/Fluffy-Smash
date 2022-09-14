@@ -131,6 +131,12 @@ namespace Mirror
         public NetworkManagerMode mode { get; private set; }
 
         // virtual so that inheriting classes' OnValidate() can call base.OnValidate() too
+
+        public void SetTransport(Transport tr)
+        {
+            transport = tr;
+        }
+
         public virtual void OnValidate()
         {
             // make sure someone doesn't accidentally add another NetworkManager

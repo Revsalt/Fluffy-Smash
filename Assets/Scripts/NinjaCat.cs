@@ -243,7 +243,7 @@ public class NinjaCat : PlayerController
     IEnumerator AttackSequence_tag()
     {
         originalgravity = gravity;
-        AudioSource audiosouce = null;
+        //AudioSource audiosouce = null;
         
         DisableInput(true);
         gravity = 0; ResetPlayerVelocity();

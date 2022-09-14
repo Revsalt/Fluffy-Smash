@@ -20,7 +20,6 @@ public class beetcatin : PlayerController
     RaycastHit hitpoint;
     public List<Bonder> Bonds = new List<Bonder>();
     public List<GameObject> StringPoints = new List<GameObject>();
-    [SerializeField] Material StringMat;
     [SerializeField] int StringHookCount = 12;
 
 
@@ -41,7 +40,6 @@ public class beetcatin : PlayerController
     [SerializeField] float lerpduration = 500f;
     [SerializeField] float ScaleMulti = 1f;
     [SerializeField] UnityEvent TagPing;
-    bool canattack;
 
     Animator animator;
     void Start()
@@ -65,17 +63,9 @@ public class beetcatin : PlayerController
                 if (!isGroundeed())
                 {
                     animator.SetTrigger("IsPlatform_Attack");
-                    GameObject TempBlock = Instantiate(MusicalNoteBlock, transform.position - Vector3.up + moveDirection * movementSpeed * 0.2f,Quaternion.identity, null);
-                    if (moveDirection == Vector3.zero)
-                    {
-                        TempBlock.transform.forward = playerModel.transform.forward;
-                    }
-                    else
-                    {
-                        TempBlock.transform.forward = moveDirection;
-                    }
-                    TempBlock.transform.localScale = new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
-                    Destroy(TempBlock, 5f);
+
+                    PlaceAirPlatform(transform.position, moveDirection, movementSpeed);
+                    CmdAirPlatform(GetComponent<NetworkIdentity>() , transform.position, moveDirection, movementSpeed);
                 }
                 ability0.End.Invoke();                
             }
@@ -86,90 +76,104 @@ public class beetcatin : PlayerController
         {
             ability = delegate
             {
-                if (StringHookCount >0)
+                StartCoroutine(HookSequence());
+
+                IEnumerator HookSequence()
                 {
-                    StartCoroutine(HookSequence());
-                    IEnumerator HookSequence()
-                    {
-                        StringHookCount--;
-                        Vector3 startpos = OutRayPos.position;
-                        Vector3 hitpoint_point = Vector3.zero;
-                        if (Physics.Raycast(OutRayPos.position, OutRayPos.forward, out hitpoint))
-                        {                         
-                            hitpoint_point = hitpoint.point;
-                        }
-                        else
-                        {
-                            ability1.End.Invoke();
-                            yield break;
-                        }
-                        animator.SetTrigger("IsThrowing");
-                        GameObject HookObj = Instantiate(Hook, OutRayPos.position, Quaternion.identity, null);
-                        HookObj.name = Random.Range(0, 12).ToString();
-                        Vector3 ThrowDirection = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
-                        for (float i = 0; Vector3.Distance(HookObj.transform.position, hitpoint_point) > 0; i += Time.deltaTime)
-                        {
-                            HookObj.transform.position = Bezier2(startpos, (startpos + hitpoint_point) / 2 + ThrowDirection * 2, hitpoint_point, i * 2f);
-                            if (Vector3.Distance(HookObj.transform.position, hitpoint_point) <= 0)
-                            {
-                                StringPoints.Add(HookObj);
-                                ChkNeighbors();
-                            }
-                            yield return null;
-                        }
+                    if (!(StringHookCount > 0) || !isLocalPlayer) {
                         ability1.End.Invoke();
-                        yield return null;
+                        yield break;
+                    };              
+
+                    StringHookCount--;
+                    Vector3 startpos = OutRayPos.position;
+                    Vector3 hitpoint_point = Vector3.zero;
+
+                    if (Physics.Raycast(OutRayPos.position, OutRayPos.forward, out hitpoint))
+                    {
+                        hitpoint_point = hitpoint.point;
                     }
-                }                             
+                    else
+                    {
+                        ability1.End.Invoke();
+                        yield break;
+                    }
+
+                    StartCoroutine(PlaceHook(hitpoint_point , startpos));
+                    CmdHookPlacePosition(GetComponent<NetworkIdentity>(), new Vector3[2] { hitpoint_point , startpos });
+                }
             },
             coolDown = 0.2f
             ,
             events = new UnityEvent[2] { OnStart, OnEnd }
-        };
-        TagLogic taglogic = GetComponent<TagLogic>();
+        };       
         ability_tag = new Ability()
         {
             ability = delegate
             {
+                if (!isLocalPlayer) { ability_tag.End.Invoke(); return; } // to stop the other clients from creating a mess (or keeping them from replication the event twice)
+
                 if (Onbeat)
                 {
                     HoloLv++;
                 }
-                else if(!Onbeat)
-                {
+                else
+                { 
                     HoloLv = 1;
                     animator.SetTrigger("FailedBeat");                   
                 }
+
                 if (HoloLv == 3)
                 {
-                    canattack = true;
-                }
-                if (HoloLv != 3 && canattack)
-                {
-                    StartCoroutine(AttackPause());
                     TagPing.Invoke();
                     HoloLv = 1;
-                    canattack = false;
                 }
+
                 animator.SetInteger("HoloLv_Attack", HoloLv);
                 StartCoroutine(HoloRing(HoloLv));
+
+                CmdStartTagAttack(GetComponent<NetworkIdentity>(), HoloLv);
+
                 ability_tag.End.Invoke();
             }
             ,coolDown = 0.2f
-            ,events = new UnityEvent[2] {taglogic.StartTag,taglogic.EndTag}
+            ,events = new UnityEvent[2] { GetComponent<TagLogic>().StartTag, GetComponent<TagLogic>().EndTag}
             
         };
     }
-    IEnumerator AttackPause()
+
+    new void Update()
     {
-        DisableInput(true);
-        DisableMovment(true);
-        animator.SetBool("AttackReady", true);
-        yield return new WaitForSeconds(3f);
-        DisableInput(false);
-        DisableMovment(false);
-        animator.SetBool("AttackReady", false);
+        base.Update();
+
+        if (!isLocalPlayer) return;
+
+        bool isRunning = moveDirection != Vector3.zero;
+        animator.SetBool("IsWalk", isRunning);
+        animator.SetBool("IsJump", !isGroundeed());
+        animator.SetFloat("runSpeed", movementSpeed / 7);
+        if (moveDirection != Vector3.zero)
+        {
+            playerModel.transform.forward = moveDirection;
+        }
+
+        HoloRingObj.transform.Rotate(Vector3.up * 50 * Time.deltaTime * HoloLv, Space.World);
+
+        if (movementSpeed > 7f)
+        {
+            movementSpeed -= Time.deltaTime;
+        }
+
+        if (Input.GetMouseButton(2) && !GetDisableInput())
+        {
+            for (int i = 0; i < StringPoints.Count; i++)
+            {
+                CmdHookRemoval(GetComponent<NetworkIdentity>(), i , transform.position);
+                RemoveAnyHooksInRange(i , transform.position);
+            }
+        }
     }
+
     IEnumerator HoloRing(int level)
     {
         if (level >= 2)
@@ -180,55 +184,13 @@ public class beetcatin : PlayerController
         {
             ScaleMulti = 1f;
         }
+
         for (float i = 0; i < lerpduration; i += Time.deltaTime)
         {
             HoloRingObj.transform.localScale = Vector3.Lerp(HoloRingObj.transform.localScale, Vector3.one * ScaleMulti, 5 * Time.deltaTime );
             yield return null;
         }      
         
-    }
-    // Update is called once per frame
-    new void Update()
-    {
-        base.Update();
-        //BeatCounter.text = (beat + "/4");
-        //Speed.text = (Mathf.RoundToInt(movementSpeed).ToString());
-        // Shots.text = StringHookCount.ToString();
-        // HoloLvText.text = HoloLv.ToString();
-        bool isRunning = moveDirection != Vector3.zero;
-        animator.SetBool("IsWalk", isRunning);
-        animator.SetBool("IsJump", !isGroundeed());
-        animator.SetFloat("runSpeed", movementSpeed / 7);
-        if (moveDirection != Vector3.zero)
-        {
-            playerModel.transform.forward = moveDirection;
-        }       
-        HoloRingObj.transform.Rotate(Vector3.up * 50 * Time.deltaTime * HoloLv, Space.World);
-        if (movementSpeed > 7f)
-        {
-            movementSpeed -= Time.deltaTime;
-        }
-        if (Input.GetMouseButton(2))
-        {
-            for (int i = 0; i < StringPoints.Count; i++)
-            {                
-                if (Vector3.Distance(StringPoints[i].transform.position,this.transform.position) < 2f)
-                {
-                    animator.SetTrigger("IsPickingUp");
-                    GameObject stringtemp = StringPoints[i];
-                    Bonder JamesBond =  GetBondOf(stringtemp);
-                    StringPoints.Remove(JamesBond.StartObj);
-                    StringPoints.Remove(JamesBond.EndObj);
-                    DestroyAccorodingly(stringtemp, JamesBond);
-                    if (JamesBond != null)
-                    {
-                        JamesBond.UpdateMesh();
-                    }                    
-                    StringHookCount += 2;                  
-                    return;
-                }
-            }
-        }
     }
     Bonder GetBondOf(GameObject haga)
     {
@@ -265,22 +227,16 @@ public class beetcatin : PlayerController
 
                     if (Physics.Raycast(item.transform.position, StringPoints[i].transform.position - item.transform.position, out RaycastHit hit) && item != StringPoints[i] && !_IsConnected(StringPoints[i]))
                     {
-
                         if (Vector3.Distance(hit.point, StringPoints[i].transform.position) < 0.5f)
                         {
                             Bonder Bond69 = new Bonder();
                             Bond69.StartObj = item;
                             Bond69.EndObj = StringPoints[i];
-                            Bond69.MeshMat = StringMat;
                             Bonds.Add(Bond69);
                             Bond69.UpdateMesh();
-
-                            // StringPoints.Remove(item);
-                            //  StringPoints.Remove(Bond69.EndObj);
                             return;
                         }
                     }
-
                 }
             }
 
@@ -355,6 +311,145 @@ public class beetcatin : PlayerController
             Bonds.Remove(bond);          
         }
     }
+
+    #region TagAttackReplication
+
+    [Command]
+    void CmdStartTagAttack(NetworkIdentity ntd , int i)
+    {
+        RpcStartTagAttack(ntd, i);
+    }
+
+    [ClientRpc]
+    void RpcStartTagAttack(NetworkIdentity ntd, int i)
+    {
+        if (ntd.isLocalPlayer) return;
+
+        StartCoroutine(HoloRing(i));
+
+    }
+
+    #endregion
+
+    #region HooksAbilityReplication
+
+    [Command]
+    void CmdHookPlacePosition(NetworkIdentity ntd, Vector3[] vectors)
+    {
+        RpcHookPlacePosition(ntd, vectors);
+    }
+
+    [ClientRpc]
+    void RpcHookPlacePosition(NetworkIdentity ntd, Vector3[] vectors)
+    {
+        if (ntd.isLocalPlayer) return;
+
+        StartCoroutine(PlaceHook(vectors[0], vectors[1]));
+    }
+
+    IEnumerator PlaceHook(Vector3 hitpoint_point , Vector3 startpos)
+    {
+
+        animator.SetTrigger("IsThrowing");
+        GameObject HookObj = Instantiate(Hook, OutRayPos.position, Quaternion.identity, null);
+        HookObj.name = Random.Range(0, 12).ToString();
+
+        Vector3 ThrowDirection = new Vector3(Random.Range(-1, 1), Random.Range(-1, 1), Random.Range(-1, 1));
+        for (float i = 0; Vector3.Distance(HookObj.transform.position, hitpoint_point) > 0; i += Time.deltaTime)
+        {
+            HookObj.transform.Rotate(i,i,i);
+            HookObj.transform.position = Bezier2(startpos, (startpos + hitpoint_point) / 2 + ThrowDirection * 2, hitpoint_point, i * 2f);
+            if (Vector3.Distance(HookObj.transform.position, hitpoint_point) <= 0)
+            {
+                StringPoints.Add(HookObj);
+                ChkNeighbors();
+            }
+            yield return null;
+        }
+
+        ability1.End.Invoke();
+        yield return null;
+    }
+
+    [Command]
+    void CmdHookRemoval(NetworkIdentity ntd ,int i , Vector3 myPos)
+    {
+        RpcHookRemoval(ntd , i , myPos);
+    }
+
+    [ClientRpc]
+    void RpcHookRemoval(NetworkIdentity ntd , int i , Vector3 myPos)
+    {
+        if (ntd.isLocalPlayer) return;
+
+        ntd.GetComponent<beetcatin>().RemoveAnyHooksInRange(i , myPos);
+    }
+
+    void RemoveAnyHooksInRange(int i , Vector3 myPos)
+    {
+        if (Vector3.Distance(StringPoints[i].transform.position, myPos) < 2f)
+        {
+            animator.SetTrigger("IsPickingUp");
+            GameObject stringtemp = StringPoints[i];
+            Bonder JamesBond = GetBondOf(stringtemp);
+
+            if (JamesBond != null)
+            {
+                StringPoints.Remove(JamesBond.StartObj);
+                StringPoints.Remove(JamesBond.EndObj);
+
+                DestroyAccorodingly(stringtemp, JamesBond);
+                if (JamesBond != null)
+                {
+                    JamesBond.UpdateMesh();
+                }
+                StringHookCount += 2;
+            }
+            else
+            {
+                StringPoints.Remove(stringtemp);
+                Destroy(stringtemp);
+                StringHookCount += 1;
+            }
+
+            return;
+        }
+    }
+
+    #endregion
+
+    #region AirPlatformsReplication
+
+    [Command]
+    void CmdAirPlatform(NetworkIdentity ntd, Vector3 PlatformPos , Vector3 _moveDirection, float _movementSpeed)
+    {
+        RpcAirPlatform(ntd, PlatformPos , _moveDirection , _movementSpeed);
+    }
+
+    [ClientRpc]
+    void RpcAirPlatform(NetworkIdentity ntd, Vector3 PlatformPos, Vector3 _moveDirection, float _movementSpeed)
+    {
+        if (ntd.isLocalPlayer) return;
+        ntd.GetComponent<beetcatin>().PlaceAirPlatform(PlatformPos , _moveDirection, _movementSpeed);
+    }
+
+    void PlaceAirPlatform(Vector3 pos ,Vector3 _moveDirection ,float _movementSpeed )
+    {
+        GameObject TempBlock = Instantiate(MusicalNoteBlock, pos - Vector3.up + _moveDirection * _movementSpeed * 0.2f, Quaternion.identity, null);
+        if (_moveDirection == Vector3.zero)
+        {
+            TempBlock.transform.forward = playerModel.transform.forward;
+        }
+        else
+        {
+            TempBlock.transform.forward = _moveDirection;
+        }
+        TempBlock.transform.GetComponent<MusicCatPlatFormManager>().UpdateCloudPlatform(_movementSpeed * 0.2f);
+        //new Vector3(TempBlock.transform.localScale.x * movementSpeed * 0.07f, TempBlock.transform.localScale.y, TempBlock.transform.localScale.z * movementSpeed * 0.2f);
+        Destroy(TempBlock, 2f);
+    }
+
+    #endregion
 }
 [System.Serializable]
 public class Bonder
@@ -362,7 +457,6 @@ public class Bonder
     public GameObject StartObj;
     public GameObject EndObj;
     public GameObject _Mesh;
-    public Material MeshMat;
     public bool Boostable = true;
     float cooldown = 5f;
     public bool IsConnected()
@@ -390,8 +484,16 @@ public class Bonder
         }      
         if (StartObj != null && EndObj != null)
         {
-           _Mesh = CreateMesh(StartObj.transform.position, StartObj.transform.position + Vector3.up * 2f, EndObj.transform.position, EndObj.transform.position + Vector3.up * 2f,MeshMat);
-        }       
+            //_Mesh = CreateMesh(StartObj.transform.position, StartObj.transform.position + Vector3.up * 2f, EndObj.transform.position, EndObj.transform.position + Vector3.up * 2f,MeshMat);
+            _Mesh = GameObject.Instantiate((GameObject)Resources.Load("strings") , (StartObj.transform.position + EndObj.transform.position) * 0.5f , Quaternion.LookRotation(StartObj.transform.position - EndObj.transform.position));
+            _Mesh.transform.localScale = new Vector3(1, 1, Vector3.Distance(StartObj.transform.position , EndObj.transform.position) / 2);
+            _Mesh.AddComponent<BoxCollider>();
+            _Mesh.GetComponent<BoxCollider>().isTrigger = true;
+            _Mesh.gameObject.tag = "String";
+
+            StartObj.transform.LookAt(_Mesh.transform);
+            EndObj.transform.LookAt(_Mesh.transform);
+        }
     }
     public IEnumerator BoostCooldown()
     {

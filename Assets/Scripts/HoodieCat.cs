@@ -82,7 +82,7 @@ public class HoodieCat : PlayerController
     bool canPickUp = true;
 
 
-    private void Update()
+    new void Update()
     {
         //Handling Ik
 

@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class SelectionScreen : MonoBehaviour
 {
+    private void Start()
+    {
+        gameObject.SetActive(SteamManager.Initialized);
+    }
+
     // Update is called once per frame
     void Update()
     {
