@@ -117,10 +117,12 @@ public class beetcatin : PlayerController
                             }
                             yield return null;
                         }
+                        Debug.Log("called");
                         ability1.End.Invoke();
                         yield return null;
                     }
-                }                             
+                }
+                ability1.End.Invoke();
             },
             coolDown = 0.2f
             ,
@@ -217,14 +219,23 @@ public class beetcatin : PlayerController
                     animator.SetTrigger("IsPickingUp");
                     GameObject stringtemp = StringPoints[i];
                     Bonder JamesBond =  GetBondOf(stringtemp);
-                    StringPoints.Remove(JamesBond.StartObj);
-                    StringPoints.Remove(JamesBond.EndObj);
-                    DestroyAccorodingly(stringtemp, JamesBond);
+                    if (JamesBond != null)
+                    {
+                        StringPoints.Remove(JamesBond.StartObj);
+                        StringPoints.Remove(JamesBond.EndObj);
+                        DestroyAccorodingly(stringtemp, JamesBond);
+                        StringHookCount += 2;
+                    }
+                    else
+                    {
+                        StringPoints.Remove(stringtemp);
+                        Destroy(stringtemp);
+                        StringHookCount += 1;
+                    }                                       
                     if (JamesBond != null)
                     {
                         JamesBond.UpdateMesh();
-                    }                    
-                    StringHookCount += 2;                  
+                    }                                                        
                     return;
                 }
             }
