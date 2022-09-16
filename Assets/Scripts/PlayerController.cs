@@ -25,7 +25,6 @@ public class PlayerController : NetworkBehaviour
     bool disableInput = false;
     float originalMovementSpeed = 0;
     float originalJumpHeight = 0;
-    float originalFOV;
     Vector3 groundNormal = Vector3.zero;
 
     [HideInInspector]public CinemachineVirtualCamera cineCamera;
@@ -86,7 +85,6 @@ public class PlayerController : NetworkBehaviour
             if (item.GetComponent<CinemachineVirtualCamera>())
             {
                 cineCamera = item.GetComponent<CinemachineVirtualCamera>();
-                originalFOV = cineCamera.m_Lens.FieldOfView;
                 return;
             }
         }
@@ -460,25 +458,29 @@ public class PlayerController : NetworkBehaviour
 
         foreach (var item in coroutines)
         {
-            StopCoroutine(item);
+            if (item != null)
+                StopCoroutine(item);
         }
 
         float result = 0;
 
-        if (b) { result = 30; if (!pointer) { pointer = (GameObject)Instantiate(Resources.Load("PointerCanvas")); }  }
-        else{ result = originalFOV; Destroy(pointer); }
+        if (b) { result = 1.7f; if (!pointer) { pointer = (GameObject)Instantiate(Resources.Load("PointerCanvas")); }  }
+        else{ result = 4.5f; Destroy(pointer); }
 
         coroutines.Add(StartCoroutine(SetFOV(result)));
 
 
         IEnumerator SetFOV(float i)
         {
-            for (float k = 0; Mathf.Round(cineCamera.m_Lens.FieldOfView) != i; k += Time.deltaTime)
+            CinemachineComponentBase componentBase = cineCamera.GetCinemachineComponent(CinemachineCore.Stage.Body);
+            if (componentBase is Cinemachine3rdPersonFollow)
             {
-                cineCamera.m_Lens.FieldOfView = Mathf.Lerp(cineCamera.m_Lens.FieldOfView, i, 7 * Time.deltaTime);
-                yield return null;
+                for (float k = 0; Mathf.Round((componentBase as Cinemachine3rdPersonFollow).CameraDistance) != i; k += Time.deltaTime)
+                {
+                    (componentBase as Cinemachine3rdPersonFollow).CameraDistance = Mathf.Lerp((componentBase as Cinemachine3rdPersonFollow).CameraDistance, i, 7 * Time.deltaTime); // your value
+                    yield return null;
+                }
             }
-
             yield break;
         }
 

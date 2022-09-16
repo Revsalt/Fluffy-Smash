@@ -20,6 +20,7 @@ public class DefaultCharacterEffects : MonoBehaviour
     PlayerController playerController;
     Animator animator;
     bool ranHarshFallFunction = false;
+    float DefaultFOV;
 
     private void Start()
     {
@@ -30,18 +31,22 @@ public class DefaultCharacterEffects : MonoBehaviour
             transform.position - Vector3.up, Quaternion.identity , transform)).GetComponent<ParticleSystem>();
 
         runAirEffect = ((GameObject)Instantiate(Resources.Load<GameObject>("DefaultEffects/CameraAnimeEffect"),
-            m_Camera.transform.position + m_Camera.transform.forward * 3f, Quaternion.identity 
+            m_Camera.transform.position + m_Camera.transform.forward * 3f, Quaternion.identity
             , m_Camera.transform)).GetComponent<ParticleSystem>();
+
+        DefaultFOV = playerController.cineCamera.m_Lens.FieldOfView;
     }
 
     void Update()
     {
         //ParticleSystem
         var mps = movementParticleSystem.main;
-        mps.simulationSpeed = Mathf.Lerp(animator.GetFloat("runSpeed"), playerController.characterController.velocity.sqrMagnitude * 1.5f, 5 * Time.deltaTime);
+        mps.simulationSpeed = GetCharacterMagintude(playerController , 1.5f);
+
+        playerController.cineCamera.m_Lens.FieldOfView = Mathf.Lerp(playerController.cineCamera.m_Lens.FieldOfView , DefaultFOV + GetCharacterMagintude(playerController , .7f) , 7 * Time.deltaTime);
 
         ParticlesSystemEnabled(movementParticleSystem, playerController.isGroundeed());
-        ParticlesSystemEnabled(runAirEffect, playerController.characterController.velocity.magnitude > 0.1f);
+        ParticlesSystemEnabled(runAirEffect, GetCharacterMagintude(playerController , 1) > 10f);
 
         var t = runAirEffect.main;
         t.simulationSpeed = playerController.movementSpeed * 0.4f;
@@ -84,6 +89,14 @@ public class DefaultCharacterEffects : MonoBehaviour
 
     }
 
+    public static float GetCharacterMagintude(PlayerController pc , float multiplier)
+    {
+        if (!pc.GetDisableMovement())
+            return pc.characterController.velocity.magnitude * multiplier;
+        else
+            return 0;
+
+    }
     public static void ParticlesSystemEnabled(ParticleSystem ps, bool b)
     {
         if (b)
