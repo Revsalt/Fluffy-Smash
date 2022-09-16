@@ -32,7 +32,7 @@ public class PlayerNetworkManager : NetworkBehaviour
         gameObject.name = "Player : " + nrp.username;
 
 
-        if (transform.position.y < -40)
+        if (transform.position.y < -2)
             GetComponent<PlayerController>().SetPlayerPosition(NetworkRoomManager.singleton.GetStartPosition().position);
     }
 }

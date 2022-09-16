@@ -12,7 +12,7 @@ namespace Mirror
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-room-player")]
     public class NetworkRoomPlayer : NetworkBehaviour
     {
-        public bool GetUserNameFromPlayer = false;
+        public bool GetUserNameFromPlayer = true;
 
         public string Username
         {

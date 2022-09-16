@@ -22,7 +22,6 @@ public class beetcatin : PlayerController
     public List<GameObject> StringPoints = new List<GameObject>();
     [SerializeField] int StringHookCount = 12;
 
-
     [Header("ObjRef & TransRef")]
 
     [SerializeField] GameObject MusicalNoteBlock;   
@@ -40,17 +39,14 @@ public class beetcatin : PlayerController
     [SerializeField] float lerpduration = 500f;
     [SerializeField] float ScaleMulti = 1f;
     [SerializeField] UnityEvent TagPing;
-
-    Animator animator;
     void Start()
     {
         StartCoroutine(StartMetronome());
-        animator = playerModel.GetComponentInChildren<Animator>();
         ability0 = new Ability()
         {
             ability = delegate
             {
-                if (Onbeat && movementSpeed <20)
+                if (Onbeat && movementSpeed < 20)
                 {
                     movementSpeed += 2.5f;
                 }
@@ -76,37 +72,34 @@ public class beetcatin : PlayerController
         {
             ability = delegate
             {
-                StartCoroutine(HookSequence());
-
-                IEnumerator HookSequence()
+                if (StringHookCount == 0 || !isLocalPlayer)
                 {
-                    if (!(StringHookCount > 0) || !isLocalPlayer) {
-                        ability1.End.Invoke();
-                        yield break;
-                    };              
-
-                    StringHookCount--;
-                    Vector3 startpos = OutRayPos.position;
-                    Vector3 hitpoint_point = Vector3.zero;
-
-                    if (Physics.Raycast(OutRayPos.position, OutRayPos.forward, out hitpoint))
-                    {
-                        hitpoint_point = hitpoint.point;
-                    }
-                    else
-                    {
-                        ability1.End.Invoke();
-                        yield break;
-                    }
-
-                    StartCoroutine(PlaceHook(hitpoint_point , startpos));
-                    CmdHookPlacePosition(GetComponent<NetworkIdentity>(), new Vector3[2] { hitpoint_point , startpos });
+                    ability1.End.Invoke();
+                    return;
                 }
+
+                Vector3 startpos = OutRayPos.position;
+                Vector3 hitpoint_point = Vector3.zero;
+
+                if (Physics.Raycast(OutRayPos.position, OutRayPos.forward, out hitpoint))
+                {
+                    hitpoint_point = hitpoint.point;
+                }
+                else
+                {
+                    ability1.End.Invoke();
+                    return;
+                }
+
+                StringHookCount--;
+                StartCoroutine(PlaceHook(hitpoint_point , startpos));
+                CmdHookPlacePosition(GetComponent<NetworkIdentity>(), new Vector3[2] { hitpoint_point, startpos });
+                
             },
             coolDown = 0.2f
             ,
             events = new UnityEvent[2] { OnStart, OnEnd }
-        };       
+        };
         ability_tag = new Ability()
         {
             ability = delegate
@@ -140,6 +133,11 @@ public class beetcatin : PlayerController
             ,events = new UnityEvent[2] { GetComponent<TagLogic>().StartTag, GetComponent<TagLogic>().EndTag}
             
         };
+
+        if (isLocalPlayer)
+        {
+            Instantiate(Resources.Load("PointerCanvas"));
+        }
     }
 
     new void Update()
@@ -152,6 +150,7 @@ public class beetcatin : PlayerController
         animator.SetBool("IsWalk", isRunning);
         animator.SetBool("IsJump", !isGroundeed());
         animator.SetFloat("runSpeed", movementSpeed / 7);
+
         if (moveDirection != Vector3.zero)
         {
             playerModel.transform.forward = moveDirection;

@@ -46,7 +46,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sceneId: 0
   serverOnly: 0
-  m_AssetId: 
+  visible: 0
+  m_AssetId: deae2134a1d77704b9c595efe69767dd
+  hasSpawned: 0
 --- !u!114 &114033720796874720
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -61,6 +63,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  GetUserNameFromPlayer: 1
   showRoomGUI: 1
+  username: 
+  Character: 0
+  ping: 
   readyToBegin: 0
   index: 0

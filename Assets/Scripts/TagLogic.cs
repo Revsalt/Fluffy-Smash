@@ -16,9 +16,6 @@ public class TagLogic : NetworkBehaviour
     [Header("InDeath")]
     public UnityEvent OnDeath;
     public UnityEvent OnRespawn;
-    [Header("DeathEffect")]
-    [SerializeField] Transform deathInstantiationParent;
-    [SerializeField] GameObject deathModel;
 
     PlayerController myPlayer;
 
@@ -46,10 +43,17 @@ public class TagLogic : NetworkBehaviour
                 {
                     Kill(player.GetComponent<NetworkIdentity>() , GetComponent<NetworkIdentity>());
                     CanAttack = false;
+
                     Instantiate(Resources.Load("DeathIcon"));
                     break;
-                }  
+                }
             }
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            Kill(GetComponent<NetworkIdentity>(), GetComponent<NetworkIdentity>());
+            Instantiate(Resources.Load("DeathIcon"));
         }
     }
 
@@ -57,6 +61,7 @@ public class TagLogic : NetworkBehaviour
     public void Kill(NetworkIdentity player , NetworkIdentity killedBY)
     {
         player.GetComponent<TagLogic>().isTagger = true;
+
         RpcKill(player , killedBY);
     }
 
@@ -65,34 +70,18 @@ public class TagLogic : NetworkBehaviour
     {
         nc.GetComponent<TagLogic>().OnDeath.Invoke();
         nc.GetComponent<CharacterController>().enabled = false;
+        nc.GetComponent<TagLogic>().Resapawn(4);
 
         if (nc.isLocalPlayer)
         {
-
             nc.GetComponent<PlayerController>().DisableInput(true);
-            nc.GetComponent<PlayerController>().folllowTarget = killedBy.transform;
-            nc.GetComponent<TagLogic>().Resapawn(4);
-        }
+            StartCoroutine(KillCamDelay());
 
-    }
-
-    public void SetParentNull(GameObject g)
-    {
-        g.transform.SetParent(null);
-    }
-    public void DisableChildrensMeshRenders(GameObject g)
-    {
-        foreach (var item in g.GetComponentsInChildren<SkinnedMeshRenderer>())
-        {
-            item.enabled = false;
-        }
-    }
-
-    public void EnableChildrensMeshRenders(GameObject g)
-    {
-        foreach (var item in g.GetComponentsInChildren<SkinnedMeshRenderer>())
-        {
-            item.enabled = true;
+            IEnumerator KillCamDelay()
+            {
+                yield return new WaitForSeconds(2);
+                nc.GetComponent<PlayerController>().folllowTarget = killedBy.transform;
+            }
         }
     }
 
@@ -115,13 +104,16 @@ public class TagLogic : NetworkBehaviour
             myPlayer.SetPlayerPosition(l[Random.Range(0,l.Length)].transform.position);
             myPlayer.DisableInput(false);
 
-            var r = (GameObject)Instantiate(deathModel , deathInstantiationParent.transform);
-            r.transform.localPosition = Vector3.zero;
-
             myPlayer.folllowTarget = transform;
 
             OnRespawn.Invoke();
         }
+    }
+
+    public void SpawnDeadModel(GameObject deadModel)
+    {
+        GameObject bodyPart = (GameObject)Instantiate(deadModel.gameObject, deadModel.transform.position , deadModel.transform.rotation , null);
+        bodyPart.SetActive(true);
     }
 
     private void OnDrawGizmos()

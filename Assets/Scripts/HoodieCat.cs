@@ -9,11 +9,6 @@ using UnityEngine.Animations.Rigging;
 
 public class HoodieCat : PlayerController
 {
-    [Header("hitGround")]
-    [SerializeField] UnityEvent HitGroundNormal;
-    [Header("inAir")]
-    [SerializeField] UnityEvent inAirStart;
-    [SerializeField] UnityEvent inAirEnd;
     [Header("inTeleport")]
     [SerializeField] UnityEvent StartTeleport;
     [SerializeField] UnityEvent EndTeleport;
@@ -22,17 +17,11 @@ public class HoodieCat : PlayerController
     [SerializeField] UnityEvent EndStun;
     [SerializeField] float stunRadius;
     [Header("Other")]
-    [SerializeField] CinemachineVirtualCamera zoomCamera;
-    [SerializeField] Transform pointerCastPosition , loliPopParent;
-    [SerializeField] GameObject pointer, LoliPop;
+    [SerializeField] Transform loliPopParent;
+    [SerializeField] GameObject LoliPop;
     [SerializeField] GameObject[] modelHidden, modelNormal;
-    [SerializeField] ParticleSystem movementParticleSystem;
-    [SerializeField] GameObject playerModelIkTarget;
-    [SerializeField] Rig rigWeight;
-    [SerializeField] GameObject lolipopText;
 
     bool canBringLoliPop = true;
-    Animator animator;
     float oldGravity;
 
     private void Start()
@@ -77,55 +66,9 @@ public class HoodieCat : PlayerController
         };
     }
 
-    float weight = 0;
-    bool ranLandFunction = false;
     bool canPickUp = true;
-
-
     new void Update()
     {
-        //Handling Ik
-
-        lolipopText.SetActive(!HasLoliPop());
-
-        if (playerModelIkTarget.transform.localPosition.z < -2)
-            weight = 1 + Mathf.RoundToInt(playerModelIkTarget.transform.localPosition.z);
-        else
-            weight = 1;
-
-        rigWeight.weight = weight;
-
-        #region OnLand
-        if (!isGroundeed())
-        {
-            inAirStart.Invoke();
-
-            if (!ranLandFunction)
-                StartCoroutine(Land());
-
-            IEnumerator Land()
-            {
-                ranLandFunction = true;
-
-                for (float i = 0; !isGroundeed(); i += Time.deltaTime)
-                {
-                    yield return null;
-                }
-
-                inAirEnd.Invoke();
-                HitGroundNormal.Invoke();
-                ShakeCamera(1, .2f);
-
-                ranLandFunction = false;
-            }
-        }
-        #endregion
-
-        var mps = movementParticleSystem.emission;
-        mps.rateOverDistance = Mathf.Lerp(mps.rateOverDistance.constant, movementSpeed / 1.2f, 5 * Time.deltaTime);
-
-        ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
-
         if (!isLocalPlayer)
             return;
 
@@ -167,28 +110,6 @@ public class HoodieCat : PlayerController
                 PickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3), GetComponent<NetworkIdentity>());
 
             }
-        }
-
-        //if (!HasLoliPop() && !loliPopTime)
-        //{
-        //    loliPopTime = true;
-        //    StartCoroutine(_LoliPopTime());
-        //    IEnumerator _LoliPopTime()
-        //    {
-        //        for (float i = 0; !HasLoliPop(); i += Time.deltaTime)
-        //        {
-        //            movementSpeed = Mathf.Clamp(movementSpeed - i, 2 , 20);               
-        //            yield return null;
-        //        }
-
-        //        loliPopTime = false;
-        //    }
-        //}
-
-        if (Camera.main)
-        {
-            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
-            playerModelIkTarget.transform.position = pos;
         }
     }
 
@@ -300,16 +221,6 @@ public class HoodieCat : PlayerController
 
     #endregion
 
-    public void ZoomCamera(bool b)
-    {
-        if (b)
-            zoomCamera.Priority = 2;
-        else
-            zoomCamera.Priority = 0;
-
-        pointer.SetActive(b);
-    }
-
     bool forceSmashLand = false;
 
     IEnumerator AttackSquence0()
@@ -321,7 +232,7 @@ public class HoodieCat : PlayerController
             yield break;
         }
 
-        playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(pointerCastPosition.transform.forward.x, 0, pointerCastPosition.transform.forward.z));
+        playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z));
         DisableInput(true);
         animator.SetBool("isAttackJump", true);
 
@@ -332,11 +243,11 @@ public class HoodieCat : PlayerController
         AudioManager.instance.Play("HoodieCatOffTheGround", transform.position , null);
         AddImpact(Vector3.up, 100, false);
         gravity = 0.1f;
-        ZoomCamera(true);
+        ZoomIn(true);
 
         for (float i = 0; i < 1.5f; i += Time.deltaTime)
         {
-            playerModel.transform.LookAt(playerModel.transform.position + pointerCastPosition.transform.forward * 10);
+            playerModel.transform.LookAt(playerModel.transform.position + cineCamera.transform.forward * 10);
 
             if (isLocalPlayer && Input.GetMouseButtonDown(0)) {CmdForceStartSmashLand(GetComponent<NetworkIdentity>()); break;}
             if (!isLocalPlayer && forceSmashLand) { forceSmashLand = false; break; }
@@ -346,10 +257,10 @@ public class HoodieCat : PlayerController
 
         GetComponent<TagLogic>().SetCanAttack(true);
 
-        playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(pointerCastPosition.transform.forward.x, 0, pointerCastPosition.transform.forward.z));
-        ZoomCamera(false);
+        playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z));
+        ZoomIn(false);
         gravity = oldGravity;
-        AddImpact(pointerCastPosition.transform.forward, 500, false);
+        AddImpact(cineCamera.transform.forward, 500, false);
 
         for (float i = 0; !isGroundeed(); i += Time.deltaTime)
         {
@@ -397,7 +308,7 @@ public class HoodieCat : PlayerController
         RaycastHit hit = new RaycastHit();
         Vector3 lastHitNormal = Vector3.zero;
 
-        ZoomCamera(true);
+        ZoomIn(true);
         for (float i = 0; !Input.GetMouseButtonDown(0); i += Time.deltaTime)
         {
             if (Input.GetMouseButtonUp(1))
@@ -407,11 +318,11 @@ public class HoodieCat : PlayerController
                 break;
             }
 
-            Physics.Raycast(pointerCastPosition.position, pointerCastPosition.transform.forward, out hit, 40, layerMask);
+            Physics.Raycast(cineCamera.transform.position, cineCamera.transform.forward, out hit, 40, layerMask);
             if (hit.collider)
             {
                 CrossPointer.transform.position = hit.point;
-                CrossPointer.transform.rotation = Quaternion.LookRotation(pointerCastPosition.transform.forward);
+                CrossPointer.transform.rotation = Quaternion.LookRotation(cineCamera.transform.forward);
 
                 CrossPointer.SetActive(true);
                 lastHitNormal = hit.normal;
@@ -422,14 +333,14 @@ public class HoodieCat : PlayerController
             yield return null;
 
         }
-        ZoomCamera(false);
+        ZoomIn(false);
 
         if (lastHitNormal != Vector3.zero && CrossPointer.activeSelf)
         {
             DisableInput(true);
             DisableMovment(true);
 
-            playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(pointerCastPosition.transform.forward.x, 0, pointerCastPosition.transform.forward.z));
+            playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z));
             animator.SetBool("isThrowLoliPop", true);
             CmdPlayAudio(transform.position);
             yield return new WaitForSeconds(0.2f);

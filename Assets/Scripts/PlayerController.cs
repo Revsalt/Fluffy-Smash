@@ -25,9 +25,11 @@ public class PlayerController : NetworkBehaviour
     bool disableInput = false;
     float originalMovementSpeed = 0;
     float originalJumpHeight = 0;
+    float originalFOV;
     Vector3 groundNormal = Vector3.zero;
 
-    CinemachineVirtualCamera cineCamera;
+    [HideInInspector]public CinemachineVirtualCamera cineCamera;
+    [HideInInspector]public Animator animator;
 
     //events
     public delegate void Jump();
@@ -69,6 +71,7 @@ public class PlayerController : NetworkBehaviour
         //platformMovingChild.transform.SetParent(transform);
         //platformMovingChild.transform.position = transform.position;
 
+        animator = playerModel.GetComponentInChildren<Animator>();
         folllowTarget = transform;
         originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
@@ -83,6 +86,7 @@ public class PlayerController : NetworkBehaviour
             if (item.GetComponent<CinemachineVirtualCamera>())
             {
                 cineCamera = item.GetComponent<CinemachineVirtualCamera>();
+                originalFOV = cineCamera.m_Lens.FieldOfView;
                 return;
             }
         }
@@ -446,6 +450,38 @@ public class PlayerController : NetworkBehaviour
         yield return new WaitForSeconds(duration);
         HasCoolUp = false;
         CoolDownReducer = 1f;
+    }
+
+    List<Coroutine> coroutines = new List<Coroutine>();
+    GameObject pointer = null;
+    public void ZoomIn(bool b)
+    {
+        if (!isLocalPlayer) return;
+
+        foreach (var item in coroutines)
+        {
+            StopCoroutine(item);
+        }
+
+        float result = 0;
+
+        if (b) { result = 30; if (!pointer) { pointer = (GameObject)Instantiate(Resources.Load("PointerCanvas")); }  }
+        else{ result = originalFOV; Destroy(pointer); }
+
+        coroutines.Add(StartCoroutine(SetFOV(result)));
+
+
+        IEnumerator SetFOV(float i)
+        {
+            for (float k = 0; Mathf.Round(cineCamera.m_Lens.FieldOfView) != i; k += Time.deltaTime)
+            {
+                cineCamera.m_Lens.FieldOfView = Mathf.Lerp(cineCamera.m_Lens.FieldOfView, i, 7 * Time.deltaTime);
+                yield return null;
+            }
+
+            yield break;
+        }
+
     }
 }
 

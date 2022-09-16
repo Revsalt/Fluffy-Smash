@@ -10,14 +10,7 @@ using Mirror;
 public class NinjaCat : PlayerController
 {
     [Header("ParticleSystems")]
-    [SerializeField] ParticleSystem movementParticleSystem;
     [SerializeField] ParticleSystem chargeParticleSystem;
-    [Header("hitGround")]
-    [SerializeField] UnityEvent HitGroundNormal;
-    [SerializeField] UnityEvent HitGroundHarsh;
-    [Header("inAir")]
-    [SerializeField] UnityEvent inAirStart;
-    [SerializeField] UnityEvent inAirEnd;
     [Header("inDash")]
     [SerializeField] UnityEvent inDashStart;
     [SerializeField] UnityEvent inDashEnd;
@@ -25,17 +18,12 @@ public class NinjaCat : PlayerController
     [SerializeField] Vector3 wallOffset;
     [SerializeField] float wallJumpForce = 80;
     [SerializeField] float dashForce = 80;
-    [SerializeField] GameObject playerModelIkTarget;
-    [SerializeField] Rig rigWeight;
     [SerializeField] float StandDuration;
     [SerializeField] float distanceduration;
     Vector3 wallDirection = Vector3.zero;
-    Animator animator;
 
     void Start()
     {
-        animator = playerModel.GetComponentInChildren<Animator>();
-
         movementSpeed = GetOriginalSpeeed() * 2f;
 
         onJump += delegate {
@@ -106,58 +94,10 @@ public class NinjaCat : PlayerController
             abilityName = "SakuraBreeze"
         };
     }
-    float weight = 0;
-    bool ranHarshFallFunction = false;
+
     new void Update()
     {
-        //Handling Ik
-
-        if (playerModelIkTarget.transform.localPosition.z < 0)
-            weight = 7 + Mathf.RoundToInt(playerModelIkTarget.transform.localPosition.z);
-        else
-            weight = 1;
-
-        rigWeight.weight = weight;
-
-        //ParticleSystem
-
-        var mps = movementParticleSystem.main;
-        mps.simulationSpeed = Mathf.Lerp(animator.GetFloat("runSpeed"), movementSpeed / 8, 5 * Time.deltaTime);
-
-        ParticlesSystemEnabled(movementParticleSystem, isGroundeed());
-
-        if (!isGroundeed())
-        {
-            inAirStart.Invoke();
-
-            if (!ranHarshFallFunction)
-                StartCoroutine(HarshFall());
-
-            IEnumerator HarshFall()
-            {
-                bool harshFall = false;
-                ranHarshFallFunction = true;
-
-                for (float i = 0; !isGroundeed(); i += Time.deltaTime)
-                {
-                    if (i > 1)
-                        harshFall = true;
-                    yield return null;
-                }
-
-                inAirEnd.Invoke();
-                HitGroundNormal.Invoke();
-                ShakeCamera(1, .2f);
-                if (harshFall)
-                {
-                    HitGroundHarsh.Invoke();
-                    AddImpact(playerModel.transform.forward, 50, true);
-                }
-
-                ranHarshFallFunction = false;
-            }
-        }
-
+        
         if (!isLocalPlayer)
             return;
 
@@ -200,18 +140,17 @@ public class NinjaCat : PlayerController
             wallDirection = Vector3.zero;
         }
 
-        if (Camera.main)
-        {
-            Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
-            playerModelIkTarget.transform.position = pos;
-        }
-
         if (GetDisableInput()) return;
 
         if (wallDirection == Vector3.zero)
             playerModel.transform.LookAt(playerModel.transform.position + moveDirection);
         else
             playerModel.transform.localRotation = Quaternion.identity;
+    }
+
+    public void RollOnHarshFall()
+    {
+        AddImpact(playerModel.transform.forward, 50, true);
     }
 
     public override void OnControllerColliderHit(ControllerColliderHit hit)
@@ -253,7 +192,7 @@ public class NinjaCat : PlayerController
         for (float i = 0; Input.GetKey(KeyCode.Mouse0) && i < 1f; i += Time.deltaTime)
         {
             //audiosouce = AudioManager.instance.Play("SwordWindUp", transform.position, transform);
-            playerModel.transform.LookAt(playerModelIkTarget.transform.position);
+            playerModel.transform.LookAt(cineCamera.transform.position + cineCamera.transform.forward * 10);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             DistanceDuration = i * 0.1f;
@@ -283,20 +222,6 @@ public class NinjaCat : PlayerController
         GetComponent<TagLogic>().SetCanAttack(false);
 
         ability_tag.End.Invoke();
-    }
-
-    void ParticlesSystemEnabled(ParticleSystem ps , bool b)
-    {
-        if (b)
-        {
-            if (!ps.isPlaying)
-                ps.Play();
-        }
-        else
-        {
-            if (ps.isPlaying)
-                ps.Stop();
-        }
     }
 
     void HidePlayerModel(bool visible)

@@ -39,8 +39,8 @@ namespace Mirror.Examples.NetworkRoom
 
 
         public void Update()
-        {
-            if(SteamManager.Initialized)
+        {          
+            if(!NetworkRoomManager.singleton.GetComponent<NetworkManagerHUD>())
             {
                 GetUserNameFromPlayer = false;
                 Username = SteamFriends.GetPersonaName();
