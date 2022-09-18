@@ -11941,6 +11941,7 @@ MonoBehaviour:
   - {fileID: 555757707498637005, guid: 2f93ca67ed60b2544920f6a4cc384e73, type: 3}
   - {fileID: 8206218320700091574, guid: d623042aa73b8f840950ef026100f45c, type: 3}
   - {fileID: 5574915866878635368, guid: 114fc4bfe6faf2b43be0bc422e35b9fa, type: 3}
+  - {fileID: 3814039662413454323, guid: 84cece894fecdf841b308940b3a5c380, type: 3}
   showRoomGUI: 1
   minPlayers: 1
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
@@ -11954,6 +11955,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
   - {fileID: 11400000, guid: 0852f0cec818ab740abb5a0fb0b7920a, type: 2}
   - {fileID: 11400000, guid: ec0fe7a38730f2648b39c0f080e4a1bd, type: 2}
+  - {fileID: 11400000, guid: c33f97e5bc3bfb545b59383f37ac5927, type: 2}
   GameScenes:
   - Assets/Scenes/Rings level.unity
 --- !u!4 &1763280529

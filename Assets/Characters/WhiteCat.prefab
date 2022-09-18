@@ -121,6 +121,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3814039662413454330}
   - component: {fileID: 3814039662413454326}
+  - component: {fileID: -6438638438926194436}
   - component: {fileID: 3295582590447461010}
   - component: {fileID: 4684191966329288854}
   - component: {fileID: 565172520331455226}
@@ -169,6 +170,40 @@ CharacterController:
   m_SkinWidth: 0.008
   m_MinMoveDistance: 0.01
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &-6438638438926194436
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3814039662413454323}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cb26b497e5818e42940e573116afd53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  characterController: {fileID: 3814039662413454326}
+  folllowTarget: {fileID: 0}
+  cineCamera: {fileID: 0}
+  animator: {fileID: 0}
+  playerModel: {fileID: 4235120042563476193}
+  piviot_M: {fileID: 3814039662847010326}
+  sensitvity: 300
+  movementSpeed: 7
+  slopeForce: 12
+  slopeForceRayLength: 2
+  slideFriction: -0.4
+  jumpHeight: 5
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 51
+  gravity: -9.8
+  Cameras:
+  - {fileID: 3814039662561590340}
+  - {fileID: 3814039664436481325}
+  moveDirection: {x: 0, y: 0, z: 0}
 --- !u!114 &3295582590447461010
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -220,7 +255,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3814039662413454323}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: caa313bb2e406e94897111992f1863de, type: 3}
   m_Name: 

@@ -9,7 +9,7 @@ using UnityEditor.Build;
 using UnityEditor.Build.Reporting;
 
 [CustomEditor(typeof(NetworkRoomManagerExt))]
-public class SwitchTransports : Editor
+public class SwitchTransports : NetworkManagerEditor
 {
     public static SwitchTransports instace;
     NetworkRoomManagerExt nrme= null; 
@@ -18,6 +18,7 @@ public class SwitchTransports : Editor
 
     public override void OnInspectorGUI() 
     {
+
         instace = this;
 
         EditorGUILayout.LabelField("Switch Transports");
@@ -41,7 +42,7 @@ public class SwitchTransports : Editor
             nrme.SetTransport(nrme.GetComponent<FizzySteamworks>());
         }
 
-        DrawDefaultInspector();
+        base.OnInspectorGUI();
     }
 
     public void EnableSteam()
