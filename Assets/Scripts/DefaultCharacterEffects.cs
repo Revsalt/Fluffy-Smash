@@ -40,9 +40,6 @@ public class DefaultCharacterEffects : MonoBehaviour
     void Update()
     {
         //ParticleSystem
-        var mps = movementParticleSystem.main;
-        mps.simulationSpeed = GetCharacterMagintude(playerController , 1.5f);
-
         playerController.cineCamera.m_Lens.FieldOfView = Mathf.Lerp(playerController.cineCamera.m_Lens.FieldOfView , DefaultFOV + GetCharacterMagintude(playerController , .7f) , 7 * Time.deltaTime);
 
         ParticlesSystemEnabled(movementParticleSystem, playerController.isGroundeed());
