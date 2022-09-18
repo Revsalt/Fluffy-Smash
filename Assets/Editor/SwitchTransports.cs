@@ -6,7 +6,6 @@ using Mirror;
 using Mirror.Examples.NetworkRoom;
 using Mirror.FizzySteam;
 using UnityEditor.Build;
-using static Data.Util.KeywordDependentCollection;
 using UnityEditor.Build.Reporting;
 
 [CustomEditor(typeof(NetworkRoomManagerExt))]
@@ -17,7 +16,7 @@ public class SwitchTransports : Editor
 
     bool isSteamTransport = false;
 
-    public override void OnInspectorGUI()
+    public override void OnInspectorGUI() 
     {
         instace = this;
 

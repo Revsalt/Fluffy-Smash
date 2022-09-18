@@ -28,10 +28,6 @@ public class beetcatin : PlayerController
     [SerializeField] Transform OutRayPos;
     [SerializeField] GameObject Hook;
 
-    [Header("Other")]
-
-    [SerializeField] UnityEvent OnStart, OnEnd;
-
     [Header("RingHolo")]
 
     int HoloLv = 1;
@@ -66,7 +62,7 @@ public class beetcatin : PlayerController
                 ability0.End.Invoke();                
             }
             , coolDown = 0.2f
-            ,events = new UnityEvent[2] { OnStart, OnEnd }
+            ,events = new UnityEvent[2] { new UnityEvent() , new UnityEvent() }
         };
         ability1 = new Ability()
         {
@@ -98,7 +94,7 @@ public class beetcatin : PlayerController
             },
             coolDown = 0.2f
             ,
-            events = new UnityEvent[2] { OnStart, OnEnd }
+            events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() }
         };
         ability_tag = new Ability()
         {

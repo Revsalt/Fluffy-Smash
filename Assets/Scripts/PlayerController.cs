@@ -3,9 +3,6 @@ using Mirror;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-//using UnityEditor.Experimental.GraphView;
-//using UnityEditor.Experimental.GraphView;
-//using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityStandardAssets.Effects;
@@ -412,15 +409,19 @@ public class PlayerController : NetworkBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
+        if (!isLocalPlayer) return;
+
         if (other.tag == "PowerUp")
         {           
             BasePowerUp OtherPowerup = other.GetComponent<PowerUp>().GetPowerUp();
             switch (OtherPowerup.PowerupEffect)
             {
-                case BasePowerUp.effect.Speed:if (HasSpeedUp == false) { StartCoroutine(SpeedUp(OtherPowerup.EffectDuration)); Destroy(other.gameObject); } break;
-                case BasePowerUp.effect.Jump:if (HasJumpUp == false) { StartCoroutine(JumpUp(OtherPowerup.EffectDuration)); Destroy(other.gameObject); } break;
-                case BasePowerUp.effect.Cooldown: if (HasCoolUp == false) { StartCoroutine(CoolDownUp(OtherPowerup.EffectDuration)); Destroy(other.gameObject); } break;
-            }            
+                case BasePowerUp.effect.Speed:if (HasSpeedUp == false) { StartCoroutine(SpeedUp(OtherPowerup.EffectDuration)); } break;
+                case BasePowerUp.effect.Jump:if (HasJumpUp == false) { StartCoroutine(JumpUp(OtherPowerup.EffectDuration)); } break;
+                case BasePowerUp.effect.Cooldown: if (HasCoolUp == false) { StartCoroutine(CoolDownUp(OtherPowerup.EffectDuration));} break;
+            }
+
+            other.GetComponent<PowerUp>().NetworkDestroy();
         }
     }
     private IEnumerator SpeedUp(float duration)

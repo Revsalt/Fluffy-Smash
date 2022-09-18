@@ -39,8 +39,10 @@ public class CharacterSelect : NetworkBehaviour
         }
     }
 
+
     public override void OnStartClient()
     {
+       
         if (characterPreviewParent.childCount == 0)
         {
             foreach (var character in Room.characters)
@@ -58,6 +60,7 @@ public class CharacterSelect : NetworkBehaviour
         characterNameText.text = Room.characters[currentCharacterIndex].CharacterName;
 
         characterSelectDisplay.SetActive(true);
+        
 
         Select();
     }

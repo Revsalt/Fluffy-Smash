@@ -210,7 +210,7 @@ public class NinjaCat : PlayerController
         GetComponent<TagLogic>().SetCanAttack(true);
 
         yield return new WaitForSeconds(DistanceDuration);
-        AudioManager.instance.Play("SwordSlash", transform.position, transform);
+        AudioManager.instance.Play("NinjaCatSwordSlash", transform.position, transform);
         HidePlayerModel(true);
         ResetPlayerVelocity();
         AddImpact(playerModel.transform.forward, 70, false);
