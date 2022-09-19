@@ -32,9 +32,8 @@ namespace Mirror
         [Tooltip("This flag controls whether the default UI is shown for the room player")]
         public bool showRoomGUI = true;
 
-        [SyncVar] public string username = "";
         [SyncVar] public int Character = 0;
-
+        [SyncVar] public string username = "";
         [SyncVar] public string ping = "";
 
         [Header("Diagnostics")]
@@ -211,6 +210,12 @@ namespace Mirror
         void CmdSendUsername(GameObject roomPlayer , string username)
         {
             roomPlayer.GetComponent<NetworkRoomPlayer>().username = username;
+        }
+
+        [Command(requiresAuthority = false)]
+        public void CmdSendCharacterIndex(GameObject roomPlayer, int characterindex)
+        {
+            roomPlayer.GetComponent<NetworkRoomPlayer>().Character = characterindex;
         }
 
         void DrawPlayerReadyButton()

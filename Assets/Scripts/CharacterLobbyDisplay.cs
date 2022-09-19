@@ -4,10 +4,11 @@ using UnityEngine;
 using Mirror;
 using Mirror.Examples.NetworkRoom;
 using System.Linq;
+using System;
 
 public class CharacterLobbyDisplay : NetworkBehaviour
 {
-    [SerializeField] List<GameObject> characterPreviews = new List<GameObject>();
+    [SerializeField] List<RoomPlayerInfo> characterPreviews = new List<RoomPlayerInfo>();
 
     private NetworkRoomManagerExt room;
     private NetworkRoomManagerExt Room
@@ -33,17 +34,51 @@ public class CharacterLobbyDisplay : NetworkBehaviour
     {
         foreach (var item in characterPreviews)
         {
-            Destroy(item);
+            Destroy(item.gameObject);
         }
-        characterPreviews = new List<GameObject>();
+        characterPreviews = new List<RoomPlayerInfo>();
 
         var allPlayers = Room.roomSlots;
 
         for (int i = 0; i < allPlayers.Count; i++)
         {
-            GameObject p = Instantiate(Room.characters[allPlayers[i].GetComponent<NetworkRoomPlayer>().Character].CharacterPreviewPrefab);
+            GameObject p = new GameObject(allPlayers[i].netId.ToString());
+
             p.transform.position = new Vector3(allPlayers.Count - (i+1), 0, -i);
-            characterPreviews.Add(p);
+
+            RoomPlayerInfo rpi = p.AddComponent<RoomPlayerInfo>();
+            rpi.nrpe = Room.roomSlots[i].GetComponent<NetworkRoomPlayerExt>();
+
+            characterPreviews.Add(rpi);
         }
+    }
+}
+
+[Serializable]
+class RoomPlayerInfo : MonoBehaviour
+{
+    private NetworkRoomManagerExt room;
+    private NetworkRoomManagerExt Room
+    {
+        get
+        {
+            if (room != null) { return room; }
+            return room = NetworkManager.singleton as NetworkRoomManagerExt;
+        }
+    }
+
+    public NetworkRoomPlayerExt nrpe;
+
+    int oldindex = -1;
+    GameObject model = null;
+    private void Update()
+    {
+        if (oldindex != nrpe.Character || !model)
+        {
+            if (model) Destroy(model);
+            model = Instantiate(Room.characters[nrpe.Character].CharacterPreviewPrefab , transform.position , Quaternion.identity , transform);
+            oldindex = nrpe.Character;
+        }
+
     }
 }
