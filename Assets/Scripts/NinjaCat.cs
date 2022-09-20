@@ -182,16 +182,17 @@ public class NinjaCat : PlayerController
     IEnumerator AttackSequence_tag()
     {
         originalgravity = gravity;
-        //AudioSource audiosouce = null;
         
         DisableInput(true);
         gravity = 0; ResetPlayerVelocity();
         animator.SetBool("isPersonGrab" , true);
         chargeParticleSystem.Play();
+
+        ZoomIn(true);
+        AudioManager.instance.Play("NinjaCatSwordWhindUp", transform.position, null);
         float DistanceDuration = 0.1f;
-        for (float i = 0; Input.GetKey(KeyCode.Mouse0) && i < 1f; i += Time.deltaTime)
+        for (float i = 0; Input.GetMouseButton(0) && i < 1f; i += Time.deltaTime)
         {
-            //audiosouce = AudioManager.instance.Play("SwordWindUp", transform.position, transform);
             playerModel.transform.LookAt(cineCamera.transform.position + cineCamera.transform.forward * 10);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
@@ -199,7 +200,32 @@ public class NinjaCat : PlayerController
             yield return null;
         }
 
-        //audiosouce.Stop();        
+        ZoomIn(false);
+
+        if (isLocalPlayer)
+        {
+            CmdSendChargeDuration(DistanceDuration);
+            StartCoroutine(Dash(DistanceDuration));
+        }
+    }
+
+    #region DashReplication
+
+    [Command]
+    void CmdSendChargeDuration(float distanceDuration , NetworkConnectionToClient sender = null)
+    {
+        RpcSendChargeDuration(distanceDuration, sender.identity);
+    }
+
+    [ClientRpc]
+    void RpcSendChargeDuration(float distanceDuration , NetworkIdentity ntd)
+    {
+        if (!ntd.isLocalPlayer)
+            ntd.GetComponent<NinjaCat>().StartCoroutine(Dash(distanceDuration));
+    }
+
+    IEnumerator Dash(float duration)
+    {
         chargeParticleSystem.Stop();
         chargeParticleSystem.Clear();
 
@@ -209,7 +235,7 @@ public class NinjaCat : PlayerController
 
         GetComponent<TagLogic>().SetCanAttack(true);
 
-        yield return new WaitForSeconds(DistanceDuration);
+        yield return new WaitForSeconds(duration);
         AudioManager.instance.Play("NinjaCatSwordSlash", transform.position, transform);
         HidePlayerModel(true);
         ResetPlayerVelocity();
@@ -223,6 +249,8 @@ public class NinjaCat : PlayerController
 
         ability_tag.End.Invoke();
     }
+
+    #endregion
 
     void HidePlayerModel(bool visible)
     {

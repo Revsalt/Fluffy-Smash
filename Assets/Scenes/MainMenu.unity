@@ -5458,7 +5458,7 @@ MonoBehaviour:
     source: {fileID: 0}
   - name: NinjaCatSwordSlash
     clips:
-    - {fileID: 8300000, guid: f9d65e8efdb3cd740834b9605c90ad73, type: 3}
+    - {fileID: 8300000, guid: 5f173035342befc4e9b381abb0f23188, type: 3}
     volume: 0.514
     pitch: 1
     maxDistance: 15.23
@@ -5504,6 +5504,15 @@ MonoBehaviour:
   - name: BumpPieceSound
     clips:
     - {fileID: 8300000, guid: b8c54fd3790e33a419ea5c46edfb98aa, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: NinjaCatSwordWhindUp
+    clips:
+    - {fileID: 8300000, guid: 6d740c274f67f3a46ace3b9bd72c61c1, type: 3}
     volume: 0.691
     pitch: 1
     maxDistance: 13.8
