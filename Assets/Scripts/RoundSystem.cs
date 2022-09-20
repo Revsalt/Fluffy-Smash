@@ -30,6 +30,11 @@ public class RoundSystem : NetworkBehaviour
         animator.enabled = false;
     }
 
+    public void PlaySound(string s)
+    {
+        AudioManager.instance.Play2D(s);
+    }
+
     #region Server
 
     public override void OnStartServer()

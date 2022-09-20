@@ -5519,6 +5519,42 @@ MonoBehaviour:
     randompitch: 0
     loop: 0
     source: {fileID: 0}
+  - name: CountDown1
+    clips:
+    - {fileID: 8300000, guid: 4961838ddfb3eda42b195e3a15b69d41, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 10
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: CountDown2
+    clips:
+    - {fileID: 8300000, guid: 4961838ddfb3eda42b195e3a15b69d41, type: 3}
+    volume: 0.691
+    pitch: 1.2
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: CountDown3
+    clips:
+    - {fileID: 8300000, guid: 4961838ddfb3eda42b195e3a15b69d41, type: 3}
+    volume: 0.691
+    pitch: 1.5
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: StartRound
+    clips:
+    - {fileID: 8300000, guid: 43e297c7ca688474f817ddaa4c824af7, type: 3}
+    volume: 0.728
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
 --- !u!4 &474417312
 Transform:
   m_ObjectHideFlags: 0
