@@ -35,23 +35,25 @@ public class CharacterSelect : NetworkBehaviour
         }
     }
 
-
-    public override void OnStartClient()
-    {
-
-        Select();
-    }
-
     public override void OnStopClient()
     {
         base.OnStopClient();
-
         characterSelectDisplay.SetActive(false);
     }
 
     void Select()
     {
-        Room.roomSlots[Room.clientIndex].CmdSendCharacterIndex(Room.roomSlots[Room.clientIndex].gameObject , currentCharacterIndex);
+        NetworkRoomPlayer roomplayer = null;
+
+        foreach (var item in Room.roomSlots)
+        {
+            if (item.netIdentity.isLocalPlayer)
+            {
+                roomplayer = item;
+            }
+        }
+
+        roomplayer.CmdSendCharacterIndex(roomplayer.gameObject , currentCharacterIndex);
     }
 
     public void Right()

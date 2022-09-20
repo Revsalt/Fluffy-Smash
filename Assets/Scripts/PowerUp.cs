@@ -43,5 +43,6 @@ public class PowerUp : NetworkBehaviour
     public void Update()
     {
         transform.position = transform.position + new Vector3(0, (Mathf.Sin(Time.time * 5) / 2) * Time.deltaTime, 0);
+        transform.Rotate(0, 90 * Time.deltaTime, 0);
     }
 }
