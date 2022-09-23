@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 4584263007708994832}
   - component: {fileID: 6504377422870351899}
   - component: {fileID: 6504377422870351900}
+  - component: {fileID: 565925297696906872}
   m_Layer: 12
   m_Name: Plane.002
   m_TagString: Untagged
@@ -115,6 +116,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &565925297696906872
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5777468164006705}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1760069244299002759
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,6 +141,7 @@ GameObject:
   - component: {fileID: 4954492087769525716}
   - component: {fileID: 6504377422870351877}
   - component: {fileID: 6504377422870351902}
+  - component: {fileID: 753424092194455120}
   m_Layer: 12
   m_Name: Plane.004
   m_TagString: Untagged
@@ -229,6 +243,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &753424092194455120
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1760069244299002759}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &3713348606180424907
 GameObject:
   m_ObjectHideFlags: 0
@@ -242,6 +268,7 @@ GameObject:
   - component: {fileID: 4371114423383005575}
   - component: {fileID: 6504377422870351897}
   - component: {fileID: 6504377422870351890}
+  - component: {fileID: 557691673006522942}
   m_Layer: 12
   m_Name: Cube.005
   m_TagString: Untagged
@@ -343,6 +370,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &557691673006522942
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3713348606180424907}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4914740200255212878
 GameObject:
   m_ObjectHideFlags: 0
@@ -356,6 +395,7 @@ GameObject:
   - component: {fileID: 5213018314192974574}
   - component: {fileID: 6504377422870351898}
   - component: {fileID: 6504377422870351891}
+  - component: {fileID: 2746910586507237225}
   m_Layer: 12
   m_Name: Plane
   m_TagString: Untagged
@@ -458,6 +498,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &2746910586507237225
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4914740200255212878}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5743066805507457110
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,6 +523,7 @@ GameObject:
   - component: {fileID: 8154617311864451186}
   - component: {fileID: 6504377422870351896}
   - component: {fileID: 6504377422870351889}
+  - component: {fileID: 1761535574109899662}
   m_Layer: 12
   m_Name: Cube.004
   m_TagString: Untagged
@@ -572,6 +625,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1761535574109899662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5743066805507457110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6234487236148014437
 GameObject:
   m_ObjectHideFlags: 0
@@ -581,6 +646,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6759491482186381279}
+  - component: {fileID: 6488143552138368399}
   m_Layer: 12
   m_Name: HoodieCatDead
   m_TagString: Untagged
@@ -609,6 +675,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &6488143552138368399
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6234487236148014437}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24af5ac0cd7ea214c9a822b0b6da02ec, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6478124534356295312
 GameObject:
   m_ObjectHideFlags: 0
@@ -622,6 +700,7 @@ GameObject:
   - component: {fileID: 9002680606449611139}
   - component: {fileID: 6504377422870351876}
   - component: {fileID: 6504377422870351901}
+  - component: {fileID: 255133664611735792}
   m_Layer: 12
   m_Name: Plane.003
   m_TagString: Untagged
@@ -724,6 +803,18 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &255133664611735792
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6478124534356295312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6504377421415079071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1703,6 +1794,7 @@ GameObject:
   - component: {fileID: 7257766495046026238}
   - component: {fileID: 6504377422870351903}
   - component: {fileID: 6504377422870351888}
+  - component: {fileID: 1505094406857118207}
   m_Layer: 12
   m_Name: Body.001
   m_TagString: Untagged
@@ -1804,3 +1896,15 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &1505094406857118207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7110744628408418314}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79595f60613e1fa41bbbf637e0790590, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

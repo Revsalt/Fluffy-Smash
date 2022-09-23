@@ -8,7 +8,7 @@ public class RagdollDeathExplosion : MonoBehaviour
     {
         foreach (var item in GetComponentsInChildren<Rigidbody>())
         {
-            item.AddExplosionForce(200 * Time.deltaTime , transform.position , 5);
+            item.AddExplosionForce(9000 * Time.deltaTime , transform.position , 10);
         }
     }
 }

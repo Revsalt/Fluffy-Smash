@@ -330,7 +330,7 @@ GameObject:
   - component: {fileID: 555757707498637004}
   - component: {fileID: 555757707498637000}
   - component: {fileID: 555757707498637014}
-  - component: {fileID: 555757707498637015}
+  - component: {fileID: 3568634296059129165}
   - component: {fileID: 8969648721433084224}
   m_Layer: 5
   m_Name: RoundSystem
@@ -458,7 +458,7 @@ MonoBehaviour:
   visible: 0
   m_AssetId: ac3f7ab04d8c2d34aa549775556ab484
   hasSpawned: 0
---- !u!114 &555757707498637015
+--- !u!114 &3568634296059129165
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -467,13 +467,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 555757707498637005}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2394e618ce71c454aa227657450cfe9b, type: 3}
+  m_Script: {fileID: 11500000, guid: 6978a4737ee7a2946b86351b72919c0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
   animator: {fileID: 555757707498637000}
   countdown: {fileID: 7794569440888320936}
+  countdownPanel: {fileID: 555757707222980503}
+  Ball: {fileID: 7217512833681114730, guid: 7134ed9eb2a46804eab678efae3d9e4b, type: 3}
   winText: {fileID: 3553751468992670252}
   roundTimeInMinutes: 2
 --- !u!114 &8969648721433084224

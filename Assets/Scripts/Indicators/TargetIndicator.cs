@@ -21,7 +21,6 @@ public class TargetIndicator : MonoBehaviour
         rectTransform = GetComponent<RectTransform>();
     }
 
-
     public void InitialiseTargetIndicator(GameObject target, Camera mainCamera, Canvas canvas)
     {
         this.target = target;

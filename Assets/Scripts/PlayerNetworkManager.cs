@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using TMPro;
+using Cinemachine;
 
 public class PlayerNetworkManager : NetworkBehaviour
 {
@@ -14,15 +15,21 @@ public class PlayerNetworkManager : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
+            GetComponent<PlayerController>().DisableMovment(true);
+
             foreach (var item in GetComponent<PlayerController>().Cameras)
             {
                 item.SetActive(true);
             }
+
+            //GameObject g = (GameObject)Instantiate(Resources.Load("IndicatorController"), transform.position, transform.rotation);
+            //g.GetComponent<UIController>().cam = GetComponent<DefaultCharacterEffects>().m_Camera;
         }
         else
         {
             GameObject g = (GameObject)Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
             usernametxt = g.GetComponentInChildren<TextMeshProUGUI>();
+            //gameObject.AddComponent<TargetObject>();
         }
     }
 
@@ -33,6 +40,6 @@ public class PlayerNetworkManager : NetworkBehaviour
 
 
         if (transform.position.y < -2)
-            GetComponent<PlayerController>().SetPlayerPosition(NetworkRoomManager.singleton.GetStartPosition().position);
+            GetComponent<TagLogic>().QuickRespawn();
     }
 }

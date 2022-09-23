@@ -31,7 +31,7 @@ public class TabScreenPlayer : MonoBehaviour
         set
         {
             playerRole = value;
-            playerRoleText.text = playerRole ? "Tagger" : "Runner";
+            playerRoleText.text = playerRole ? "RedTeam" : "BlueTeam";
         }
     }
 

@@ -113,7 +113,7 @@ public class PlayerController : NetworkBehaviour
 
         if (Input.GetKeyDown(KeyCode.F11))
         {
-            Screen.fullScreen = true;
+            Screen.fullScreen = !Screen.fullScreen;
         }
     }
 

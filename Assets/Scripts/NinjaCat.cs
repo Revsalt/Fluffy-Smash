@@ -18,8 +18,6 @@ public class NinjaCat : PlayerController
     [SerializeField] Vector3 wallOffset;
     [SerializeField] float wallJumpForce = 80;
     [SerializeField] float dashForce = 80;
-    [SerializeField] float StandDuration;
-    [SerializeField] float distanceduration;
     Vector3 wallDirection = Vector3.zero;
 
     void Start()

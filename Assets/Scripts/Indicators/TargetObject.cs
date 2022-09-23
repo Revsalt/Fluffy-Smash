@@ -6,13 +6,18 @@ public class TargetObject : MonoBehaviour
 {
     private void Awake()
     {
-        UIController ui = GetComponentInParent<UIController>();
-        if(ui == null)
-        {
-            ui = GameObject.Find("World").GetComponent<UIController>();
-        }
+        StartCoroutine(KeepLoopinTillitsHere());
+    }
 
-        if (ui == null) Debug.LogError("No UIController component found");
+    IEnumerator KeepLoopinTillitsHere()
+    {
+        UIController ui = GetComponentInParent<UIController>();
+
+        for (float i = 0; ui == null; i += Time.deltaTime)
+        {
+            ui = FindObjectOfType<UIController>();
+            yield return null;
+        }
 
         ui.AddTargetIndicator(this.gameObject);
     }

@@ -7,6 +7,7 @@ using Mirror;
 public class TagLogic : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnChangeTaggerState))] public bool isTagger = false;
+    [SyncVar]public string TeamName = "none";
     bool CanAttack = false;
     public float TagRadius = 2;
 
@@ -16,6 +17,8 @@ public class TagLogic : NetworkBehaviour
     [Header("InDeath")]
     public UnityEvent OnDeath;
     public UnityEvent OnRespawn;
+
+    public bool IsDead;
 
     PlayerController myPlayer;
 
@@ -39,7 +42,7 @@ public class TagLogic : NetworkBehaviour
         {
             foreach (var player in FindObjectsOfType<TagLogic>())
             {
-                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && !player.GetComponent<TagLogic>().isTagger && Vector3.Distance(player.transform.position , transform.position) < TagRadius) // if anyone is close to me
+                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && TeamName != player.TeamName && Vector3.Distance(player.transform.position , transform.position) < TagRadius) // if anyone is close to me
                 {
                     Kill(player.GetComponent<NetworkIdentity>() , GetComponent<NetworkIdentity>());
                     CanAttack = false;
@@ -77,10 +80,13 @@ public class TagLogic : NetworkBehaviour
             nc.GetComponent<PlayerController>().DisableInput(true);
             StartCoroutine(KillCamDelay());
 
+            IsDead = true;
+            
             IEnumerator KillCamDelay()
             {
                 yield return new WaitForSeconds(2);
                 nc.GetComponent<PlayerController>().folllowTarget = killedBy.transform;
+                IsDead = false;
             }
         }
     }
@@ -97,17 +103,25 @@ public class TagLogic : NetworkBehaviour
 
         IEnumerator delay()
         {
-            var l = FindObjectsOfType<NetworkStartPosition>();
-
             yield return new WaitForSeconds(time);
 
-            myPlayer.SetPlayerPosition(l[Random.Range(0,l.Length)].transform.position);
+            myPlayer.SetPlayerPosition(NetworkStartPosition.GetSpawnPoistionRandomAtTeam(TeamName));
             myPlayer.DisableInput(false);
 
             myPlayer.folllowTarget = transform;
 
             OnRespawn.Invoke();
         }
+    }
+
+    public void QuickRespawn()
+    {
+        myPlayer.SetPlayerPosition(NetworkStartPosition.GetSpawnPoistionRandomAtTeam(TeamName));
+        myPlayer.DisableInput(false);
+
+        myPlayer.folllowTarget = transform;
+
+        OnRespawn.Invoke();
     }
 
     public void SpawnDeadModel(GameObject deadModel)

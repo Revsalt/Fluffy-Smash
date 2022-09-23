@@ -15,7 +15,7 @@ public class DefaultCharacterEffects : MonoBehaviour
     [SerializeField] UnityEvent inAirStart;
     [SerializeField] UnityEvent inAirEnd;
     [Header("Other")]
-    [SerializeField] Camera m_Camera;
+    public Camera m_Camera;
 
     PlayerController playerController;
     Animator animator;
@@ -31,7 +31,7 @@ public class DefaultCharacterEffects : MonoBehaviour
             transform.position - Vector3.up, Quaternion.identity , transform)).GetComponent<ParticleSystem>();
 
         runAirEffect = ((GameObject)Instantiate(Resources.Load<GameObject>("DefaultEffects/CameraAnimeEffect"),
-            m_Camera.transform.position + m_Camera.transform.forward * 3f, Quaternion.identity
+            m_Camera.transform.position + m_Camera.transform.forward, Quaternion.identity
             , m_Camera.transform)).GetComponent<ParticleSystem>();
 
         DefaultFOV = playerController.cineCamera.m_Lens.FieldOfView;
@@ -46,7 +46,7 @@ public class DefaultCharacterEffects : MonoBehaviour
         ParticlesSystemEnabled(runAirEffect, GetCharacterMagintude(playerController , 1) > 10f);
 
         var t = runAirEffect.main;
-        t.simulationSpeed = playerController.movementSpeed * 0.4f;
+        t.simulationSpeed = playerController.movementSpeed * 0.1f;
 
         if (!playerController.isGroundeed())
         {
