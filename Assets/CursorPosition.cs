@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem.Utilities;
+using UnityEngine.InputSystem;
 
 public class CursorPosition : MonoBehaviour
 {
@@ -17,8 +17,7 @@ public class CursorPosition : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        var screenPoint = Input.mousePosition;
-        screenPoint.z = depth; //distance of the plane from the camera
-        transform.position = Camera.main.ScreenToWorldPoint(screenPoint) + Offset;
+        //var screenPoint = Mouse.current.position.ReadValue();
+        //transform.position = Camera.main.ScreenToWorldPoint(screenPoint) + Offset;
     }
 }

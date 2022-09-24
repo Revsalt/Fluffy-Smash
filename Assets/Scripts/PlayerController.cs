@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityStandardAssets.Effects;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// for offline testing use the PlayerControllerOffline 
@@ -87,6 +88,21 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    Vector3 inputAxis = Vector3.zero;
+    bool isJumpPressed = false;
+    public void Move(InputAction.CallbackContext ctx)
+    {
+        var inputValue = ctx.ReadValue<Vector2>();
+        inputAxis = new Vector3(inputValue.x, 0f, inputValue.y);
+    }
+
+    public void JumpInput(InputAction.CallbackContext ctx)
+    {
+       if (!ctx.performed) { return; }
+
+        isJumpPressed = true;
+    }
+
     private void LateUpdate()
     {
         //CameraPosistionAdjustment
@@ -123,8 +139,8 @@ public class PlayerController : NetworkBehaviour
     {
         if (!disableInput)
         {
-            moveDirection = new Vector3(cineCamera.transform.right.x , 0 , cineCamera.transform.right.z).normalized * Input.GetAxisRaw("Horizontal") +
-                new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z).normalized * Input.GetAxisRaw("Vertical");
+            moveDirection = new Vector3(cineCamera.transform.right.x , 0 , cineCamera.transform.right.z).normalized * inputAxis.x  +
+                new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z).normalized * inputAxis.z;
         }
         else { moveDirection = Vector3.zero; }
 
@@ -158,7 +174,7 @@ public class PlayerController : NetworkBehaviour
 
         Result += moveDirection.normalized * Time.deltaTime * movementSpeed;
 
-        if (Input.GetButtonDown("Jump") && isGroundeed() && !GetDisableInput())
+        if (isJumpPressed && isGroundeed() && !GetDisableInput())
         {
             playerVelocity.y = 0;
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
@@ -166,6 +182,8 @@ public class PlayerController : NetworkBehaviour
             //Callin the event for children classes
             onJump();
         }
+
+        isJumpPressed = false;
 
         if (groundNormal != Vector3.zero && characterController.isGrounded)
         {
