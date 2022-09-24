@@ -7,7 +7,7 @@ using Mirror;
 public class TagLogic : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnChangeTaggerState))] public bool isTagger = false;
-    [SyncVar]public string TeamName = "none";
+    [SyncVar(hook = nameof(OnChangeTeam))] public string TeamName = "none";
     bool CanAttack = false;
     public float TagRadius = 2;
 
@@ -31,6 +31,16 @@ public class TagLogic : NetworkBehaviour
     {
         if (isLocalPlayer) CanAttack = b;
 
+    }
+
+    public void OnChangeTeam(string olds , string news)
+    {
+        Color c = Color.black;
+        
+        if (news == "RedTeam") { c = Color.red; } 
+        else if (news == "BlueTeam"){ c = Color.blue;}
+
+        GetComponent<PlayerController>().playerModel.GetComponentInChildren<OutLineColor>().SetColor(c);
     }
 
     void Update()

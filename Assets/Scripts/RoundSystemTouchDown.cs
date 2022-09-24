@@ -3,20 +3,27 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Mirror;
+using Mirror.Examples.NetworkRoom;
 
 public class RoundSystemTouchDown : NetworkBehaviour
 {
+    int RedTeamScore = 0,BlueTeamScore = 0;
+
     public static RoundSystemTouchDown instace;
     [SerializeField] private Animator animator = null;
     [SerializeField] private Text countdown = null;
+    [SerializeField] private Text score = null;
     [SerializeField] private GameObject countdownPanel = null;
     [SerializeField] private GameObject Ball = null;
     [SerializeField] private Text winText = null;
     [SerializeField] private float roundTimeInMinutes = 2;
-
-    private PlayerNetworkManager Tagger = null;
+    [SerializeField] private float maxScore = 5;
+    
+    List<PlayerNetworkManager> TeamRed = new List<PlayerNetworkManager>();
+    List<PlayerNetworkManager> TeamBlue = new List<PlayerNetworkManager>();
 
     private NetworkRoomManager room;
     private NetworkRoomManager Room
@@ -66,7 +73,6 @@ public class RoundSystemTouchDown : NetworkBehaviour
     public void StartRound()
     {
         RpcStartRound();
-
         StartCoroutine(RoundCountDown());
     }
 
@@ -82,12 +88,50 @@ public class RoundSystemTouchDown : NetworkBehaviour
 
         RpcEndRound(winText.text);
 
+        if (message == "RedTeam")
+        {
+            RedTeamScore++;
+        } else {BlueTeamScore++; }
+      
+        UpdateGameScore(RedTeamScore + " : " + BlueTeamScore);
+
         IEnumerator Delay(Action act)
         {
             act.Invoke();
             yield return new WaitForSeconds(5);
-            Room.ServerChangeScene(Room.RoomScene);
+
+            if (RedTeamScore == maxScore || BlueTeamScore == maxScore)
+            {
+                Room.ServerChangeScene(Room.RoomScene);
+            }
+            else
+            {
+                Reset();
+            }
         }
+    }
+
+    [ClientRpc]
+    void UpdateGameScore(string scoreText)
+    {
+        score.text = scoreText;
+    }
+
+    void Reset()
+    {
+        ScatterPlayers();
+            
+        StopAllCoroutines();
+
+        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up , Quaternion.identity , null);
+        NetworkServer.Spawn(g);
+
+        countdown.text = "";
+        countdownPanel.SetActive(true);
+        animator.enabled = true;
+        RpcStartCountdown();
+
+        winText.text = "";
     }
 
     [ClientRpc]
@@ -99,15 +143,27 @@ public class RoundSystemTouchDown : NetworkBehaviour
     [TargetRpc]
     private void RpcSetStartPosition(NetworkConnection nctc , Vector3 pos)
     {
-        nctc.identity.transform.position = pos;
+        nctc.identity.GetComponent<PlayerController>().SetPlayerPosition(pos);
     }
 
+    [ServerCallback]
     private void FixedUpdate()
     {
-        if (!isServer)
-            return;
+        foreach (var item in TeamRed)
+        {
+            if (item == null)
+            {
+                Room.ServerChangeScene(Room.RoomScene);
+            }
+        }
 
-        //Contant check if they won
+        foreach (var item in TeamBlue)
+        {
+            if (item == null)
+            {
+                Room.ServerChangeScene(Room.RoomScene);
+            }
+        }
     }
 
     [Server]
@@ -134,9 +190,6 @@ public class RoundSystemTouchDown : NetworkBehaviour
         GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up , Quaternion.identity , null);
         NetworkServer.Spawn(g);
 
-        List<PlayerNetworkManager> TeamRed = new List<PlayerNetworkManager>();
-        List<PlayerNetworkManager> TeamBlue = new List<PlayerNetworkManager>();
-
         List<PlayerNetworkManager> allPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
         
         int redTeamCount = 0, blueTeamCount = 0;
@@ -161,8 +214,20 @@ public class RoundSystemTouchDown : NetworkBehaviour
                 allPlayers[i].GetComponent<TagLogic>().TeamName = "BlueTeam";
                 blueTeamCount++;
             }
+        }
 
-            RpcSetStartPosition(allPlayers[i].GetComponent<NetworkIdentity>().connectionToClient , NetworkStartPosition.GetSpawnPoistionRandomAtTeam(allPlayers[i].GetComponent<TagLogic>().TeamName));
+        ScatterPlayers();
+    }
+
+    void ScatterPlayers()
+    {
+        List<PlayerNetworkManager> allPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
+
+        for (int i = 0; i < allPlayers.Count; i++)
+        {
+            RpcSetStartPosition(allPlayers[i].GetComponent<NetworkIdentity>().connectionToClient ,
+            NetworkStartPosition.GetSpawnPoistionRandomAtTeam(allPlayers[i].GetComponent<TagLogic>().TeamName));
+            allPlayers[i].GetComponent<TagLogic>().isTagger = true;
         }
     }
 
@@ -173,7 +238,14 @@ public class RoundSystemTouchDown : NetworkBehaviour
     [ClientRpc]
     private void RpcStartCountdown()
     {
-        animator.enabled = true;
+        animator.enabled = true;     
+
+        foreach (var item in FindObjectsOfType<PlayerNetworkManager>())
+        {
+            if (item.GetComponent<NetworkIdentity>().isLocalPlayer)
+                item.GetComponent<PlayerController>().DisableMovment(true);
+        }
+   
     }
 
     [ClientRpc]

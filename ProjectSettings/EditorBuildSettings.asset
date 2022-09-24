@@ -14,4 +14,6 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TouchDownMap.unity
     guid: 300e7cd3babbb65448903b7f4351fd2a
-  m_configObjects: {}
+  m_configObjects:
+    com.unity.input.settings: {fileID: 11400000, guid: 3ba30a344de09c746a961566e7794d24,
+      type: 2}

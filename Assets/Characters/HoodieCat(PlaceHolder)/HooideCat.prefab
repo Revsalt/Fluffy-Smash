@@ -5425,7 +5425,7 @@ GameObject:
   m_Component:
   - component: {fileID: 544682916192419410}
   m_Layer: 8
-  m_Name: Model
+  m_Name: HooideCat
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5878,6 +5878,11 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 544682916192419410}
     m_Modifications:
+    - target: {fileID: -9165797768001435688, guid: f579f891b4ff4194db4fd04785eee215,
+        type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 9b3c3537d16f085408317284dbd10cae, type: 2}
     - target: {fileID: -8679921383154817045, guid: f579f891b4ff4194db4fd04785eee215,
         type: 3}
       propertyPath: m_RootOrder

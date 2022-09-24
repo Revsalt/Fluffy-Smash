@@ -43,7 +43,7 @@ public class WhiteCat : PlayerController
             color.a = Mathf.Lerp(startvalue, endvalue, 5 * Time.deltaTime);
             if (IsTranparent && color.a == endvalue)
             {
-                playerModel.SetActive(!playerModel.active);
+                playerModel.SetActive(!playerModel.activeSelf);
             }
             yield return null;
         }
