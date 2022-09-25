@@ -5564,6 +5564,16 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 5256703679096396871, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 11.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679096396871, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9.900024
+      objectReference: {fileID: 0}
     - target: {fileID: 5256703679096396872, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_Color.b
@@ -5592,7 +5602,12 @@ PrefabInstance:
     - target: {fileID: 5256703679100181587, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -52.299957
+      value: -62.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679100181587, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9.899963
       objectReference: {fileID: 0}
     - target: {fileID: 5256703679100181588, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
@@ -12910,6 +12925,26 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1623418456}
     m_Modifications:
+    - target: {fileID: 5256703679096396871, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 8.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679096396871, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679100181587, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -65.7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679100181587, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -6
+      objectReference: {fileID: 0}
     - target: {fileID: 5256703679275070441, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_Name
@@ -13317,6 +13352,16 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 50
       objectReference: {fileID: 0}
+    - target: {fileID: 5256703679096396871, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 7.8
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679096396871, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9.799988
+      objectReference: {fileID: 0}
     - target: {fileID: 5256703679096396872, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_Color.b
@@ -13345,7 +13390,12 @@ PrefabInstance:
     - target: {fileID: 5256703679100181587, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -52.3
+      value: -74.2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5256703679100181587, guid: d28a2dbd231dcb34081cc81103eb47cb,
+        type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -9.799988
       objectReference: {fileID: 0}
     - target: {fileID: 5256703679100181588, guid: d28a2dbd231dcb34081cc81103eb47cb,
         type: 3}
@@ -13898,7 +13948,7 @@ MonoBehaviour:
   - {fileID: 3814039662413454323, guid: 84cece894fecdf841b308940b3a5c380, type: 3}
   - {fileID: 7217512833681114730, guid: 7134ed9eb2a46804eab678efae3d9e4b, type: 3}
   - {fileID: 7017652105095865759, guid: e40e715f967ccce498408c0d57fee5e4, type: 3}
-  showRoomGUI: 1
+  showRoomGUI: 0
   minPlayers: 1
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
     type: 3}
@@ -13910,8 +13960,6 @@ MonoBehaviour:
   characters:
   - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
   - {fileID: 11400000, guid: 0852f0cec818ab740abb5a0fb0b7920a, type: 2}
-  - {fileID: 11400000, guid: ec0fe7a38730f2648b39c0f080e4a1bd, type: 2}
-  - {fileID: 11400000, guid: c33f97e5bc3bfb545b59383f37ac5927, type: 2}
   GameScenes:
   - Assets/Scenes/TouchDownMap.unity
 --- !u!4 &1763280529

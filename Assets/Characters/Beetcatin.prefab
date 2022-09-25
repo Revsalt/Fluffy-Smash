@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 4318505476291552482}
   - component: {fileID: 8274996992366524117}
   - component: {fileID: -8893717147365553019}
+  - component: {fileID: -1015059001121077862}
   m_Layer: 8
   m_Name: Beetcatin
   m_TagString: Player
@@ -216,6 +217,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   isTagger: 0
+  TeamName: none
   TagRadius: 2
   StartTag:
     m_PersistentCalls:
@@ -229,6 +231,7 @@ MonoBehaviour:
   OnRespawn:
     m_PersistentCalls:
       m_Calls: []
+  IsDead: 0
 --- !u!114 &8276555766348153610
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -376,6 +379,69 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+--- !u!114 &-1015059001121077862
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8206218320700091574}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 62899f850307741f2a39c98a8b639597, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Actions: {fileID: -944628639613478452, guid: 7dead05c54ca85b4681351aafd8bd03a,
+    type: 3}
+  m_NotificationBehavior: 2
+  m_UIInputModule: {fileID: 0}
+  m_DeviceLostEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_DeviceRegainedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ControlsChangedEvent:
+    m_PersistentCalls:
+      m_Calls: []
+  m_ActionEvents:
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4975466897577374294}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: Move
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 9d8fcbff-87d1-43ef-857e-931c84d5bd72
+    m_ActionName: Gameplay/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
+  - m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 4975466897577374294}
+        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+        m_MethodName: JumpInput
+        m_Mode: 0
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+    m_ActionId: 46f62973-ca12-4e5e-891c-7e6db355a24e
+    m_ActionName: Gameplay/Jump[/Keyboard/space]
+  m_NeverAutoSwitchControlSchemes: 0
+  m_DefaultControlScheme: 
+  m_DefaultActionMap: 8e11a806-753d-41d8-af38-51876e9ea8b1
+  m_SplitScreenIndex: -1
+  m_Camera: {fileID: 0}
 --- !u!1 &8206218320823569153
 GameObject:
   m_ObjectHideFlags: 0
@@ -916,12 +982,6 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: 3ea885335cc40df4c9ae0bb983915659, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 6f3a6b388dde54549a2cd4338da94ae0, type: 3}
---- !u!4 &5245873011797010318 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6f3a6b388dde54549a2cd4338da94ae0,
-    type: 3}
-  m_PrefabInstance: {fileID: 5712724630058647653}
-  m_PrefabAsset: {fileID: 0}
 --- !u!95 &2174457285366382068 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 5866666021909216657, guid: 6f3a6b388dde54549a2cd4338da94ae0,
@@ -931,6 +991,12 @@ Animator:
 --- !u!1 &955846026148819579 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: -4466317193237958114, guid: 6f3a6b388dde54549a2cd4338da94ae0,
+    type: 3}
+  m_PrefabInstance: {fileID: 5712724630058647653}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5245873011797010318 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 6f3a6b388dde54549a2cd4338da94ae0,
     type: 3}
   m_PrefabInstance: {fileID: 5712724630058647653}
   m_PrefabAsset: {fileID: 0}

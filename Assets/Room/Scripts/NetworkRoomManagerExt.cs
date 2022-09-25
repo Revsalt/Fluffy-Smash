@@ -107,8 +107,6 @@ namespace Mirror.Examples.NetworkRoom
             // calling the base method calls ServerChangeScene as soon as all players are in Ready state.
 #if UNITY_SERVER
             base.OnRoomServerPlayersReady();
-#else
-            showStartButton = true;
 #endif
         }
 
@@ -116,7 +114,7 @@ namespace Mirror.Examples.NetworkRoom
         {
             base.OnGUI();
 
-            if (allPlayersReady && showStartButton && GUI.Button(new Rect(150, 300, 120, 20), "START GAME"))
+            if (allPlayersReady && showStartButton && GUI.Button(new Rect(150, 300, 120, 20), "START GAME") && NetworkManager.IsSceneActive(RoomScene))
             {
                 // set to false to hide it in the game scene
                 showStartButton = false;

@@ -5,6 +5,7 @@ using Mirror;
 using Mirror.Examples.NetworkRoom;
 using System.Linq;
 using System;
+using TMPro;
 
 public class CharacterLobbyDisplay : NetworkBehaviour
 {
@@ -56,7 +57,9 @@ public class CharacterLobbyDisplay : NetworkBehaviour
 
 [Serializable]
 class RoomPlayerInfo : MonoBehaviour
-{
+{   
+    [HideInInspector] public TextMeshProUGUI usernametxt;
+
     private NetworkRoomManagerExt room;
     private NetworkRoomManagerExt Room
     {
@@ -71,6 +74,13 @@ class RoomPlayerInfo : MonoBehaviour
 
     int oldindex = -1;
     GameObject model = null;
+
+    void Start()
+    {
+        GameObject g = (GameObject)Instantiate(Resources.Load("UserNameDispaly"), gameObject.transform);
+        usernametxt = g.GetComponentInChildren<TextMeshProUGUI>();
+    }
+
     private void Update()
     {
         if (oldindex != nrpe.Character || !model)
@@ -80,5 +90,6 @@ class RoomPlayerInfo : MonoBehaviour
             oldindex = nrpe.Character;
         }
 
+        usernametxt.text = nrpe.username;
     }
 }

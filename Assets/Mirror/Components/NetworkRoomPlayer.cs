@@ -1,5 +1,8 @@
 using System;
 using UnityEngine;
+using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using UnityEngine.Events;
 
 namespace Mirror
 {
@@ -12,6 +15,7 @@ namespace Mirror
     [HelpURL("https://mirror-networking.gitbook.io/docs/components/network-room-player")]
     public class NetworkRoomPlayer : NetworkBehaviour
     {
+
         public bool GetUserNameFromPlayer = true;
 
         public string Username

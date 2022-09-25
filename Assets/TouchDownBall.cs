@@ -60,6 +60,9 @@ public class TouchDownBall : NetworkBehaviour
             transform.SetParent(null);
             RpcDropBall(gameObject , transform.position);
         }
+
+        if (transform.position.y < 0)
+            transform.position = Vector3.zero;
     }
 
 }

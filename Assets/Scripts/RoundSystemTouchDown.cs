@@ -126,12 +126,11 @@ public class RoundSystemTouchDown : NetworkBehaviour
         GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up , Quaternion.identity , null);
         NetworkServer.Spawn(g);
 
+        winText.text = "";
         countdown.text = "";
         countdownPanel.SetActive(true);
         animator.enabled = true;
         RpcStartCountdown();
-
-        winText.text = "";
     }
 
     [ClientRpc]
@@ -237,8 +236,12 @@ public class RoundSystemTouchDown : NetworkBehaviour
 
     [ClientRpc]
     private void RpcStartCountdown()
-    {
-        animator.enabled = true;     
+    {  
+        winText.text = "";
+        countdown.text = "";
+        countdownPanel.SetActive(true);
+        animator.enabled = true;
+        animator.SetTrigger("Start");
 
         foreach (var item in FindObjectsOfType<PlayerNetworkManager>())
         {

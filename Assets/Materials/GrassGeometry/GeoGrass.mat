@@ -29,11 +29,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _DistanceDetail: 0
-    - _Height: 0.6
-    - _RandomHeight: 0.5
-    - _RandomWidth: 0.2
-    - _TessellationUniform: 14
-    - _Width: 0.1
+    - _Height: 0.06
+    - _RandomHeight: 0.39
+    - _RandomWidth: 0.08
+    - _TessellationUniform: 17.5
+    - _Width: 0.03
     - _WindStrength: 0.1
     m_Colors:
     - _Color: {r: 0.22512545, g: 0.3584906, b: 0.19784622, a: 1}

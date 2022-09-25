@@ -4,12 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
 using Mirror.Examples.NetworkRoom;
+using Cinemachine;
 
 public class CharacterSelect : NetworkBehaviour
 {
     public static CharacterSelect instance;
 
-    [SerializeField] private GameObject characterSelectDisplay = default;
+    [SerializeField] private CinemachineVirtualCamera characterSelectDisplay = default;
 
     private int currentCharacterIndex = 0;
 
@@ -35,14 +36,22 @@ public class CharacterSelect : NetworkBehaviour
         }
     }
 
+    public override void OnStartClient()
+    {
+        base.OnStartClient();
+        characterSelectDisplay.m_Priority = 2;
+    }
+
     public override void OnStopClient()
     {
         base.OnStopClient();
-        characterSelectDisplay.SetActive(false);
+        characterSelectDisplay.m_Priority = 0;
     }
 
-    void Select()
+    public void Select(int index)
     {
+        currentCharacterIndex = index;
+
         NetworkRoomPlayer roomplayer = null;
 
         foreach (var item in Room.roomSlots)
@@ -54,33 +63,5 @@ public class CharacterSelect : NetworkBehaviour
         }
 
         roomplayer.CmdSendCharacterIndex(roomplayer.gameObject , currentCharacterIndex);
-    }
-
-    public void Right()
-    {
-        //characterInstances[currentCharacterIndex].SetActive(false);
-
-        currentCharacterIndex = (currentCharacterIndex + 1) % Room.characters.Length;
-
-        //characterInstances[currentCharacterIndex].SetActive(true);
-        //characterNameText.text = Room.characters[currentCharacterIndex].CharacterName;
-
-        Select();
-    }
-
-    public void Left()
-    {
-        //characterInstances[currentCharacterIndex].SetActive(false);
-
-        currentCharacterIndex--;
-        if (currentCharacterIndex < 0)
-        {
-            currentCharacterIndex += Room.characters.Length;
-        }
-
-        //characterInstances[currentCharacterIndex].SetActive(true);
-        //characterNameText.text = Room.characters[currentCharacterIndex].CharacterName;
-
-        Select();
     }
 }

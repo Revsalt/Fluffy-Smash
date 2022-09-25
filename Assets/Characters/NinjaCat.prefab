@@ -442,14 +442,6 @@ MonoBehaviour:
     m_ActionId: 9d8fcbff-87d1-43ef-857e-931c84d5bd72
     m_ActionName: Gameplay/Move[/Keyboard/w,/Keyboard/s,/Keyboard/a,/Keyboard/d]
   - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: ddab72da-d325-4b4c-a484-abe4f6bdf113
-    m_ActionName: Gameplay/Look
-  - m_PersistentCalls:
-      m_Calls: []
-    m_ActionId: 2bd60403-0923-469e-a3a4-7338b04f6bbc
-    m_ActionName: Gameplay/Interact[/Keyboard/e]
-  - m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1646360425263456798}
         m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
@@ -467,7 +459,7 @@ MonoBehaviour:
     m_ActionName: Gameplay/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: Gameplay
+  m_DefaultActionMap: 8e11a806-753d-41d8-af38-51876e9ea8b1
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &1646360425379016323
