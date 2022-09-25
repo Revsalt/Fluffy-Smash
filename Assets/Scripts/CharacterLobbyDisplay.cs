@@ -90,6 +90,9 @@ class RoomPlayerInfo : MonoBehaviour
             oldindex = nrpe.Character;
         }
 
-        usernametxt.text = nrpe.username;
+        string rd = "";
+        if (nrpe.readyToBegin) {rd = "Ready";} else { rd = "NotReady";} 
+
+        usernametxt.text = nrpe.username + " " + rd;
     }
 }
