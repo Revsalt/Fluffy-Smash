@@ -77,7 +77,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void RoundEnded(string message) // if there is more than one last guy
+    public void RoundEnded(string message , string WhoWon) // if there is more than one last guy
     {
         if (winText.text != String.Empty)
             return;
@@ -88,7 +88,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
 
         RpcEndRound(winText.text);
 
-        if (message == "RedTeam")
+        if (WhoWon == "RedTeam")
         {
             RedTeamScore++;
         } else {BlueTeamScore++; }
@@ -120,7 +120,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
     void Reset()
     {
         ScatterPlayers();
-            
+        
         StopAllCoroutines();
 
         GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up , Quaternion.identity , null);
@@ -278,7 +278,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
             countdown.text = answer;
         }
 
-        RoundEnded("GameOver");
+        RoundEnded("GameOver" , "None");
     }
 
     #endregion
