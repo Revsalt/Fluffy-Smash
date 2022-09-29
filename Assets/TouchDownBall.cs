@@ -10,12 +10,12 @@ public class TouchDownBall : NetworkBehaviour
     [ClientCallback]
     void OnTriggerEnter(Collider collision)
     {
-        if (collision.tag == "Player" && collision.GetComponent<TagLogic>())
+        if (collision.tag == "Player" && collision.GetComponent<TagLogic>() && !transform.parent)
         {
             if (!collision.GetComponent<NetworkIdentity>().isLocalPlayer) return;
 
-            GetComponent<SphereCollider>().enabled = false;
-            GetComponent<Rigidbody>().isKinematic = true;
+            //GetComponent<SphereCollider>().enabled = false;
+            //GetComponent<Rigidbody>().isKinematic = true;
             transform.SetParent(collision.transform);
             transform.localPosition = new Vector3(0,1.5f,0);
             
@@ -34,8 +34,8 @@ public class TouchDownBall : NetworkBehaviour
     [ClientRpc]
     void RpcPickUpBall(Transform ball , Transform player)
     {
-        ball.GetComponent<SphereCollider>().enabled = false;
-        ball.GetComponent<Rigidbody>().isKinematic = true;
+        //ball.GetComponent<SphereCollider>().enabled = false;
+        //ball.GetComponent<Rigidbody>().isKinematic = true;
         ball.SetParent(player.transform);
         ball.transform.localPosition = new Vector3(0,1.5f,0);
     }
@@ -43,8 +43,8 @@ public class TouchDownBall : NetworkBehaviour
     [ClientRpc]
     public void RpcDropBall(GameObject ball , Vector3 pos)
     {
-        ball.GetComponent<SphereCollider>().enabled = true;
-        ball.GetComponent<Rigidbody>().isKinematic = false;
+        //ball.GetComponent<SphereCollider>().enabled = true;
+        //ball.GetComponent<Rigidbody>().isKinematic = false;
         ball.transform.SetParent(null);
         ball.transform.position = pos;
     }
@@ -54,14 +54,14 @@ public class TouchDownBall : NetworkBehaviour
     {
         if (transform.parent != null && transform.parent.GetComponent<TagLogic>().IsDead)
         {
-            GetComponent<SphereCollider>().enabled = true;
-            GetComponent<Rigidbody>().isKinematic = false;
+            //GetComponent<SphereCollider>().enabled = true;
+            //GetComponent<Rigidbody>().isKinematic = false;
             transform.parent.GetComponent<TagLogic>().isTagger = true;
             transform.SetParent(null);
             RpcDropBall(gameObject , transform.position);
         }
 
-        if (transform.position.y < 0)
+        if (transform.position.y < -60)
             transform.position = Vector3.zero;
     }
 

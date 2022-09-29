@@ -60,7 +60,7 @@ CharacterController:
   m_Height: 1.52
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0
+  m_StepOffset: 0.4
   m_SkinWidth: 0.008
   m_MinMoveDistance: 0.01
   m_Center: {x: 0, y: -0.27, z: 0}
@@ -459,7 +459,7 @@ MonoBehaviour:
     m_ActionName: Gameplay/Jump[/Keyboard/space]
   m_NeverAutoSwitchControlSchemes: 0
   m_DefaultControlScheme: 
-  m_DefaultActionMap: 8e11a806-753d-41d8-af38-51876e9ea8b1
+  m_DefaultActionMap: Gameplay
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
 --- !u!1 &1646360425379016323

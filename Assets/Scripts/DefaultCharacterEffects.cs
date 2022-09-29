@@ -48,6 +48,9 @@ public class DefaultCharacterEffects : MonoBehaviour
         var t = runAirEffect.main;
         t.simulationSpeed = playerController.movementSpeed * 0.1f;
 
+        var z = movementParticleSystem.main;
+        z.simulationSpeed = playerController.movementSpeed * 0.1f;
+
         if (!playerController.isGroundeed())
         {
             inAirStart.Invoke();
