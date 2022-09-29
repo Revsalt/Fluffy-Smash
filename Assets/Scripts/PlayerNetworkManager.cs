@@ -39,7 +39,7 @@ public class PlayerNetworkManager : NetworkBehaviour
         gameObject.name = "Player : " + nrp.username;
 
 
-        if (transform.position.y < -2)
+        if (transform.position.y < -40)
             GetComponent<TagLogic>().QuickRespawn();
     }
 }
