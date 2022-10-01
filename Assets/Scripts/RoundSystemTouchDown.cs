@@ -123,7 +123,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
         
         StopAllCoroutines();
 
-        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up , Quaternion.identity , null);
+        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 48 , Quaternion.identity , null);
         NetworkServer.Spawn(g);
 
         winText.text = "";
@@ -186,7 +186,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
             item.GetComponent<TagLogic>().isTagger = true;
         }
 
-        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up , Quaternion.identity , null);
+        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 48 , Quaternion.identity , null);
         NetworkServer.Spawn(g);
 
         List<PlayerNetworkManager> allPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();

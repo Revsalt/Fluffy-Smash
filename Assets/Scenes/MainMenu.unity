@@ -13976,7 +13976,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 779bc09e676b01f48b9ff823b37d9906, type: 2}
   - {fileID: 11400000, guid: 0852f0cec818ab740abb5a0fb0b7920a, type: 2}
   GameScenes:
-  - Assets/Scenes/TouchDownIslandMap.unity
+  - Assets/Scenes/TouchDownSplatoonLikeMap.unity
 --- !u!4 &1763280529
 Transform:
   m_ObjectHideFlags: 0
