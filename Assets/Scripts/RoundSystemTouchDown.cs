@@ -95,6 +95,10 @@ public class RoundSystemTouchDown : NetworkBehaviour
       
         UpdateGameScore(RedTeamScore + " : " + BlueTeamScore);
 
+        TouchDownBall tdb = FindObjectOfType<TouchDownBall>();
+        tdb.RpcDropBall(tdb.gameObject , Vector3.zero);
+        NetworkServer.Destroy(tdb.gameObject);
+
         IEnumerator Delay(Action act)
         {
             act.Invoke();
@@ -123,7 +127,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
         
         StopAllCoroutines();
 
-        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 48 , Quaternion.identity , null);
+        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 1 , Quaternion.identity , null);
         NetworkServer.Spawn(g);
 
         winText.text = "";
@@ -186,7 +190,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
             item.GetComponent<TagLogic>().isTagger = true;
         }
 
-        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 48 , Quaternion.identity , null);
+        GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 1 , Quaternion.identity , null);
         NetworkServer.Spawn(g);
 
         List<PlayerNetworkManager> allPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();

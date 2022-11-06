@@ -72,7 +72,7 @@ public class DefaultCharacterEffects : MonoBehaviour
 
                 inAirEnd.Invoke();
 
-                ParticleSystem p = ((GameObject)Instantiate(Resources.Load<GameObject>("DefaultEffects/Land") , transform.position - Vector3.up, Quaternion.identity)).GetComponent<ParticleSystem>();
+                ParticleSystem p = ((GameObject)Instantiate(Resources.Load<GameObject>("DefaultEffects/Land") , transform.position - Vector3.up, Quaternion.Euler(90,0,0))).GetComponent<ParticleSystem>();
                 p.Play();
                 Destroy(p.gameObject, 1);
 

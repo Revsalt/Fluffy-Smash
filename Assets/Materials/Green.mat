@@ -9,7 +9,7 @@ Material:
   m_PrefabAsset: {fileID: 0}
   m_Name: Green
   m_Shader: {fileID: 4800000, guid: 3be450f303ab19f44b240ca55af61cb5, type: 3}
-  m_ShaderKeywords: 
+  m_ShaderKeywords: _USEEMISSION_ON
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
@@ -89,14 +89,14 @@ Material:
     - _SrcBlend: 5
     - _Surface: 1
     - _UseAlphaClipping: 0
-    - _UseEmission: 0
+    - _UseEmission: 1
     - _UseOcclusion: 0
     - _WorkflowMode: 1
     - _ZWrite: 0
     m_Colors:
     - _BaseColor: {r: 0.23487401, g: 1, b: 0, a: 0.5529412}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionMapChannelMask: {r: 1, g: 1, b: 1, a: 0}
     - _IndirectLightMinColor: {r: 0.8113208, g: 0.5549128, b: 0.7074739, a: 1}
     - _OcclusionMapChannelMask: {r: 1, g: 0, b: 0, a: 0}

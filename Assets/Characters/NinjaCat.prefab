@@ -61,7 +61,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0
-  m_SkinWidth: 0.008
+  m_SkinWidth: 0.02
   m_MinMoveDistance: 0.01
   m_Center: {x: 0, y: -0.27, z: 0}
 --- !u!114 &1646360425263456798
@@ -87,7 +87,7 @@ MonoBehaviour:
   sensitvity: 300
   movementSpeed: 7
   slopeForce: 12
-  slopeForceRayLength: 2
+  slopeForceRayLength: 1.7
   slideFriction: -0.4
   jumpHeight: 5
   layerMask:
