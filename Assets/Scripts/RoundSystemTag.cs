@@ -62,7 +62,7 @@ public class RoundSystemTag : NetworkBehaviour
 
         List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
         Tagger = AllPlayers[UnityEngine.Random.Range(0, AllPlayers.Count)];
-        Tagger.GetComponent<TagLogic>().isTagger = true;
+        Tagger.GetComponent<Health>().canInfluenceDamage = true;
 
         StartCoroutine(RoundCountDown());
     }
@@ -79,7 +79,7 @@ public class RoundSystemTag : NetworkBehaviour
 
         foreach (var item in AllPlayers) //assign the winner
         {
-            if (item.GetComponent<TagLogic>().isTagger)
+            if (item.GetComponent<Health>().canInfluenceDamage)
             {
                 TaggedPlayers.Add(item);
             }
@@ -117,7 +117,7 @@ public class RoundSystemTag : NetworkBehaviour
 
         foreach (var item in AllPlayers)
         {
-            item.GetComponent<TagLogic>().isTagger = false;
+            item.GetComponent<Health>().canInfluenceDamage = false;
         }
     }
 
@@ -140,7 +140,7 @@ public class RoundSystemTag : NetworkBehaviour
 
         foreach (var item in AllPlayers)
         {
-            if (item.GetComponent<TagLogic>().isTagger)
+            if (item.GetComponent<Health>().canInfluenceDamage)
             {
                 TaggedPlayers.Add(item);
             }

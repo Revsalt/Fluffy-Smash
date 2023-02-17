@@ -126,7 +126,7 @@ public class beetcatin : PlayerController
                 ability_tag.End.Invoke();
             }
             ,coolDown = 0.2f
-            ,events = new UnityEvent[2] { GetComponent<TagLogic>().StartTag, GetComponent<TagLogic>().EndTag}
+            ,events = new UnityEvent[2] { GetComponent<Health>().StartAttack, GetComponent<Health>().EndAttack}
             
         };
 

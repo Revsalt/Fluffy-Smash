@@ -12,11 +12,8 @@ EditorBuildSettings:
     path: Assets/Scenes/RoomScene.unity
     guid: eb753f0bf278ef64aac21e4d228d628f
   - enabled: 1
-    path: Assets/Scenes/TouchDownSplatoonLikeMap.unity
-    guid: cd97a1250310e7b448b33e2ec9d9f57a
-  - enabled: 1
-    path: Assets/Scenes/TouchDownIslandMap.unity
-    guid: b5ec2d7f683b0414d8f8b69df69bb344
+    path: Assets/Scenes/TouchDownMap.unity
+    guid: 300e7cd3babbb65448903b7f4351fd2a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 3ba30a344de09c746a961566e7794d24,
       type: 2}

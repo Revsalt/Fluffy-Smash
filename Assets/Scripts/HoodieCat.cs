@@ -53,7 +53,7 @@ public class HoodieCat : PlayerController
         };
 
 
-        TagLogic taglogic = GetComponent<TagLogic>();
+        Health health = GetComponent<Health>();
 
         ability_tag = new Ability()
         {
@@ -62,7 +62,7 @@ public class HoodieCat : PlayerController
                 StartCoroutine(AttackSquence0());
             },
             coolDown = 5f,
-            events = new UnityEvent[] { taglogic.StartTag , taglogic.EndTag }
+            events = new UnityEvent[] { health.StartAttack , health.EndAttack }
         };
     }
 
@@ -255,7 +255,7 @@ public class HoodieCat : PlayerController
             yield return null;
         }
 
-        GetComponent<TagLogic>().SetCanAttack(true);
+        GetComponent<Health>().SetCanAttack(true);
 
         playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z));
         ZoomIn(false);
@@ -278,7 +278,7 @@ public class HoodieCat : PlayerController
 
         yield return new WaitForSeconds(.5f);
 
-        GetComponent<TagLogic>().SetCanAttack(false);
+        GetComponent<Health>().SetCanAttack(false);
         DisableMovment(false);
         DisableInput(false);
 
@@ -403,7 +403,7 @@ public class HoodieCat : PlayerController
 
         yield return new WaitForSeconds(.6f);
 
-        foreach (var item in FindObjectsOfType<TagLogic>())
+        foreach (var item in FindObjectsOfType<Health>())
         {
             if (!item.GetComponent<NetworkIdentity>().isLocalPlayer && Vector3.Distance(LoliPop.transform.position , item.transform.position) < stunRadius)
             {

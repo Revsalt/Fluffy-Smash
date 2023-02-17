@@ -146,39 +146,15 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  isTagger: 0
+  canInfluenceDamage: 0
   TeamName: none
-  TagRadius: 2
-  StartTag:
+  damageRadius: 2
+  StartAttack:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3830502617292365957}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Play
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  EndTag:
+      m_Calls: []
+  EndAttack:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3830502617292365957}
-        m_TargetAssemblyTypeName: UnityEngine.ParticleSystem, UnityEngine
-        m_MethodName: Stop
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
   OnDeath:
     m_PersistentCalls:
       m_Calls:
@@ -270,19 +246,19 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 1
-  sendInterval: 0.05
+  sendInterval: 0
   syncPosition: 1
   syncRotation: 1
   syncScale: 0
   interpolatePosition: 1
-  interpolateRotation: 1
+  interpolateRotation: 0
   interpolateScale: 0
   bufferTimeMultiplier: 1
   bufferSizeLimit: 64
   catchupThreshold: 4
   catchupMultiplier: 0.1
   showGizmos: 1
-  showOverlay: 0
+  showOverlay: 1
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
 --- !u!114 &7179160013567609580
 MonoBehaviour:

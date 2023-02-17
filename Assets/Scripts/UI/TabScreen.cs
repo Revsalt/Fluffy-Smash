@@ -51,7 +51,7 @@ public class TabScreen : NetworkBehaviour
 
         foreach(PlayerNetworkManager newPlayer in AllPlayers)
         {
-            if(newPlayer.GetComponent<TagLogic>().TeamName == "RedTeam")
+            if(newPlayer.GetComponent<Health>().TeamName == "RedTeam")
             {
                 //Taggers
                 TabScreenPlayer tabScreenPlayer = Instantiate(TabScreenPlayerPrefab, TaggersListObject.transform);

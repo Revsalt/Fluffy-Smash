@@ -218,7 +218,7 @@ public class PlayerController : NetworkBehaviour
             StartAbility(1);
         }
 
-        if (Input.GetMouseButtonDown(0) && !GetDisableInput() && GetComponent<TagLogic>().isTagger)
+        if (Input.GetMouseButtonDown(0) && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
         {
             StartAbility(2);
         }
@@ -462,7 +462,7 @@ public class PlayerController : NetworkBehaviour
         jumpHeight -= 5f;
         gravity = -9.8f;
     }
-    
+
     private IEnumerator CoolDownUp(float duration)
     {
         HasCoolUp = true;

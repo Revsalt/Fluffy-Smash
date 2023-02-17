@@ -25,10 +25,7 @@ public class WhiteCat : PlayerController
         //    events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() }
         //};
     }
-    private void Update()
-    {
-        
-    }
+    
     IEnumerator SetTranslucent(float Duration)
     {
         LerpAlpha(0,false);

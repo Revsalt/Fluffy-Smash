@@ -40,6 +40,6 @@ public class PlayerNetworkManager : NetworkBehaviour
 
 
         if (transform.position.y < -40)
-            GetComponent<TagLogic>().QuickRespawn();
+            GetComponent<Health>().QuickRespawn();
     }
 }

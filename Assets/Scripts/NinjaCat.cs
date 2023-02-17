@@ -79,7 +79,7 @@ public class NinjaCat : PlayerController
             abilityName = "Walk"
         };
 
-        TagLogic taglogic = GetComponent<TagLogic>();
+        Health health = GetComponent<Health>();
 
         ability_tag = new Ability()
         {
@@ -88,7 +88,7 @@ public class NinjaCat : PlayerController
                 StartCoroutine(AttackSequence_tag());
             },
             coolDown = 2,
-            events = new UnityEvent[] { taglogic.StartTag, taglogic.EndTag },
+            events = new UnityEvent[] { health.StartAttack, health.EndAttack },
             abilityName = "SakuraBreeze"
         };
     }
@@ -231,7 +231,7 @@ public class NinjaCat : PlayerController
         AddImpact(playerModel.transform.forward, 1400, false);
         ShakeCamera(3, 0.3f);
 
-        GetComponent<TagLogic>().SetCanAttack(true);
+        GetComponent<Health>().SetCanAttack(true);
 
         yield return new WaitForSeconds(duration);
         AudioManager.instance.Play("NinjaCatSwordSlash", transform.position, transform);
@@ -243,7 +243,7 @@ public class NinjaCat : PlayerController
         animator.SetBool("isPersonGrab", false);
         DisableInput(false);
         gravity = originalgravity;
-        GetComponent<TagLogic>().SetCanAttack(false);
+        GetComponent<Health>().SetCanAttack(false);
 
         ability_tag.End.Invoke();
     }

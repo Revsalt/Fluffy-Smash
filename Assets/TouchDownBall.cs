@@ -10,7 +10,7 @@ public class TouchDownBall : NetworkBehaviour
     [ClientCallback]
     void OnTriggerEnter(Collider collision)
     {
-        if (collision.tag == "Player" && collision.GetComponent<TagLogic>() && !transform.parent)
+        if (collision.tag == "Player" && collision.GetComponent<Health>() && !transform.parent)
         {
             if (!collision.GetComponent<NetworkIdentity>().isLocalPlayer) return;
 
@@ -26,7 +26,7 @@ public class TouchDownBall : NetworkBehaviour
     [Command(requiresAuthority = false)]
     void CmdPickUpBall(Transform ball , Transform player)
     {
-        player.GetComponent<TagLogic>().isTagger = false;
+        player.GetComponent<Health>().canInfluenceDamage = false;
 
         RpcPickUpBall(ball , player);
     }
@@ -52,11 +52,11 @@ public class TouchDownBall : NetworkBehaviour
     [ServerCallback]
     void FixedUpdate()
     {
-        if (transform.parent != null && transform.parent.GetComponent<TagLogic>().IsDead)
+        if (transform.parent != null && transform.parent.GetComponent<Health>().IsDead)
         {
             //GetComponent<SphereCollider>().enabled = true;
             //GetComponent<Rigidbody>().isKinematic = false;
-            transform.parent.GetComponent<TagLogic>().isTagger = true;
+            transform.parent.GetComponent<Health>().canInfluenceDamage = true;
             transform.SetParent(null);
             RpcDropBall(gameObject , transform.position);
         }

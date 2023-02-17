@@ -4,22 +4,22 @@ using UnityEngine;
 using UnityEngine.Events;
 using Mirror;
 
-public class TagLogic : NetworkBehaviour
+public class Health : NetworkBehaviour
 {
-    [SyncVar(hook = nameof(OnChangeTaggerState))] public bool isTagger = false;
+    [SyncVar(hook = nameof(OnChangeDamageState))] public bool canInfluenceDamage = false;
     [SyncVar(hook = nameof(OnChangeTeam))] public string TeamName = "none";
     bool CanAttack = false;
-    public float TagRadius = 2;
+    public float damageRadius = 2;
 
-    [Header("InTag")]
-    public UnityEvent StartTag;
-    public UnityEvent EndTag;
+    [Header("InAttack")]
+    public UnityEvent StartAttack;
+    public UnityEvent EndAttack;
     
     [Header("InDeath")]
     public UnityEvent OnDeath;
     public UnityEvent OnRespawn;
 
-    public bool IsDead;
+    [SyncVar]public bool IsDead;
 
     PlayerController myPlayer;
 
@@ -51,9 +51,9 @@ public class TagLogic : NetworkBehaviour
 
         if (CanAttack)
         {
-            foreach (var player in FindObjectsOfType<TagLogic>())
+            foreach (var player in FindObjectsOfType<Health>())
             {
-                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && TeamName != player.TeamName && Vector3.Distance(player.transform.position , transform.position) < TagRadius) // if anyone is close to me
+                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && TeamName != player.TeamName && Vector3.Distance(player.transform.position , transform.position) < damageRadius) // if anyone is close to me
                 {
                     Kill(player.GetComponent<NetworkIdentity>() , GetComponent<NetworkIdentity>());
                     CanAttack = false;
@@ -74,7 +74,7 @@ public class TagLogic : NetworkBehaviour
     [Command]
     public void Kill(NetworkIdentity player , NetworkIdentity killedBY)
     {
-        player.GetComponent<TagLogic>().isTagger = true;
+        player.GetComponent<Health>().canInfluenceDamage = true;
 
         RpcKill(player , killedBY);
     }
@@ -82,9 +82,9 @@ public class TagLogic : NetworkBehaviour
     [ClientRpc]
     void RpcKill(NetworkIdentity nc , NetworkIdentity killedBy)
     {
-        nc.GetComponent<TagLogic>().OnDeath.Invoke();
+        nc.GetComponent<Health>().OnDeath.Invoke();
         nc.GetComponent<CharacterController>().enabled = false;
-        nc.GetComponent<TagLogic>().Resapawn(4);
+        nc.GetComponent<Health>().Resapawn(4);
 
         if (nc.isLocalPlayer)
         {
@@ -102,7 +102,7 @@ public class TagLogic : NetworkBehaviour
         }
     }
 
-    public void OnChangeTaggerState(bool oldb, bool newb)
+    public void OnChangeDamageState(bool oldb, bool newb)
     {
         if (newb && GetComponent<PlayerNetworkManager>().usernametxt)
             GetComponent<PlayerNetworkManager>().usernametxt.color = Color.red;
@@ -145,6 +145,6 @@ public class TagLogic : NetworkBehaviour
     {
         Gizmos.color = Color.red;
 
-        Gizmos.DrawWireSphere(Vector3.zero, TagRadius);
+        Gizmos.DrawWireSphere(Vector3.zero, damageRadius);
     }
 }

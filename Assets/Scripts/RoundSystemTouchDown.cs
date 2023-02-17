@@ -187,7 +187,7 @@ public class RoundSystemTouchDown : NetworkBehaviour
     {
         foreach(var item in FindObjectsOfType<PlayerNetworkManager>().ToList()) 
         {
-            item.GetComponent<TagLogic>().isTagger = true;
+            item.GetComponent<Health>().canInfluenceDamage = true;
         }
 
         GameObject g = Instantiate(Ball , Vector3.zero + Vector3.up * 1 , Quaternion.identity , null);
@@ -208,13 +208,13 @@ public class RoundSystemTouchDown : NetworkBehaviour
             if (isRed)
             {
                 TeamRed.Add(allPlayers[i]);
-                allPlayers[i].GetComponent<TagLogic>().TeamName = "RedTeam";
+                allPlayers[i].GetComponent<Health>().TeamName = "RedTeam";
                 redTeamCount++;
             }
             else
             {
                 TeamBlue.Add(allPlayers[i]);
-                allPlayers[i].GetComponent<TagLogic>().TeamName = "BlueTeam";
+                allPlayers[i].GetComponent<Health>().TeamName = "BlueTeam";
                 blueTeamCount++;
             }
         }
@@ -229,8 +229,8 @@ public class RoundSystemTouchDown : NetworkBehaviour
         for (int i = 0; i < allPlayers.Count; i++)
         {
             RpcSetStartPosition(allPlayers[i].GetComponent<NetworkIdentity>().connectionToClient ,
-            NetworkStartPosition.GetSpawnPoistionRandomAtTeam(allPlayers[i].GetComponent<TagLogic>().TeamName));
-            allPlayers[i].GetComponent<TagLogic>().isTagger = true;
+            NetworkStartPosition.GetSpawnPoistionRandomAtTeam(allPlayers[i].GetComponent<Health>().TeamName));
+            allPlayers[i].GetComponent<Health>().canInfluenceDamage = true;
         }
     }
 
