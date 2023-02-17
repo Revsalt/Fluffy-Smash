@@ -135,6 +135,7 @@ public class PlayerController : NetworkBehaviour
 
     float rotX, rotY;
     [HideInInspector] public Vector3 moveDirection = Vector3.zero;
+
     public void Update()
     {
         if (!disableInput)
@@ -425,6 +426,7 @@ public class PlayerController : NetworkBehaviour
 
         groundNormal = hit.normal;
     }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!isLocalPlayer) return;
@@ -460,6 +462,7 @@ public class PlayerController : NetworkBehaviour
         jumpHeight -= 5f;
         gravity = -9.8f;
     }
+    
     private IEnumerator CoolDownUp(float duration)
     {
         HasCoolUp = true;

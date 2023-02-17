@@ -14,6 +14,7 @@ public class TagLogic : NetworkBehaviour
     [Header("InTag")]
     public UnityEvent StartTag;
     public UnityEvent EndTag;
+    
     [Header("InDeath")]
     public UnityEvent OnDeath;
     public UnityEvent OnRespawn;
