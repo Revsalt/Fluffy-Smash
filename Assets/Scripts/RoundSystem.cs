@@ -8,7 +8,9 @@ using Mirror;
 
 public class RoundSystem : NetworkBehaviour
 {
-    [SerializeField] private Animator animator = null;
+    public static RoundSystem instance;
+
+    private Animator animator = null;
     [SerializeField] private Text countdown = null;
     [SerializeField] private Text winText = null;
     [SerializeField] private float roundTimeInMinutes = 2;
@@ -21,6 +23,12 @@ public class RoundSystem : NetworkBehaviour
             if (room != null) { return room; }
             return room = NetworkManager.singleton as NetworkRoomManager;
         }
+    }
+
+    private void Awake()
+    {
+        instance = this;
+        animator = GetComponent<Animator>();
     }
 
     public void CountdownEnded()
@@ -42,7 +50,7 @@ public class RoundSystem : NetworkBehaviour
     }
 
     public List<PlayerNetworkManager> GetAllPlayers()
-    {
+    { 
         return FindObjectsOfType<PlayerNetworkManager>().ToList();
     }
 
@@ -68,9 +76,23 @@ public class RoundSystem : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void RoundsEnded() // if there is more than one last guy
+    public void RoundsEnded(string endText)
     {
-        RpcEndRound(winText.text);
+        RpcEndRound(endText);
+
+        StartCoroutine(WinDelay());
+
+        IEnumerator WinDelay()
+        {
+            yield return new WaitForSeconds(2);
+            Room.ServerChangeScene(Room.RoomScene);
+        }
+    }
+
+    [ServerCallback]
+    public void RoundsEnded()
+    {
+        RpcEndRound("");
 
         Room.ServerChangeScene(Room.RoomScene);
     }
@@ -91,6 +113,11 @@ public class RoundSystem : NetworkBehaviour
         animator.enabled = true;
 
         RpcStartCountdown();
+    }
+
+    public virtual void OnPlayerKill(NetworkIdentity theKiller)
+    {
+        // on any player kill
     }
 
     #endregion

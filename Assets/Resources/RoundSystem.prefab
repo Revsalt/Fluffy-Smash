@@ -331,7 +331,7 @@ GameObject:
   - component: {fileID: 555757707498637000}
   - component: {fileID: 555757707498637014}
   - component: {fileID: 8969648721433084224}
-  - component: {fileID: 6237747652993901130}
+  - component: {fileID: 2761104670915116512}
   m_Layer: 5
   m_Name: RoundSystem
   m_TagString: Untagged
@@ -478,7 +478,7 @@ MonoBehaviour:
     type: 3}
   TaggersListObject: {fileID: 5761153339538438763}
   RunnerListObject: {fileID: 9119473701210476109}
---- !u!114 &6237747652993901130
+--- !u!114 &2761104670915116512
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -487,15 +487,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 555757707498637005}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c26e48b761a314a4ca831f5d102ba4a5, type: 3}
+  m_Script: {fileID: 11500000, guid: 2394e618ce71c454aa227657450cfe9b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  animator: {fileID: 555757707498637000}
   countdown: {fileID: 7794569440888320936}
   winText: {fileID: 3553751468992670252}
-  roundTimeInMinutes: 0.5
+  roundTimeInMinutes: 2
 --- !u!1 &555757708070758235
 GameObject:
   m_ObjectHideFlags: 0

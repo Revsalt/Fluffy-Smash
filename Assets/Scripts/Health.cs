@@ -77,6 +77,9 @@ public class Health : NetworkBehaviour
         player.GetComponent<Health>().canInfluenceDamage = true;
 
         RpcKill(player , killedBY);
+
+        //tell the roundsystem that this player killed someone !
+        RoundSystem.instance?.OnPlayerKill(GetComponent<NetworkIdentity>());
     }
 
     [ClientRpc]

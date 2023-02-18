@@ -212,6 +212,7 @@ MonoBehaviour:
   syncInterval: 0.1
   nrp: {fileID: 0}
   usernametxt: {fileID: 0}
+  playerScores: 000000000000000000000000
 --- !u!114 &1373193218838475886
 MonoBehaviour:
   m_ObjectHideFlags: 0

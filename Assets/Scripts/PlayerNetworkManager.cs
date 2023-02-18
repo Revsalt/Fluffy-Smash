@@ -11,6 +11,9 @@ public class PlayerNetworkManager : NetworkBehaviour
     [SyncVar]public NetworkRoomPlayer nrp;
 
     [HideInInspector] public TextMeshProUGUI usernametxt;
+
+    public List<int> playerScores = new List<int>() {0 ,0 ,0 };
+
     private void Start()
     {
         if (isLocalPlayer)
