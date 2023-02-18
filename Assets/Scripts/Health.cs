@@ -53,7 +53,7 @@ public class Health : NetworkBehaviour
         {
             foreach (var player in FindObjectsOfType<Health>())
             {
-                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && TeamName != player.TeamName && Vector3.Distance(player.transform.position , transform.position) < damageRadius) // if anyone is close to me
+                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && (TeamName != player.TeamName || TeamName == "none" || player.TeamName == "none") && Vector3.Distance(player.transform.position , transform.position) < damageRadius) // if anyone is close to me
                 {
                     Kill(player.GetComponent<NetworkIdentity>() , GetComponent<NetworkIdentity>());
                     CanAttack = false;

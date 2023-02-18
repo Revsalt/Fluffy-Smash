@@ -81,7 +81,7 @@ public class NinjaCat : PlayerController
 
         Health health = GetComponent<Health>();
 
-        ability_tag = new Ability()
+        ability_Attack = new Ability()
         {
             ability = delegate
             {
@@ -191,7 +191,7 @@ public class NinjaCat : PlayerController
         float DistanceDuration = 0.1f;
         for (float i = 0; Input.GetMouseButton(0) && i < 1f; i += Time.deltaTime)
         {
-            playerModel.transform.LookAt(cineCamera.transform.position + cineCamera.transform.forward * 10);
+            playerModel.transform.LookAt(cineCamera.transform.position + cineCamera.transform.forward * 1000);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             DistanceDuration = i * 0.1f;
@@ -245,7 +245,7 @@ public class NinjaCat : PlayerController
         gravity = originalgravity;
         GetComponent<Health>().SetCanAttack(false);
 
-        ability_tag.End.Invoke();
+        ability_Attack.End.Invoke();
     }
 
     #endregion

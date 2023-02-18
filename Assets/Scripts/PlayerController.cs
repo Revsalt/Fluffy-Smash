@@ -32,7 +32,7 @@ public class PlayerController : NetworkBehaviour
     public delegate void Jump();
     public event Jump onJump;
 
-    public Ability ability0, ability1, ability_tag;
+    public Ability ability0, ability1, ability_Attack;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
@@ -316,7 +316,7 @@ public class PlayerController : NetworkBehaviour
     bool abilityInProgress = false;
     public void StartAbility(int i)
     {
-        Ability abilityRef = new Ability[3] { ability0, ability1, ability_tag }[i];
+        Ability abilityRef = new Ability[3] { ability0, ability1, ability_Attack }[i];
 
         if (!abilityRef.canCast || abilityInProgress) return;
 

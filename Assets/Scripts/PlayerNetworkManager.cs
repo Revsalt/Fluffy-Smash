@@ -35,7 +35,8 @@ public class PlayerNetworkManager : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer) usernametxt.text = nrp.username;
+        
+        if (!isLocalPlayer) {usernametxt.text = nrp.username;}
         gameObject.name = "Player : " + nrp.username;
 
 

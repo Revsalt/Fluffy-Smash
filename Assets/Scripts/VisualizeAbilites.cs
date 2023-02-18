@@ -22,7 +22,7 @@ public class VisualizeAbilites : NetworkBehaviour
 
         GameObject t = (GameObject)Instantiate(Resources.Load("AbilityVisualization"), Vector3.zero, Quaternion.identity, null);
 
-        foreach (var item in new Ability[3] { pc.ability0, pc.ability1, pc.ability_tag })
+        foreach (var item in new Ability[3] { pc.ability0, pc.ability1, pc.ability_Attack })
         {
             item.coolDown_current_value = item.coolDown;
 

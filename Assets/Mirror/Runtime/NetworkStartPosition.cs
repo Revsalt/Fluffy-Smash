@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using System.Collections;
 
 namespace Mirror
@@ -36,6 +37,9 @@ namespace Mirror
                     avaliablePositions.Add(item);
                 }
             }
+
+            if (avaliablePositions.Count == 0)
+                avaliablePositions = FindObjectsOfType<NetworkStartPosition>().ToList();
 
             return avaliablePositions[Random.Range(0 , avaliablePositions.Count)].transform.position;
         }

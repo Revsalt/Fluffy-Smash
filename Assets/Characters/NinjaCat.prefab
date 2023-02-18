@@ -14,13 +14,11 @@ GameObject:
   - component: {fileID: 4097870006058671203}
   - component: {fileID: 6435042394493189592}
   - component: {fileID: 1373193218838475886}
-  - component: {fileID: -5272361936637950625}
+  - component: {fileID: -9218091509796099498}
   - component: {fileID: 7179160013567609580}
-  - component: {fileID: 7909071717775516325}
-  - component: {fileID: 5701409085117814386}
   - component: {fileID: -7452015145682520640}
   - component: {fileID: 1027678777448782296}
-  - component: {fileID: 1367320341176219758}
+  - component: {fileID: 4672922393138554058}
   m_Layer: 8
   m_Name: NinjaCat
   m_TagString: Player
@@ -231,7 +229,7 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 6f71b832f06ab0e4ba3b015b2ea606e2
   hasSpawned: 0
---- !u!114 &-5272361936637950625
+--- !u!114 &-9218091509796099498
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -246,7 +244,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   clientAuthority: 1
-  sendInterval: 0
+  sendInterval: 0.01
   syncPosition: 1
   syncRotation: 1
   syncScale: 0
@@ -258,8 +256,8 @@ MonoBehaviour:
   catchupThreshold: 4
   catchupMultiplier: 0.1
   showGizmos: 1
-  showOverlay: 1
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  showOverlay: 0
+  overlayColor: {r: 0.0620358, g: 1, b: 0, a: 0.5}
 --- !u!114 &7179160013567609580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -276,66 +274,6 @@ MonoBehaviour:
   syncInterval: 0.1
   clientAuthority: 1
   animator: {fileID: 1646360426086753232}
---- !u!114 &7909071717775516325
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646360425263456792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 734b48bea0b204338958ee3d885e11f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
-  sendInterval: 0.1
-  syncPosition: 0
-  syncRotation: 1
-  syncScale: 0
-  interpolatePosition: 0
-  interpolateRotation: 0
-  interpolateScale: 0
-  bufferTimeMultiplier: 1
-  bufferSizeLimit: 64
-  catchupThreshold: 4
-  catchupMultiplier: 0.1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  target: {fileID: 1646360426110567442}
---- !u!114 &5701409085117814386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646360425263456792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 734b48bea0b204338958ee3d885e11f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
-  sendInterval: 0.1
-  syncPosition: 1
-  syncRotation: 0
-  syncScale: 0
-  interpolatePosition: 1
-  interpolateRotation: 0
-  interpolateScale: 0
-  bufferTimeMultiplier: 1
-  bufferSizeLimit: 64
-  catchupThreshold: 4
-  catchupMultiplier: 0.1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  target: {fileID: 1646360426227162867}
 --- !u!114 &-7452015145682520640
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -375,7 +313,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   m_Camera: {fileID: 1646360426734641768}
---- !u!114 &1367320341176219758
+--- !u!114 &4672922393138554058
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -11737,24 +11675,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 569b9dbd52ef84b428295aa4bde5da6d, type: 3}
---- !u!4 &9051843862720261438 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: -1493066296968431178, guid: 569b9dbd52ef84b428295aa4bde5da6d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1646360426346910856}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &5516378604514663401 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6509690516202999649, guid: 569b9dbd52ef84b428295aa4bde5da6d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1646360426346910856}
-  m_PrefabAsset: {fileID: 0}
---- !u!4 &4611671307098424681 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 2965337277638480353, guid: 569b9dbd52ef84b428295aa4bde5da6d,
-    type: 3}
-  m_PrefabInstance: {fileID: 1646360426346910856}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &8738723190360593466 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -1180186760710045518, guid: 569b9dbd52ef84b428295aa4bde5da6d,
@@ -11764,6 +11684,12 @@ Transform:
 --- !u!4 &1248540983182127971 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1646360426346910856}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &5516378604514663401 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 6509690516202999649, guid: 569b9dbd52ef84b428295aa4bde5da6d,
     type: 3}
   m_PrefabInstance: {fileID: 1646360426346910856}
   m_PrefabAsset: {fileID: 0}
@@ -11779,9 +11705,21 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1646360426346910856}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &4611671307098424681 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 2965337277638480353, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1646360426346910856}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1880364737530046937 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 569b9dbd52ef84b428295aa4bde5da6d,
+    type: 3}
+  m_PrefabInstance: {fileID: 1646360426346910856}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &9051843862720261438 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -1493066296968431178, guid: 569b9dbd52ef84b428295aa4bde5da6d,
     type: 3}
   m_PrefabInstance: {fileID: 1646360426346910856}
   m_PrefabAsset: {fileID: 0}

@@ -55,7 +55,7 @@ public class HoodieCat : PlayerController
 
         Health health = GetComponent<Health>();
 
-        ability_tag = new Ability()
+        ability_Attack = new Ability()
         {
             ability = delegate
             {
@@ -227,8 +227,8 @@ public class HoodieCat : PlayerController
     {
         if (!HasLoliPop())
         {
-            ability_tag.skipNextCoolDown = true;
-            ability_tag.End.Invoke();
+            ability_Attack.skipNextCoolDown = true;
+            ability_Attack.End.Invoke();
             yield break;
         }
 
@@ -282,7 +282,7 @@ public class HoodieCat : PlayerController
         DisableMovment(false);
         DisableInput(false);
 
-        ability_tag.End.Invoke();
+        ability_Attack.End.Invoke();
 
         yield return null;
     }

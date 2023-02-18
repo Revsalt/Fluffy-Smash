@@ -96,11 +96,11 @@ public class beetcatin : PlayerController
             ,
             events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() }
         };
-        ability_tag = new Ability()
+        ability_Attack = new Ability()
         {
             ability = delegate
             {
-                if (!isLocalPlayer) { ability_tag.End.Invoke(); return; } // to stop the other clients from creating a mess (or keeping them from replication the event twice)
+                if (!isLocalPlayer) { ability_Attack.End.Invoke(); return; } // to stop the other clients from creating a mess (or keeping them from replication the event twice)
 
                 if (Onbeat)
                 {
@@ -123,7 +123,7 @@ public class beetcatin : PlayerController
 
                 CmdStartTagAttack(GetComponent<NetworkIdentity>(), HoloLv);
 
-                ability_tag.End.Invoke();
+                ability_Attack.End.Invoke();
             }
             ,coolDown = 0.2f
             ,events = new UnityEvent[2] { GetComponent<Health>().StartAttack, GetComponent<Health>().EndAttack}
