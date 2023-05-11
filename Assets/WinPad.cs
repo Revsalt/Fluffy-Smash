@@ -14,7 +14,7 @@ public class WinPad : NetworkBehaviour
         {   
             other.GetComponentInChildren<TouchDownBall>().RpcDropBall(other.GetComponentInChildren<TouchDownBall>().gameObject , Vector3.zero);
             NetworkServer.Destroy(other.GetComponentInChildren<TouchDownBall>().gameObject);
-            RoundSystemTouchDown.instace.RoundEnded(other.GetComponent<Health>().TeamName.ToUpper() + " WINS" , other.GetComponent<Health>().TeamName);
+            RoundSystemTouchDown.instance.RoundsEnded(other.GetComponent<Health>().TeamName.ToUpper() + " WINS");
             
             other.GetComponent<Health>().canInfluenceDamage = true;
         }

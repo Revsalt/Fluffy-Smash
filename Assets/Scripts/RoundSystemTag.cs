@@ -8,7 +8,6 @@ using Mirror;
 
 public class RoundSystemTag : RoundSystem
 {
-
     public override void OnPlayerKill(NetworkIdentity theKiller)
     {
         base.OnPlayerKill(theKiller);

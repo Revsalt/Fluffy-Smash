@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Mirror;
 using TMPro;
@@ -38,12 +39,16 @@ public class PlayerNetworkManager : NetworkBehaviour
 
     void Update()
     {
-        
         if (!isLocalPlayer) {usernametxt.text = nrp.username;}
         gameObject.name = "Player : " + nrp.username;
 
 
         if (transform.position.y < -40)
             GetComponent<Health>().QuickRespawn();
+    }
+
+    bool IsCurrentSceneLoaded()
+    {
+        return  SceneManager.GetActiveScene().isLoaded;
     }
 }

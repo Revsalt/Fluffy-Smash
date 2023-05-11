@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Mirror;
 
@@ -11,17 +12,17 @@ public class RoundSystem : NetworkBehaviour
     public static RoundSystem instance;
 
     private Animator animator = null;
-    [SerializeField] private Text countdown = null;
-    [SerializeField] private Text winText = null;
-    [SerializeField] private float roundTimeInMinutes = 2;
+    [HideInInspector]public Text countdown = null;
+    [HideInInspector]public Text winText = null;
+    [SerializeField] public float roundTimeInMinutes = 2;
 
-    private NetworkRoomManager room;
-    private NetworkRoomManager Room
+    private NetworkRoomManagerExt room;
+    private NetworkRoomManagerExt Room
     {
         get
         {
             if (room != null) { return room; }
-            return room = NetworkManager.singleton as NetworkRoomManager;
+            return room = NetworkRoomManagerExt.singleton as NetworkRoomManagerExt;
         }
     }
 
@@ -29,11 +30,14 @@ public class RoundSystem : NetworkBehaviour
     {
         instance = this;
         animator = GetComponent<Animator>();
+
     }
 
     public void CountdownEnded()
     {
         animator.enabled = (false);
+
+        StartRounds();
     }
 
     public void PlaySound(string s)
@@ -50,7 +54,7 @@ public class RoundSystem : NetworkBehaviour
     }
 
     public List<PlayerNetworkManager> GetAllPlayers()
-    { 
+    {
         return FindObjectsOfType<PlayerNetworkManager>().ToList();
     }
 
@@ -73,6 +77,8 @@ public class RoundSystem : NetworkBehaviour
         {
             item.GetComponent<Health>().canInfluenceDamage = true;
         }
+
+        OnRoundStart();
     }
 
     [ServerCallback]
@@ -103,21 +109,44 @@ public class RoundSystem : NetworkBehaviour
         winText.text = winScreen;
     }
 
+    int readyPlayers = 0;
+
     [Server]
     private void CheckToStartRound(NetworkConnection conn)
     {
-        Debug.Log(Room.numPlayers + " || " + FindObjectsOfType<PlayerNetworkManager>().Length);
+        RpcArePlayersReady();
 
-        if (Room.numPlayers != FindObjectsOfType<PlayerNetworkManager>().Length) { return; }
+        Debug.Log(Room.numPlayers + " || " + readyPlayers);
+
+        if (Room.numPlayers != readyPlayers) { return; }
 
         animator.enabled = true;
 
         RpcStartCountdown();
     }
 
+    [ClientRpc]
+    public void RpcArePlayersReady()
+    {
+        if (SceneManager.GetActiveScene().isLoaded)
+            PlayerIsReady();
+
+    }
+
+    [Command(requiresAuthority = false)]
+    public void PlayerIsReady()
+    {
+        readyPlayers++;
+    }
+
     public virtual void OnPlayerKill(NetworkIdentity theKiller)
     {
         // on any player kill
+    }
+
+    public virtual void OnRoundStart()
+    {
+        // on roundStarts
     }
 
     #endregion
@@ -150,7 +179,7 @@ public class RoundSystem : NetworkBehaviour
     IEnumerator RoundCountDown()
     {
         countdown.transform.parent.gameObject.SetActive(true);
-        for (int i = 0; i <= roundTimeInMinutes*60; i++)
+        for (int i = 0; i <= roundTimeInMinutes * 60; i++)
         {
             yield return new WaitForSeconds(1f);
             TimeSpan t = TimeSpan.FromSeconds(i);

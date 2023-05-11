@@ -540,6 +540,8 @@ namespace Mirror
         /// This is called on the server when a networked scene finishes loading.
         /// </summary>
         /// <param name="sceneName">Name of the new scene.</param>
+
+        [HideInInspector]public float roundTimeInMinutes;
         public virtual void OnRoomServerSceneChanged(string sceneName) {
             Debug.Log(Path.GetFileNameWithoutExtension(GameplayScene));
             if (SceneManager.GetActiveScene().name == Path.GetFileNameWithoutExtension(GameplayScene))
@@ -552,6 +554,8 @@ namespace Mirror
                 NetworkServer.Spawn(chatSystemInstance);
             }
         }
+
+
 
         /// <summary>
         /// This allows customization of the creation of the room-player object on the server.

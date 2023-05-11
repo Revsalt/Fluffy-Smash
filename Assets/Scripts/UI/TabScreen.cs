@@ -15,22 +15,19 @@ public class TabScreen : NetworkBehaviour
 
 
     [SerializeField]
-    private GameObject TaggersListObject;
-
-    [SerializeField]
-    private GameObject RunnerListObject;
+    private GameObject PlayersListObject;
 
 
     //public List<PlayerNetworkManager> 
 
     private void Update()
     {
-        if(Input.GetKeyDown(KeyCode.Tab))
+        if (Input.GetKeyDown(KeyCode.Tab))
         {
             TabScreenObject.SetActive(true);
         }
-       
-        if(Input.GetKeyUp(KeyCode.Tab))
+
+        if (Input.GetKeyUp(KeyCode.Tab))
         {
             TabScreenObject.SetActive(false);
         }
@@ -39,34 +36,23 @@ public class TabScreen : NetworkBehaviour
         List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
 
 
-        foreach(Transform x in TaggersListObject.transform)
+        foreach (Transform x in PlayersListObject.transform)
         {
             Destroy(x.gameObject);
         }
 
-        foreach (Transform x in RunnerListObject.transform)
+        foreach (Transform x in PlayersListObject.transform)
         {
             Destroy(x.gameObject);
         }
 
-        foreach(PlayerNetworkManager newPlayer in AllPlayers)
+        foreach (PlayerNetworkManager newPlayer in AllPlayers)
         {
-            if(newPlayer.GetComponent<Health>().TeamName == "RedTeam")
-            {
-                //Taggers
-                TabScreenPlayer tabScreenPlayer = Instantiate(TabScreenPlayerPrefab, TaggersListObject.transform);
-                tabScreenPlayer.PlayerName = newPlayer.nrp.username;
-                tabScreenPlayer.PlayerRole = true;
-                tabScreenPlayer.PlayerPing = Convert.ToInt32(newPlayer.nrp.ping);
-            }
-            else
-            {
-                //Runners
-                TabScreenPlayer tabScreenPlayer = Instantiate(TabScreenPlayerPrefab, RunnerListObject.transform);
-                tabScreenPlayer.PlayerName = newPlayer.nrp.username;
-                tabScreenPlayer.PlayerRole = false;
-                tabScreenPlayer.PlayerPing = Convert.ToInt32(newPlayer.nrp.ping);
-            }
+            //Taggers
+            TabScreenPlayer tabScreenPlayer = Instantiate(TabScreenPlayerPrefab, PlayersListObject.transform);
+            tabScreenPlayer.PlayerName = newPlayer.nrp.username;
+            tabScreenPlayer.PlayerRole = true;
+            tabScreenPlayer.PlayerPing = Convert.ToInt32(newPlayer.nrp.ping);
         }
     }
 }
