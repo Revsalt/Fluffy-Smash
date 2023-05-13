@@ -62630,12 +62630,15 @@ MonoBehaviour:
   - {fileID: 3814039662413454323, guid: 84cece894fecdf841b308940b3a5c380, type: 3}
   - {fileID: 7217512833681114730, guid: 7134ed9eb2a46804eab678efae3d9e4b, type: 3}
   - {fileID: 7017652105095865759, guid: e40e715f967ccce498408c0d57fee5e4, type: 3}
+  - {fileID: 555757707498637005, guid: f23657655bfd28145a916d6b50f570a3, type: 3}
+  - {fileID: 555757707498637005, guid: ac3f7ab04d8c2d34aa549775556ab484, type: 3}
   showRoomGUI: 0
   minPlayers: 1
-  roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
+  roomPlayerPrefab: {fileID: 6214244957340260601, guid: deae2134a1d77704b9c595efe69767dd,
     type: 3}
   RoomScene: Assets/Scenes/RoomScene.unity
   GameplayScene: Assets/Scenes/Rings level.unity
+  gameModeName: 
   _allPlayersReady: 0
   roomSlots: []
   clientIndex: 0
@@ -62648,6 +62651,7 @@ MonoBehaviour:
   - Assets/Scenes/TouchDownMap.unity
   - Assets/Scenes/Rings level Simplified.unity
   - Assets/Scenes/Rings level.unity
+  - Assets/Scenes/TouchDownMap.unity
 --- !u!4 &1763280529
 Transform:
   m_ObjectHideFlags: 0

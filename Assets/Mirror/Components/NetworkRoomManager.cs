@@ -55,6 +55,8 @@ namespace Mirror
         [Scene]
         public string GameplayScene;
 
+        [HideInInspector]public string gameModeName;
+
         /// <summary>
         /// List of players that are in the Room
         /// </summary>
@@ -546,7 +548,7 @@ namespace Mirror
             Debug.Log(Path.GetFileNameWithoutExtension(GameplayScene));
             if (SceneManager.GetActiveScene().name == Path.GetFileNameWithoutExtension(GameplayScene))
             {
-                GameObject roundSystemInstance = Instantiate(Resources.Load("RoundSystem") as GameObject);
+                GameObject roundSystemInstance = Instantiate(Resources.Load(gameModeName) as GameObject);
                 NetworkServer.Spawn(roundSystemInstance);
 
 

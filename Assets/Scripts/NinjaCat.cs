@@ -11,6 +11,7 @@ public class NinjaCat : PlayerController
 {
     [Header("ParticleSystems")]
     [SerializeField] ParticleSystem chargeParticleSystem;
+    [SerializeField] ParticleSystem leafDashParticleSystem;
     [Header("inDash")]
     [SerializeField] UnityEvent inDashStart;
     [SerializeField] UnityEvent inDashEnd;
@@ -85,7 +86,7 @@ public class NinjaCat : PlayerController
         {
             ability = delegate
             {
-                StartCoroutine(AttackSequence_tag());
+                StartCoroutine(AttackSequence());
             },
             coolDown = 2,
             events = new UnityEvent[] { health.StartAttack, health.EndAttack },
@@ -177,7 +178,7 @@ public class NinjaCat : PlayerController
 
     float originalgravity;
 
-    IEnumerator AttackSequence_tag()
+    IEnumerator AttackSequence()
     {
         originalgravity = gravity;
         
@@ -195,6 +196,7 @@ public class NinjaCat : PlayerController
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             DistanceDuration = i * 0.1f;
+             ShakeCamera(i, 1);
             yield return null;
         }
 
@@ -226,10 +228,11 @@ public class NinjaCat : PlayerController
     {
         chargeParticleSystem.Stop();
         chargeParticleSystem.Clear();
+        leafDashParticleSystem.Play();
 
         HidePlayerModel(false);
         AddImpact(playerModel.transform.forward, 1400, false);
-        ShakeCamera(3, 0.3f);
+        ShakeCamera(6, 0.3f);
 
         GetComponent<Health>().SetCanAttack(true);
 
@@ -245,6 +248,7 @@ public class NinjaCat : PlayerController
         gravity = originalgravity;
         GetComponent<Health>().SetCanAttack(false);
 
+        leafDashParticleSystem.Stop();
         ability_Attack.End.Invoke();
     }
 

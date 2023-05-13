@@ -39,8 +39,8 @@ public class PlayerNetworkManager : NetworkBehaviour
 
     void Update()
     {
-        if (!isLocalPlayer) {usernametxt.text = nrp.username;}
-        gameObject.name = "Player : " + nrp.username;
+        if (!isLocalPlayer && nrp) {usernametxt.text = nrp.username;}
+            gameObject.name = "Player : " + nrp.username;
 
 
         if (transform.position.y < -40)

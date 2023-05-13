@@ -10,11 +10,10 @@ public class WinPad : NetworkBehaviour
     [ServerCallback]
     void OnTriggerEnter(Collider other)
     {
-        if (other.tag == "Player" && other.GetComponent<Health>().TeamName != TeamName && other.GetComponentInChildren<TouchDownBall>())
+        if (other.tag == "Player" && other.GetComponentInChildren<TouchDownBall>())
         {   
-            other.GetComponentInChildren<TouchDownBall>().RpcDropBall(other.GetComponentInChildren<TouchDownBall>().gameObject , Vector3.zero);
-            NetworkServer.Destroy(other.GetComponentInChildren<TouchDownBall>().gameObject);
-            RoundSystemTouchDown.instance.RoundsEnded(other.GetComponent<Health>().TeamName.ToUpper() + " WINS");
+            other.GetComponentInChildren<TouchDownBall>().ResetBall();
+            //RoundSystemTouchDown.instance.RoundsEnded(other.GetComponent<Health>().TeamName.ToUpper() + " WINS");
             
             other.GetComponent<Health>().canInfluenceDamage = true;
         }

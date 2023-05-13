@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6435042394493189592}
   - component: {fileID: 1373193218838475886}
   - component: {fileID: -9218091509796099498}
+  - component: {fileID: 7022690057247796476}
   - component: {fileID: 7179160013567609580}
   - component: {fileID: -7452015145682520640}
   - component: {fileID: 1027678777448782296}
@@ -97,6 +98,7 @@ MonoBehaviour:
   - {fileID: 1646360426734641765}
   moveDirection: {x: 0, y: 0, z: 0}
   chargeParticleSystem: {fileID: 5280127289521539745}
+  leafDashParticleSystem: {fileID: 3830502617292365957}
   inDashStart:
     m_PersistentCalls:
       m_Calls:
@@ -259,6 +261,36 @@ MonoBehaviour:
   showGizmos: 1
   showOverlay: 0
   overlayColor: {r: 0.0620358, g: 1, b: 0, a: 0.5}
+--- !u!114 &7022690057247796476
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646360425263456792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 734b48bea0b204338958ee3d885e11f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientAuthority: 1
+  sendInterval: 0.05
+  syncPosition: 0
+  syncRotation: 1
+  syncScale: 0
+  interpolatePosition: 0
+  interpolateRotation: 1
+  interpolateScale: 0
+  bufferTimeMultiplier: 1
+  bufferSizeLimit: 64
+  catchupThreshold: 4
+  catchupMultiplier: 0.1
+  showGizmos: 0
+  showOverlay: 0
+  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+  target: {fileID: 1646360426110567442}
 --- !u!114 &7179160013567609580
 MonoBehaviour:
   m_ObjectHideFlags: 0

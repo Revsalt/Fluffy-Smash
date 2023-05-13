@@ -128,7 +128,7 @@ GameObject:
   - component: {fileID: 7028284753930226414}
   - component: {fileID: 7806696978941231158}
   m_Layer: 8
-  m_Name: WhiteCat
+  m_Name: CharacterBase
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -183,12 +183,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  isTagger: 0
-  TagRadius: 3
-  StartTag:
+  canInfluenceDamage: 1
+  TeamName: none
+  damageRadius: 2
+  StartAttack:
     m_PersistentCalls:
       m_Calls: []
-  EndTag:
+  EndAttack:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
@@ -197,6 +198,7 @@ MonoBehaviour:
   OnRespawn:
     m_PersistentCalls:
       m_Calls: []
+  IsDead: 0
 --- !u!114 &4684191966329288854
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -213,6 +215,7 @@ MonoBehaviour:
   syncInterval: 0.1
   nrp: {fileID: 0}
   usernametxt: {fileID: 0}
+  playerScores: 000000000000000000000000
 --- !u!114 &565172520331455226
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -242,7 +245,7 @@ MonoBehaviour:
   sceneId: 0
   serverOnly: 0
   visible: 0
-  m_AssetId: 84cece894fecdf841b308940b3a5c380
+  m_AssetId: 88a3446310b03a94a929cb6cd12ae12a
   hasSpawned: 0
 --- !u!114 &7028284753930226414
 MonoBehaviour:

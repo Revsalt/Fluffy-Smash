@@ -11,6 +11,6 @@ public class RoundSystemTouchDown : RoundSystem
     public override void OnRoundStart()
     {
         base.OnRoundStart();
-        Instantiate(Resources.Load("Ball") , Vector3.zero , Quaternion.identity , null);
+        Instantiate(Resources.Load("Ball") , Vector3.zero + Vector3.up , Quaternion.identity , null);
     }
 }

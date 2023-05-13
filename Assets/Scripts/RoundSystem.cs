@@ -12,8 +12,8 @@ public class RoundSystem : NetworkBehaviour
     public static RoundSystem instance;
 
     private Animator animator = null;
-    [HideInInspector]public Text countdown = null;
-    [HideInInspector]public Text winText = null;
+    [SerializeField] Text countdown = null;
+    [SerializeField] Text winText = null;
     [SerializeField] public float roundTimeInMinutes = 2;
 
     private NetworkRoomManagerExt room;
@@ -179,9 +179,8 @@ public class RoundSystem : NetworkBehaviour
     IEnumerator RoundCountDown()
     {
         countdown.transform.parent.gameObject.SetActive(true);
-        for (int i = 0; i <= roundTimeInMinutes * 60; i++)
+        for (float i = roundTimeInMinutes * 60; i > 0; i--)
         {
-            yield return new WaitForSeconds(1f);
             TimeSpan t = TimeSpan.FromSeconds(i);
             string answer = string.Format("{1:D2}:{2:D2}",
                 t.Hours,
@@ -190,6 +189,8 @@ public class RoundSystem : NetworkBehaviour
                 t.Milliseconds);
 
             countdown.text = answer;
+
+            yield return new WaitForSeconds(1f);
         }
 
         RoundsEnded();
