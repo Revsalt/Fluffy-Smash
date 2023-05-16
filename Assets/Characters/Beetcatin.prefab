@@ -187,8 +187,9 @@ MonoBehaviour:
   Cameras:
   - {fileID: 8206218322169739880}
   - {fileID: 8206218320823569153}
+  airResistence: 0.05
   moveDirection: {x: 0, y: 0, z: 0}
-  bpm: 140
+  bpm: 100
   Bonds: []
   StringPoints: []
   StringHookCount: 6
@@ -216,13 +217,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  isTagger: 0
+  canInfluenceDamage: 0
   TeamName: none
-  TagRadius: 2
-  StartTag:
+  damageRadius: 2
+  StartAttack:
     m_PersistentCalls:
       m_Calls: []
-  EndTag:
+  EndAttack:
     m_PersistentCalls:
       m_Calls: []
   OnDeath:
@@ -248,6 +249,7 @@ MonoBehaviour:
   syncInterval: 0.1
   nrp: {fileID: 0}
   usernametxt: {fileID: 0}
+  playerScores: 000000000000000000000000
 --- !u!114 &2041527777
 MonoBehaviour:
   m_ObjectHideFlags: 0

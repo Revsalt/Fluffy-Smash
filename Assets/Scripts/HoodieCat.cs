@@ -241,7 +241,7 @@ public class HoodieCat : PlayerController
         ResetPlayerVelocity();
         ShakeCamera(2, 0.4f);
         AudioManager.instance.Play("HoodieCatOffTheGround", transform.position , null);
-        AddImpact(Vector3.up, 100, false);
+        AddImpact(Vector3.up, 30, false);
         gravity = 0.1f;
         ZoomIn(true);
 
@@ -260,7 +260,7 @@ public class HoodieCat : PlayerController
         playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z));
         ZoomIn(false);
         gravity = oldGravity;
-        AddImpact(cineCamera.transform.forward, 500, false);
+        AddImpact(cineCamera.transform.forward, 220, false);
 
         for (float i = 0; !isGroundeed(); i += Time.deltaTime)
         {

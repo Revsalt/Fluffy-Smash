@@ -4,7 +4,25 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Scenes/MainMenu.unity
+    guid: 08344b4edadd3eb46b1f25c09d6dad11
+  - enabled: 1
+    path: Assets/Scenes/RoomScene.unity
+    guid: eb753f0bf278ef64aac21e4d228d628f
+  - enabled: 1
+    path: Assets/Scenes/TouchDownMap.unity
+    guid: 300e7cd3babbb65448903b7f4351fd2a
+  - enabled: 1
+    path: Assets/Scenes/TouchDownSplatoonLikeMap.unity
+    guid: cd97a1250310e7b448b33e2ec9d9f57a
+  - enabled: 1
+    path: Assets/Scenes/Rings level Simplified.unity
+    guid: ac8d003eb91fd994398e8ec0f8438ac2
+  - enabled: 1
+    path: Assets/Scenes/Rings level.unity
+    guid: 088db2b6d9f9a4ed5b8deead5b635ce8
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 3ba30a344de09c746a961566e7794d24,
       type: 2}

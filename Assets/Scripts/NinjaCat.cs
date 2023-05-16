@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
@@ -15,6 +15,7 @@ public class NinjaCat : PlayerController
     [Header("inDash")]
     [SerializeField] UnityEvent inDashStart;
     [SerializeField] UnityEvent inDashEnd;
+    
     [Header("Other")]
     [SerializeField] Vector3 wallOffset;
     [SerializeField] float wallJumpForce = 80;
@@ -25,7 +26,8 @@ public class NinjaCat : PlayerController
     {
         movementSpeed = GetOriginalSpeeed() * 2f;
 
-        onJump += delegate {
+        onJump += delegate
+        {
             if (playerModel.GetComponentInChildren<ModelAnimationSounds>() != null) playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
             animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
         };
@@ -39,7 +41,7 @@ public class NinjaCat : PlayerController
                 IEnumerator Dash()
                 {
                     if (moveDirection != Vector3.zero)
-                        AddImpact(moveDirection.normalized, dashForce , true);
+                        AddImpact(moveDirection.normalized, dashForce, true);
                     else
                         AddImpact(Vector3.up, dashForce, false);
 
@@ -76,7 +78,7 @@ public class NinjaCat : PlayerController
                 }
             },
             coolDown = 0,
-            events = new UnityEvent[2] { new UnityEvent() , new UnityEvent()},
+            events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() },
             abilityName = "Walk"
         };
 
@@ -96,7 +98,7 @@ public class NinjaCat : PlayerController
 
     new void Update()
     {
-        
+
         if (!isLocalPlayer)
             return;
 
@@ -127,7 +129,7 @@ public class NinjaCat : PlayerController
             {
                 if (isRunning)
                 {
-                    AddImpact(Vector3.up, wallJumpForce , true);
+                    AddImpact(Vector3.up, wallJumpForce, true);
                     AddImpact(wallDirection, 60, true);
                 }
                 else
@@ -159,7 +161,8 @@ public class NinjaCat : PlayerController
         if (wallDirection != Vector3.zero)
             return;
 
-        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed())
+        Debug.Log(Vector3.Dot(Vector3.up , hit.normal));
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed() && Vector3.Dot(Vector3.up , hit.normal) < 0.7f && Vector3.Dot(Vector3.up , hit.normal) > -0.7f )
         {
             playerModel.GetComponentInChildren<ModelAnimationSounds>().playSoundWalkFootStep();
             animator.SetBool("isWallGrab", true);
@@ -169,7 +172,7 @@ public class NinjaCat : PlayerController
 
             RaycastHit hitLine;
             Physics.Raycast(playerModel.transform.position, -hit.normal, out hitLine, 3, layerMask);
-            transform.position = hitLine.point + new Vector3(hit.normal.x * wallOffset.x , hit.normal.y * wallOffset.y ,hit.normal.z * wallOffset.z);
+            transform.position = hitLine.point + new Vector3(hit.normal.x * wallOffset.x, hit.normal.y * wallOffset.y, hit.normal.z * wallOffset.z);
 
             wallDirection = hit.normal;
             transform.rotation = Quaternion.FromToRotation(Vector3.up, wallDirection);
@@ -181,10 +184,10 @@ public class NinjaCat : PlayerController
     IEnumerator AttackSequence()
     {
         originalgravity = gravity;
-        
+
         DisableInput(true);
         gravity = 0; ResetPlayerVelocity();
-        animator.SetBool("isPersonGrab" , true);
+        animator.SetBool("isPersonGrab", true);
         chargeParticleSystem.Play();
 
         ZoomIn(true);
@@ -196,7 +199,7 @@ public class NinjaCat : PlayerController
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             DistanceDuration = i * 0.1f;
-             ShakeCamera(i, 1);
+            ShakeCamera(i, 1);
             yield return null;
         }
 
@@ -212,13 +215,13 @@ public class NinjaCat : PlayerController
     #region DashReplication
 
     [Command]
-    void CmdSendChargeDuration(float distanceDuration , NetworkConnectionToClient sender = null)
+    void CmdSendChargeDuration(float distanceDuration, NetworkConnectionToClient sender = null)
     {
         RpcSendChargeDuration(distanceDuration, sender.identity);
     }
 
     [ClientRpc]
-    void RpcSendChargeDuration(float distanceDuration , NetworkIdentity ntd)
+    void RpcSendChargeDuration(float distanceDuration, NetworkIdentity ntd)
     {
         if (!ntd.isLocalPlayer)
             ntd.GetComponent<NinjaCat>().StartCoroutine(Dash(distanceDuration));
@@ -231,7 +234,7 @@ public class NinjaCat : PlayerController
         leafDashParticleSystem.Play();
 
         HidePlayerModel(false);
-        AddImpact(playerModel.transform.forward, 1400, false);
+        AddImpact(playerModel.transform.forward, 2400, false);
         ShakeCamera(6, 0.3f);
 
         GetComponent<Health>().SetCanAttack(true);
@@ -269,7 +272,7 @@ public class NinjaCat : PlayerController
         for (int i = 0; i < 2; i++)
         {
             RaycastHit hit;
-            Physics.Raycast(transform.position + new Vector3(0,i * .5f,0), -wallDirection, out hit , 1);
+            Physics.Raycast(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, out hit, 1);
             //Debug.DrawRay(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, Color.blue , 5);
 
             if (hit.collider != null)

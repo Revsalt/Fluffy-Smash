@@ -23070,9 +23070,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
-  far clip plane: 1000
-  field of view: 40
+  near clip plane: 0.001
+  far clip plane: 5000
+  field of view: 75.00002
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -23820,10 +23820,10 @@ MonoBehaviour:
   m_LookAt: {fileID: 0}
   m_Follow: {fileID: 0}
   m_Lens:
-    FieldOfView: 40
+    FieldOfView: 75.00002
     OrthographicSize: 5
-    NearClipPlane: 0.3
-    FarClipPlane: 1000
+    NearClipPlane: 0.001
+    FarClipPlane: 5000
     Dutch: 0
     LensShift: {x: 0, y: 0}
   m_Transitions:
@@ -62609,7 +62609,7 @@ MonoBehaviour:
   PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
   autoStartServerBuild: 1
-  serverTickRate: 30
+  serverTickRate: 60
   offlineScene: Assets/Scenes/MainMenu.unity
   onlineScene: Assets/Scenes/RoomScene.unity
   transport: {fileID: 1763280527}
@@ -62648,10 +62648,10 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 0852f0cec818ab740abb5a0fb0b7920a, type: 2}
   - {fileID: 11400000, guid: ec0fe7a38730f2648b39c0f080e4a1bd, type: 2}
   GameScenes:
-  - Assets/Scenes/TouchDownMap.unity
-  - Assets/Scenes/Rings level Simplified.unity
-  - Assets/Scenes/Rings level.unity
-  - Assets/Scenes/TouchDownMap.unity
+  - Assets/Scenes/TouchDownSplatoonLikeMap.unity
+  - Assets/Scenes/TouchDownSplatoonLikeMap.unity
+  - Assets/Scenes/TouchDownSplatoonLikeMap.unity
+  - Assets/Scenes/TouchDownSplatoonLikeMap.unity
 --- !u!4 &1763280529
 Transform:
   m_ObjectHideFlags: 0

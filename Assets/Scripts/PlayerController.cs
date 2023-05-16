@@ -25,8 +25,8 @@ public class PlayerController : NetworkBehaviour
     float originalJumpHeight = 0;
     Vector3 groundNormal = Vector3.zero;
 
-    [HideInInspector]public CinemachineVirtualCamera cineCamera;
-    [HideInInspector]public Animator animator;
+    [HideInInspector] public CinemachineVirtualCamera cineCamera;
+    [HideInInspector] public Animator animator;
 
     //events
     public delegate void Jump();
@@ -45,6 +45,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float slopeForce;
     [SerializeField] private float slopeForceRayLength;
     [SerializeField] private float slideFriction;
+
     [Header("Jumping")]
     public float jumpHeight = 5;
     public LayerMask layerMask = 5;
@@ -67,6 +68,8 @@ public class PlayerController : NetworkBehaviour
 
         //platformMovingChild.transform.SetParent(transform);
         //platformMovingChild.transform.position = transform.position;
+
+        Cameras[0].transform.parent.SetParent(null);
 
         animator = playerModel.GetComponentInChildren<Animator>();
         folllowTarget = transform;
@@ -98,7 +101,7 @@ public class PlayerController : NetworkBehaviour
 
     public void JumpInput(InputAction.CallbackContext ctx)
     {
-       if (!ctx.performed) { return; }
+        if (!ctx.performed) { return; }
 
         isJumpPressed = true;
     }
@@ -133,6 +136,8 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    [SerializeField ]  float airResistence;
+
     float rotX, rotY;
     [HideInInspector] public Vector3 moveDirection = Vector3.zero;
 
@@ -140,7 +145,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (!disableInput)
         {
-            moveDirection = new Vector3(cineCamera.transform.right.x , 0 , cineCamera.transform.right.z).normalized * inputAxis.x  +
+            moveDirection = new Vector3(cineCamera.transform.right.x, 0, cineCamera.transform.right.z).normalized * inputAxis.x +
                 new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z).normalized * inputAxis.z;
         }
         else { moveDirection = Vector3.zero; }
@@ -166,7 +171,12 @@ public class PlayerController : NetworkBehaviour
         Vector3 Result = Vector3.zero;
 
         if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
-        impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
+
+        if (impact.magnitude > 0.2)
+            impact -= impact * airResistence;
+
+        if (impact.magnitude < 0)
+            impact = Vector3.zero;
 
         if (isGroundeed() && playerVelocity.y < 0)
         {
@@ -339,11 +349,11 @@ public class PlayerController : NetworkBehaviour
 
             if (!abilityRef.skipNextCoolDown)
             {
-                for (float z = 0; z < abilityRef.coolDown*CoolDownReducer; z += Time.deltaTime)
+                for (float z = 0; z < abilityRef.coolDown * CoolDownReducer; z += Time.deltaTime)
                 {
                     abilityRef.coolDown_current_value = z;
                     yield return null;
-                } 
+                }
             }
             else
                 abilityRef.skipNextCoolDown = true;
@@ -432,13 +442,13 @@ public class PlayerController : NetworkBehaviour
         if (!isLocalPlayer) return;
 
         if (other.tag == "PowerUp")
-        {           
+        {
             BasePowerUp OtherPowerup = other.GetComponent<PowerUp>().GetPowerUp();
             switch (OtherPowerup.PowerupEffect)
             {
-                case BasePowerUp.effect.Speed:if (HasSpeedUp == false) { StartCoroutine(SpeedUp(OtherPowerup.EffectDuration)); } break;
-                case BasePowerUp.effect.Jump:if (HasJumpUp == false) { StartCoroutine(JumpUp(OtherPowerup.EffectDuration)); } break;
-                case BasePowerUp.effect.Cooldown: if (HasCoolUp == false) { StartCoroutine(CoolDownUp(OtherPowerup.EffectDuration));} break;
+                case BasePowerUp.effect.Speed: if (HasSpeedUp == false) { StartCoroutine(SpeedUp(OtherPowerup.EffectDuration)); } break;
+                case BasePowerUp.effect.Jump: if (HasJumpUp == false) { StartCoroutine(JumpUp(OtherPowerup.EffectDuration)); } break;
+                case BasePowerUp.effect.Cooldown: if (HasCoolUp == false) { StartCoroutine(CoolDownUp(OtherPowerup.EffectDuration)); } break;
             }
 
             other.GetComponent<PowerUp>().NetworkDestroy();
@@ -486,8 +496,8 @@ public class PlayerController : NetworkBehaviour
 
         float result = 0;
 
-        if (b) { result = 1.7f; if (!pointer) { pointer = (GameObject)Instantiate(Resources.Load("PointerCanvas")); }  }
-        else{ result = 4.5f; Destroy(pointer); }
+        if (b) { result = 1.7f; if (!pointer) { pointer = (GameObject)Instantiate(Resources.Load("PointerCanvas")); } }
+        else { result = 4.5f; Destroy(pointer); }
 
         coroutines.Add(StartCoroutine(SetFOV(result)));
 

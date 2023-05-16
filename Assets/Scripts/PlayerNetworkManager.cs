@@ -28,6 +28,9 @@ public class PlayerNetworkManager : NetworkBehaviour
 
             //GameObject g = (GameObject)Instantiate(Resources.Load("IndicatorController"), transform.position, transform.rotation);
             //g.GetComponent<UIController>().cam = GetComponent<DefaultCharacterEffects>().m_Camera;
+
+            GetComponent<PlayerController>().DisableMovment(false);
+            GetComponent<Health>().canInfluenceDamage = true;
         }
         else
         {
@@ -40,7 +43,7 @@ public class PlayerNetworkManager : NetworkBehaviour
     void Update()
     {
         if (!isLocalPlayer && nrp) {usernametxt.text = nrp.username;}
-            gameObject.name = "Player : " + nrp.username;
+            //gameObject.name = "Player : " + nrp.username;
 
 
         if (transform.position.y < -40)
