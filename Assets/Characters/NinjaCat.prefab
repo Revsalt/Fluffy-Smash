@@ -60,7 +60,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0
-  m_SkinWidth: 0.02
+  m_SkinWidth: 0.1
   m_MinMoveDistance: 0.01
   m_Center: {x: 0, y: -0.27, z: 0}
 --- !u!114 &1646360425263456798
@@ -85,18 +85,40 @@ MonoBehaviour:
   piviot_M: {fileID: 5230716323925670244}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 12
-  slopeForceRayLength: 1.7
-  slideFriction: -0.4
-  jumpHeight: 5
+  slopeForce: 0
+  slopeForceRayLength: 0
+  slideFriction: 0
+  airResistence: 80
+  jumpHeight: 80
   layerMask:
     serializedVersion: 2
     m_Bits: 51
-  gravity: -9.8
+  gravity: -4
   Cameras:
   - {fileID: 1646360426184249716}
   - {fileID: 1646360426734641765}
-  airResistence: 0.08
+  ability0:
+    coolDown: 0.5
+    coolDown_current_value: 0
+    abilityName: QuickDash
+    events: []
+    canCast: 1
+    skipNextCoolDown: 0
+  ability1:
+    coolDown: 0
+    coolDown_current_value: 0
+    abilityName: Walk
+    events: []
+    canCast: 1
+    skipNextCoolDown: 0
+  ability_Attack:
+    coolDown: 2
+    coolDown_current_value: 0
+    abilityName: SakuraBreeze
+    events: []
+    canCast: 1
+    skipNextCoolDown: 0
+  Result_: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   chargeParticleSystem: {fileID: 5280127289521539745}
   leafDashParticleSystem: {fileID: 3830502617292365957}
@@ -130,9 +152,9 @@ MonoBehaviour:
   inDashEnd:
     m_PersistentCalls:
       m_Calls: []
-  wallOffset: {x: 0.7, y: 10, z: 0.7}
-  wallJumpForce: 100
-  dashForce: 100
+  wallJumpForce: 70
+  dashForce: 60
+  swordSlashDistance: 1200
 --- !u!114 &4097870006058671203
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -346,6 +368,7 @@ MonoBehaviour:
   inAirEnd:
     m_PersistentCalls:
       m_Calls: []
+  windVolumeMultiplaier: 0.007
   m_Camera: {fileID: 1646360426734641768}
 --- !u!114 &4672922393138554058
 MonoBehaviour:

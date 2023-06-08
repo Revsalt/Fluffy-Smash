@@ -32,8 +32,6 @@ public class PlayerController : NetworkBehaviour
     public delegate void Jump();
     public event Jump onJump;
 
-    public Ability ability0, ability1, ability_Attack;
-
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
     [SerializeField] public GameObject piviot_M;
@@ -45,6 +43,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float slopeForce;
     [SerializeField] private float slopeForceRayLength;
     [SerializeField] private float slideFriction;
+    [SerializeField] float airResistence;
 
     [Header("Jumping")]
     public float jumpHeight = 5;
@@ -52,6 +51,10 @@ public class PlayerController : NetworkBehaviour
     public float gravity = 5;
     [Header("Networks")]
     public GameObject[] Cameras;
+
+    [Header("Ability Settings")]
+    public Ability ability0;
+    public Ability ability1, ability_Attack;
 
     //GameObject platformMovingChild = null;
 
@@ -61,9 +64,9 @@ public class PlayerController : NetworkBehaviour
         if (characterController == null)
             characterController = GetComponent<CharacterController>();
     }
-
     private void Awake()
     {
+        airResistence *= Time.fixedDeltaTime;
         //platformMovingChild = new GameObject("platformMovingChild");
 
         //platformMovingChild.transform.SetParent(transform);
@@ -135,8 +138,7 @@ public class PlayerController : NetworkBehaviour
             Screen.fullScreen = !Screen.fullScreen;
         }
     }
-
-    [SerializeField ]  float airResistence;
+    [SerializeField] Vector3 Result_ = Vector3.zero;
 
     float rotX, rotY;
     [HideInInspector] public Vector3 moveDirection = Vector3.zero;
@@ -173,7 +175,9 @@ public class PlayerController : NetworkBehaviour
         if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
 
         if (impact.magnitude > 0.2)
-            impact -= impact * airResistence;
+        {
+            impact -= new Vector3(impact.x * airResistence, impact.y * airResistence, impact.z * airResistence) * Time.deltaTime;
+        }
 
         if (impact.magnitude < 0)
             impact = Vector3.zero;
@@ -187,8 +191,8 @@ public class PlayerController : NetworkBehaviour
 
         if (isJumpPressed && isGroundeed() && !GetDisableInput())
         {
-            playerVelocity.y = 0;
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            ResetPlayerVelocity();
+            AddImpact(Vector3.up , jumpHeight , false);
             StartCoroutine(ChkIfJumped());
             //Callin the event for children classes
             onJump();
@@ -205,7 +209,11 @@ public class PlayerController : NetworkBehaviour
         //Vector3 translation = platformMovingChild.transform.position - transform.position;
 
         if (!characterController.isGrounded)
-            playerVelocity.y += gravity * Time.deltaTime * 3;
+        {
+            //playerVelocity.y += gravity * Time.deltaTime * 3;
+        }
+
+        Result_ = Result;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
 
         //platformMovingChild.transform.position = transform.position;
@@ -231,6 +239,16 @@ public class PlayerController : NetworkBehaviour
         if (Input.GetMouseButtonDown(0) && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
         {
             StartAbility(2);
+        }
+
+    }
+
+    void FixedUpdate()
+    {
+        if (!characterController.isGrounded)
+        {
+            //playerVelocity.y += gravity * Time.deltaTime * 3;
+            AddImpact(Vector3.up , gravity , false);
         }
 
     }
@@ -402,6 +420,21 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    public void ShakeCamera(float intensity)
+    {
+        CinemachineBasicMultiChannelPerlin cinemachineBasicMultiChannelPerlin =
+            cineCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+        StartCoroutine(timer());
+
+        IEnumerator timer()
+        {
+            cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = intensity;
+            yield return new WaitForSeconds(intensity / 3);
+            cinemachineBasicMultiChannelPerlin.m_AmplitudeGain = 0;
+        }
+    }
+
     private bool OnSlope()
     {
         RaycastHit hit;
@@ -519,19 +552,21 @@ public class PlayerController : NetworkBehaviour
     }
 }
 
+[Serializable]
 public class Ability
 {
+
     public Action ability;
 
     public float coolDown;
-    public float coolDown_current_value = 0;
+    [HideInInspector] public float coolDown_current_value = 0;
 
     public string abilityName = "NoName (please assign a name)";
 
-    public UnityEvent[] events;
-    public Action End;
+    [HideInInspector] public UnityEvent[] events;
+    [HideInInspector] public Action End;
 
-    public bool canCast = true;
-    public bool skipNextCoolDown = false;
+    [HideInInspector] public bool canCast = true;
+    [HideInInspector] public bool skipNextCoolDown = false;
 
 }

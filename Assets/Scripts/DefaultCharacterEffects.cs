@@ -15,6 +15,7 @@ public class DefaultCharacterEffects : MonoBehaviour
     [SerializeField] UnityEvent inAirStart;
     [SerializeField] UnityEvent inAirEnd;
     [Header("Other")]
+    [SerializeField]float windVolumeMultiplaier = .5f;
     public Camera m_Camera;
 
     PlayerController playerController;
@@ -22,8 +23,11 @@ public class DefaultCharacterEffects : MonoBehaviour
     bool ranHarshFallFunction = false;
     float DefaultFOV;
 
+    AudioSource windAUD;
+
     private void Start()
     {
+        windAUD = AudioManager.instance.Play2DAUD("wind");
         playerController = GetComponent<PlayerController>();
         animator = playerController.animator;
 
@@ -39,6 +43,8 @@ public class DefaultCharacterEffects : MonoBehaviour
 
     void Update()
     {
+        
+        windAUD.volume = Mathf.Lerp(windAUD.volume , GetComponent<CharacterController>().velocity.magnitude * windVolumeMultiplaier , 5 * Time.deltaTime);
         //ParticleSystem
         playerController.cineCamera.m_Lens.FieldOfView = Mathf.Lerp(playerController.cineCamera.m_Lens.FieldOfView , DefaultFOV + GetCharacterMagintude(playerController , .7f) , 7 * Time.deltaTime);
 

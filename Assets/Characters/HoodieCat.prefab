@@ -10600,7 +10600,7 @@ CharacterController:
   m_Radius: 0.5
   m_SlopeLimit: 45
   m_StepOffset: 0.5
-  m_SkinWidth: 0.02
+  m_SkinWidth: 0.1
   m_MinMoveDistance: 0.01
   m_Center: {x: 0, y: -0.27, z: 0}
 --- !u!114 &5825491574038173422
@@ -10625,18 +10625,40 @@ MonoBehaviour:
   piviot_M: {fileID: 3814039662847010326}
   sensitvity: 300
   movementSpeed: 7
-  slopeForce: 12
-  slopeForceRayLength: 1.7
-  slideFriction: -0.4
-  jumpHeight: 5
+  slopeForce: 0
+  slopeForceRayLength: 0
+  slideFriction: 0
+  airResistence: 60
+  jumpHeight: 80
   layerMask:
     serializedVersion: 2
     m_Bits: 51
-  gravity: -9.8
+  gravity: -4
   Cameras:
   - {fileID: 3814039662561590340}
   - {fileID: 3814039664436481325}
-  airResistence: 0.005
+  ability0:
+    coolDown: 1
+    coolDown_current_value: 0
+    abilityName: NoName (please assign a name)
+    events: []
+    canCast: 1
+    skipNextCoolDown: 0
+  ability1:
+    coolDown: 1
+    coolDown_current_value: 0
+    abilityName: NoName (please assign a name)
+    events: []
+    canCast: 1
+    skipNextCoolDown: 0
+  ability_Attack:
+    coolDown: 5
+    coolDown_current_value: 0
+    abilityName: NoName (please assign a name)
+    events: []
+    canCast: 1
+    skipNextCoolDown: 0
+  Result_: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   StartTeleport:
     m_PersistentCalls:
@@ -10952,6 +10974,7 @@ MonoBehaviour:
   inAirEnd:
     m_PersistentCalls:
       m_Calls: []
+  windVolumeMultiplaier: 0.007
   m_Camera: {fileID: 3814039662561590350}
 --- !u!114 &7246233812388027385
 MonoBehaviour:

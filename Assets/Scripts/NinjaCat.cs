@@ -15,11 +15,11 @@ public class NinjaCat : PlayerController
     [Header("inDash")]
     [SerializeField] UnityEvent inDashStart;
     [SerializeField] UnityEvent inDashEnd;
-    
-    [Header("Other")]
-    [SerializeField] Vector3 wallOffset;
+
+    [Header("CharacterBalancing")]
     [SerializeField] float wallJumpForce = 80;
     [SerializeField] float dashForce = 80;
+    [SerializeField] float swordSlashDistance = 200;
     Vector3 wallDirection = Vector3.zero;
 
     void Start()
@@ -32,68 +32,56 @@ public class NinjaCat : PlayerController
             animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
         };
 
-        ability0 = new Ability()
-        {
-            ability = delegate
-            {
-                StartCoroutine(Dash());
-
-                IEnumerator Dash()
-                {
-                    if (moveDirection != Vector3.zero)
-                        AddImpact(moveDirection.normalized, dashForce, true);
-                    else
-                        AddImpact(Vector3.up, dashForce, false);
-
-                    yield return new WaitForSeconds(0.1f);
-
-                    ability0.End.Invoke();
-                }
-            },
-            coolDown = 0.5f,
-            events = new UnityEvent[2] { inDashStart, inDashEnd },
-            abilityName = "QuickDash"
-        };
-
-        ability1 = new Ability()
-        {
-            ability = delegate
-            {
-                movementSpeed = GetOriginalSpeeed();
-                Debug.Log("set slow");
-
-                StartCoroutine(Sprint());
-
-                IEnumerator Sprint()
-                {
-                    for (float i = 0; !Input.GetKeyUp(KeyCode.LeftShift); i += Time.deltaTime)
-                    {
-                        yield return null;
-                    }
-
-                    movementSpeed = GetOriginalSpeeed() * 2f;
-                    Debug.Log("set fast");
-
-                    ability1.End.Invoke();
-                }
-            },
-            coolDown = 0,
-            events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() },
-            abilityName = "Walk"
-        };
-
         Health health = GetComponent<Health>();
 
-        ability_Attack = new Ability()
+        ability0.ability = delegate
         {
-            ability = delegate
+            StartCoroutine(Dash());
+
+            IEnumerator Dash()
             {
-                StartCoroutine(AttackSequence());
-            },
-            coolDown = 2,
-            events = new UnityEvent[] { health.StartAttack, health.EndAttack },
-            abilityName = "SakuraBreeze"
+                if (moveDirection != Vector3.zero)
+                    AddImpact(moveDirection.normalized, dashForce, true);
+                else
+                    AddImpact(Vector3.up, dashForce, false);
+
+                yield return new WaitForSeconds(0.1f);
+
+                ability0.End.Invoke();
+            }
+
         };
+
+        ability0.events = new UnityEvent[2] { inDashStart, inDashEnd };
+
+        ability1.ability = delegate
+        {
+            movementSpeed = GetOriginalSpeeed();
+
+            StartCoroutine(Sprint());
+
+            IEnumerator Sprint()
+            {
+                for (float i = 0; !Input.GetKeyUp(KeyCode.LeftShift); i += Time.deltaTime)
+                {
+                    yield return null;
+                }
+
+                movementSpeed = GetOriginalSpeeed() * 2f;
+                Debug.Log("set fast");
+
+                ability1.End.Invoke();
+            }
+        };
+
+        ability1.events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() };
+
+        ability_Attack.ability = delegate
+        {
+            StartCoroutine(AttackSequence());
+        };
+        
+        ability_Attack.events = new UnityEvent[] { health.StartAttack, health.EndAttack };
     }
 
     new void Update()
@@ -129,11 +117,13 @@ public class NinjaCat : PlayerController
             {
                 if (isRunning)
                 {
+                    ResetPlayerVelocity();
                     AddImpact(Vector3.up, wallJumpForce, true);
                     AddImpact(wallDirection, 60, true);
                 }
                 else
                 {
+                    ResetPlayerVelocity();
                     AddImpact(wallDirection, 20, true);
                 }
             }
@@ -161,8 +151,8 @@ public class NinjaCat : PlayerController
         if (wallDirection != Vector3.zero)
             return;
 
-        Debug.Log(Vector3.Dot(Vector3.up , hit.normal));
-        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed() && Vector3.Dot(Vector3.up , hit.normal) < 0.7f && Vector3.Dot(Vector3.up , hit.normal) > -0.7f )
+        Debug.Log(Vector3.Dot(Vector3.up, hit.normal));
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed() && Vector3.Dot(Vector3.up, hit.normal) < 0.7f && Vector3.Dot(Vector3.up, hit.normal) > -0.7f)
         {
             playerModel.GetComponentInChildren<ModelAnimationSounds>().playSoundWalkFootStep();
             animator.SetBool("isWallGrab", true);
@@ -172,7 +162,7 @@ public class NinjaCat : PlayerController
 
             RaycastHit hitLine;
             Physics.Raycast(playerModel.transform.position, -hit.normal, out hitLine, 3, layerMask);
-            transform.position = hitLine.point + new Vector3(hit.normal.x * wallOffset.x, hit.normal.y * wallOffset.y, hit.normal.z * wallOffset.z);
+            transform.position = hitLine.point + new Vector3(hit.normal.x, hit.normal.y, hit.normal.z);
 
             wallDirection = hit.normal;
             transform.rotation = Quaternion.FromToRotation(Vector3.up, wallDirection);
@@ -234,7 +224,7 @@ public class NinjaCat : PlayerController
         leafDashParticleSystem.Play();
 
         HidePlayerModel(false);
-        AddImpact(playerModel.transform.forward, 2400, false);
+        AddImpact(playerModel.transform.forward, swordSlashDistance, false);
         ShakeCamera(6, 0.3f);
 
         GetComponent<Health>().SetCanAttack(true);

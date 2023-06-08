@@ -30,40 +30,27 @@ public class HoodieCat : PlayerController
 
         oldGravity = gravity;
 
-        onJump += delegate { Debug.Log("Jump"); };
-
-        ability0 = new Ability()
-        {
-            ability = delegate
-            {
-                StartCoroutine(AttackSequence1());
-            },
-            coolDown = 1f,
-            events = new UnityEvent[2] { StartTeleport, EndTeleport }
-        };
-
-        ability1 = new Ability()
-        {
-            ability = delegate
-            {
-                StartCoroutine(AttackSequence2());
-            },
-            coolDown = 1, // 8
-            events = new UnityEvent[2] { StartStun, EndStun }
-        };
-
-
         Health health = GetComponent<Health>();
 
-        ability_Attack = new Ability()
+        ability0.ability = delegate
         {
-            ability = delegate
-            {
-                StartCoroutine(AttackSquence0());
-            },
-            coolDown = 5f,
-            events = new UnityEvent[] { health.StartAttack , health.EndAttack }
+            StartCoroutine(AttackSequence1());
         };
+        ability0.events = new UnityEvent[2] { StartTeleport, EndTeleport };
+
+        ability1.ability = delegate
+        {
+            StartCoroutine(AttackSequence2());
+        };
+        ability1.events = new UnityEvent[2] { StartStun, EndStun };
+
+
+        ability_Attack.ability = delegate
+        {
+            StartCoroutine(AttackSquence0());
+        };
+        ability_Attack.events = new UnityEvent[] { health.StartAttack, health.EndAttack };
+
     }
 
     bool canPickUp = true;
@@ -93,8 +80,8 @@ public class HoodieCat : PlayerController
 
         if (HasLoliPop())
             jumpHeight = GetOriginalJumpHeight();
-        else 
-            jumpHeight = GetOriginalJumpHeight() + GetOriginalJumpHeight() / 1.4f; 
+        else
+            jumpHeight = GetOriginalJumpHeight() + GetOriginalJumpHeight() / 4f;
 
         if (Input.GetKeyDown(KeyCode.E) && !GetDisableInput() && !GetIsAnyAbilityInPorgress() && canBringLoliPop)
         {
@@ -117,18 +104,18 @@ public class HoodieCat : PlayerController
     [Command]
     void CmdDrop(NetworkIdentity ntd, bool onlyUnparent)
     {
-        Drop(ntd , onlyUnparent);
-        RpcDrop(ntd , onlyUnparent);
+        Drop(ntd, onlyUnparent);
+        RpcDrop(ntd, onlyUnparent);
     }
 
     [ClientRpc]
     void RpcDrop(NetworkIdentity ntd, bool onlyUnparent)
     {
         if (ntd.isLocalPlayer) return;
-        Drop(ntd , onlyUnparent);
+        Drop(ntd, onlyUnparent);
     }
 
-    public void Drop(NetworkIdentity ntd , bool onlyUnparent)
+    public void Drop(NetworkIdentity ntd, bool onlyUnparent)
     {
         GameObject lolipop_ = ntd.GetComponent<HoodieCat>().LoliPop;
 
@@ -152,11 +139,11 @@ public class HoodieCat : PlayerController
 
     #region PickUp
     [Command]
-    void CmdPickUp(bool Teleport , NetworkIdentity ntd)
+    void CmdPickUp(bool Teleport, NetworkIdentity ntd)
     {
-        PickUp(Teleport , ntd);
+        PickUp(Teleport, ntd);
 
-        RpcPickUp(Teleport , ntd);
+        RpcPickUp(Teleport, ntd);
     }
 
     [ClientRpc]
@@ -240,8 +227,8 @@ public class HoodieCat : PlayerController
 
         ResetPlayerVelocity();
         ShakeCamera(2, 0.4f);
-        AudioManager.instance.Play("HoodieCatOffTheGround", transform.position , null);
-        AddImpact(Vector3.up, 30, false);
+        AudioManager.instance.Play("HoodieCatOffTheGround", transform.position, null);
+        AddImpact(Vector3.up, 50, false);
         gravity = 0.1f;
         ZoomIn(true);
 
@@ -249,7 +236,7 @@ public class HoodieCat : PlayerController
         {
             playerModel.transform.LookAt(playerModel.transform.position + cineCamera.transform.forward * 10);
 
-            if (isLocalPlayer && Input.GetMouseButtonDown(0)) {CmdForceStartSmashLand(GetComponent<NetworkIdentity>()); break;}
+            if (isLocalPlayer && Input.GetMouseButtonDown(0)) { CmdForceStartSmashLand(GetComponent<NetworkIdentity>()); break; }
             if (!isLocalPlayer && forceSmashLand) { forceSmashLand = false; break; }
 
             yield return null;
@@ -319,7 +306,7 @@ public class HoodieCat : PlayerController
             }
 
             Physics.Raycast(cineCamera.transform.position, cineCamera.transform.forward, out hit, 40, layerMask);
-            if (hit.collider)
+            if (hit.collider) //  hit.normal.y * 90f >= -20 && hit.normal.y * 90f == 0
             {
                 CrossPointer.transform.position = hit.point;
                 CrossPointer.transform.rotation = Quaternion.LookRotation(cineCamera.transform.forward);
@@ -357,7 +344,7 @@ public class HoodieCat : PlayerController
             for (float i = 0; Vector3.Distance(LoliPop.transform.position, GoToPos_) >= 0.1f; i += Time.deltaTime)
             {
                 LoliPop.GetComponent<CapsuleCollider>().enabled = false;
-                LoliPop.transform.position = Bezier2(startpos_, ((startpos_ + GoToPos_) / 2) + ThrowDirection * 2, GoToPos_,i * 2);
+                LoliPop.transform.position = Bezier2(startpos_, ((startpos_ + GoToPos_) / 2) + ThrowDirection * 2, GoToPos_, i * 2);
                 LoliPop.transform.rotation = Quaternion.LookRotation((LoliPop.transform.position - GoToPos_).normalized);
                 yield return null;
             }
@@ -373,10 +360,10 @@ public class HoodieCat : PlayerController
 
             DisableInput(false);
             animator.SetBool("isThrowLoliPop", false);
-            Vector3 GoToPos = CrossPointer.transform.position + lastHitNormal + Vector3.up* 1;
+            Vector3 GoToPos = CrossPointer.transform.position + lastHitNormal + Vector3.up * 1;
             for (float i = 0; Vector3.Distance(transform.position, GoToPos) > .3f; i += Time.deltaTime)
             {
-                transform.position = Bezier2(startpos, ((startpos + GoToPos) / 2) + Vector3.up * 5, GoToPos, i  * 2);
+                transform.position = Bezier2(startpos, ((startpos + GoToPos) / 2) + Vector3.up * 5, GoToPos, i * 2);
                 yield return null;
             }
             #endregion
@@ -384,7 +371,7 @@ public class HoodieCat : PlayerController
             LoliPop.GetComponent<CapsuleCollider>().enabled = true;
 
             DisableMovment(false);
-            
+
         }
 
         animator.SetBool("isThrowLoliPop", false);
@@ -405,7 +392,7 @@ public class HoodieCat : PlayerController
 
         foreach (var item in FindObjectsOfType<Health>())
         {
-            if (!item.GetComponent<NetworkIdentity>().isLocalPlayer && Vector3.Distance(LoliPop.transform.position , item.transform.position) < stunRadius)
+            if (!item.GetComponent<NetworkIdentity>().isLocalPlayer && Vector3.Distance(LoliPop.transform.position, item.transform.position) < stunRadius)
             {
                 CmdStunPlayer(item.GetComponent<NetworkIdentity>());
             }
@@ -418,7 +405,7 @@ public class HoodieCat : PlayerController
     [Command]
     void CmdStunPlayer(NetworkIdentity ntd)
     {
-         StunMe(ntd.connectionToClient);
+        StunMe(ntd.connectionToClient);
     }
 
     [TargetRpc]

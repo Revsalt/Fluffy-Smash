@@ -28,7 +28,7 @@ public partial class AudioManager : MonoBehaviour
         Play2D("ThemeSong");
     }
 
-    public AudioSource Play(string name , Vector3 pos , Transform childOf)
+    public AudioSource Play(string name, Vector3 pos, Transform childOf)
     {
         Sound s = Array.Find(sounds, sound => sound.name == name);
         if (s == null)
@@ -87,6 +87,35 @@ public partial class AudioManager : MonoBehaviour
         As.Play();
 
         if (!As.loop) Destroy(As.gameObject, As.clip.length);
+
+    }
+
+    public AudioSource Play2DAUD(string name)
+    {
+        Sound s = Array.Find(sounds, sound => sound.name == name);
+        if (s == null)
+        {
+            Debug.LogWarning("Sound: " + name + " not found");
+            return null;
+        }
+
+        GameObject g = new GameObject("Sound" + UnityEngine.Random.Range(0, 8000));
+
+        AudioSource As = g.AddComponent<AudioSource>();
+
+        As.volume = s.volume;
+        As.pitch = s.pitch;
+        As.loop = s.loop;
+        As.clip = s.clips[UnityEngine.Random.Range(0, s.clips.Length)];
+
+        if (s.randompitch)
+            As.pitch = UnityEngine.Random.Range(.9f, 1.1f);
+
+        As.Play();
+
+        if (!As.loop) Destroy(As.gameObject, As.clip.length);
+
+        return As;
 
     }
 
