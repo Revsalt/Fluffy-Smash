@@ -368,7 +368,7 @@ MonoBehaviour:
   inAirEnd:
     m_PersistentCalls:
       m_Calls: []
-  windVolumeMultiplaier: 0.007
+  windVolumeMultiplaier: 0.001
   m_Camera: {fileID: 1646360426734641768}
 --- !u!114 &4672922393138554058
 MonoBehaviour:

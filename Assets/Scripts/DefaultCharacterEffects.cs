@@ -44,7 +44,7 @@ public class DefaultCharacterEffects : MonoBehaviour
     void Update()
     {
         
-        windAUD.volume = Mathf.Lerp(windAUD.volume , GetComponent<CharacterController>().velocity.magnitude * windVolumeMultiplaier , 5 * Time.deltaTime);
+        windAUD.volume = Mathf.Lerp(windAUD.volume , GetComponent<CharacterController>().velocity.magnitude * windVolumeMultiplaier , 2 * Time.deltaTime);
         //ParticleSystem
         playerController.cineCamera.m_Lens.FieldOfView = Mathf.Lerp(playerController.cineCamera.m_Lens.FieldOfView , DefaultFOV + GetCharacterMagintude(playerController , .7f) , 7 * Time.deltaTime);
 

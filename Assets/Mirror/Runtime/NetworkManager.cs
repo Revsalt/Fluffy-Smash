@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using kcp2k;
@@ -23,7 +24,7 @@ namespace Mirror
         [Tooltip("Should the Network Manager object be persisted through scene changes?")]
         public bool dontDestroyOnLoad = true;
 
-           // Deprecated 2021-03-10
+        // Deprecated 2021-03-10
         // Temporary bool to allow Network Manager to persist to offline scene
         // Based on Discord convo, BigBox is invoking StopHost in startup sequence, bouncing the server and clients back to offline scene, which resets Network Manager.
         // Request is for a checkbox to persist Network Manager to offline scene, despite the collision and warning.
@@ -31,7 +32,7 @@ namespace Mirror
         [Tooltip("Should the Network Manager object be persisted through scene change to the offline scene?")]
         public bool PersistNetworkManagerToOfflineScene;
 
-     /// <summary>Multiplayer games should always run in the background so the network doesn't time out.</summary>
+        /// <summary>Multiplayer games should always run in the background so the network doesn't time out.</summary>
         [FormerlySerializedAs("m_RunInBackground")]
         [Tooltip("Multiplayer games should always run in the background so the network doesn't time out.")]
         public bool runInBackground = true;
@@ -643,7 +644,7 @@ namespace Mirror
 
         // Deprecated 2021-07-21
         [Obsolete("Renamed to ConfigureHeadlessFrameRate()")]
-        public virtual void ConfigureServerFrameRate() {}
+        public virtual void ConfigureServerFrameRate() { }
 
         /// <summary>Set the frame rate for a headless builds. Override to disable or modify.</summary>
         // useful for dedicated servers.
@@ -759,41 +760,53 @@ namespace Mirror
         // the change and ready again to participate in the new scene.
         public virtual void ServerChangeScene(string newSceneName)
         {
-            if (string.IsNullOrEmpty(newSceneName))
+            StartCoroutine(SceneTranstion());
+
+            IEnumerator SceneTranstion()
             {
-                Debug.LogError("ServerChangeScene empty scene name");
-                return;
+
+                if (string.IsNullOrEmpty(newSceneName))
+                {
+                    Debug.LogError("ServerChangeScene empty scene name");
+                    yield break;
+                }
+
+                if (NetworkServer.isLoadingScene && newSceneName == networkSceneName)
+                {
+                    Debug.LogError($"Scene change is already in progress for {newSceneName}");
+                    yield break;
+                }
+
+                TransitionUI.instance.FadeIn();
+
+                yield return new WaitForSeconds(TransitionUI.instance.TranstionTime);
+
+                Debug.Log("changing");
+
+                // Debug.Log($"ServerChangeScene {newSceneName}");
+                NetworkServer.SetAllClientsNotReady();
+                networkSceneName = newSceneName;
+
+                // Let server prepare for scene change
+                OnServerChangeScene(newSceneName);
+
+                // set server flag to stop processing messages while changing scenes
+                // it will be re-enabled in FinishLoadScene.
+                NetworkServer.isLoadingScene = true;
+
+                loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+
+                // ServerChangeScene can be called when stopping the server
+                // when this happens the server is not active so does not need to tell clients about the change
+                if (NetworkServer.active)
+                {
+                    // notify all clients about the new scene
+                    NetworkServer.SendToAll(new SceneMessage { sceneName = newSceneName });
+                }
+
+                startPositionIndex = 0;
+                startPositions.Clear();
             }
-
-            if (NetworkServer.isLoadingScene && newSceneName == networkSceneName)
-            {
-                Debug.LogError($"Scene change is already in progress for {newSceneName}");
-                return;
-            }
-
-            // Debug.Log($"ServerChangeScene {newSceneName}");
-            NetworkServer.SetAllClientsNotReady();
-            networkSceneName = newSceneName;
-
-            // Let server prepare for scene change
-            OnServerChangeScene(newSceneName);
-
-            // set server flag to stop processing messages while changing scenes
-            // it will be re-enabled in FinishLoadScene.
-            NetworkServer.isLoadingScene = true;
-
-            loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
-
-            // ServerChangeScene can be called when stopping the server
-            // when this happens the server is not active so does not need to tell clients about the change
-            if (NetworkServer.active)
-            {
-                // notify all clients about the new scene
-                NetworkServer.SendToAll(new SceneMessage { sceneName = newSceneName });
-            }
-
-            startPositionIndex = 0;
-            startPositions.Clear();
         }
 
         // This is only set in ClientChangeScene below...never on server.
@@ -926,6 +939,7 @@ namespace Mirror
 
         protected void FinishLoadScene()
         {
+            TransitionUI.instance.FadeOut();
             // NOTE: this cannot use NetworkClient.allClients[0] - that client may be for a completely different purpose.
 
             // process queued messages that we received while loading the scene
@@ -1214,7 +1228,7 @@ namespace Mirror
         }
 
         /// <summary>Called on the server when a new client connects.</summary>
-        public virtual void OnServerConnect(NetworkConnection conn) {}
+        public virtual void OnServerConnect(NetworkConnection conn) { }
 
         /// <summary>Called on the server when a client disconnects.</summary>
         // Called by NetworkServer.OnTransportDisconnect!
@@ -1254,13 +1268,13 @@ namespace Mirror
         }
 
         /// <summary>Called on server when transport raises an exception. NetworkConnection may be null.</summary>
-        public virtual void OnServerError(NetworkConnection conn, Exception exception) {}
+        public virtual void OnServerError(NetworkConnection conn, Exception exception) { }
 
         /// <summary>Called from ServerChangeScene immediately before SceneManager.LoadSceneAsync is executed</summary>
-        public virtual void OnServerChangeScene(string newSceneName) {}
+        public virtual void OnServerChangeScene(string newSceneName) { }
 
         /// <summary>Called on server after a scene load with ServerChangeScene() is completed.</summary>
-        public virtual void OnServerSceneChanged(string sceneName) {}
+        public virtual void OnServerSceneChanged(string sceneName) { }
 
         /// <summary>Called on the client when connected to a server. By default it sets client as ready and adds a player.</summary>
         // TODO client only ever uses NetworkClient.connection. this parameter is redundant.
@@ -1293,15 +1307,15 @@ namespace Mirror
         }
 
         /// <summary>Called on client when transport raises an exception.</summary>
-        public virtual void OnClientError(Exception exception) {}
+        public virtual void OnClientError(Exception exception) { }
 
         /// <summary>Called on clients when a servers tells the client it is no longer ready, e.g. when switching scenes.</summary>
         // TODO client only ever uses NetworkClient.connection. this parameter is redundant.
-        public virtual void OnClientNotReady(NetworkConnection conn) {}
+        public virtual void OnClientNotReady(NetworkConnection conn) { }
 
         /// <summary>Called from ClientChangeScene immediately before SceneManager.LoadSceneAsync is executed</summary>
         // customHandling: indicates if scene loading will be handled through overrides
-        public virtual void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) {}
+        public virtual void OnClientChangeScene(string newSceneName, SceneOperation sceneOperation, bool customHandling) { }
 
         /// <summary>Called on clients when a scene has completed loaded, when the scene load was initiated by the server.</summary>
         // Scene changes can cause player objects to be destroyed. The default
@@ -1327,21 +1341,21 @@ namespace Mirror
         // from all versions, so users only need to implement this one case.
 
         /// <summary>This is invoked when a host is started.</summary>
-        public virtual void OnStartHost() {}
+        public virtual void OnStartHost() { }
 
         /// <summary>This is invoked when a server is started - including when a host is started.</summary>
-        public virtual void OnStartServer() {}
+        public virtual void OnStartServer() { }
 
         /// <summary>This is invoked when the client is started.</summary>
-        public virtual void OnStartClient() {}
+        public virtual void OnStartClient() { }
 
         /// <summary>This is called when a server is stopped - including when a host is stopped.</summary>
-        public virtual void OnStopServer() {}
+        public virtual void OnStopServer() { }
 
         /// <summary>This is called when a client is stopped.</summary>
-        public virtual void OnStopClient() {}
+        public virtual void OnStopClient() { }
 
         /// <summary>This is called when a host is stopped.</summary>
-        public virtual void OnStopHost() {}
+        public virtual void OnStopHost() { }
     }
 }
