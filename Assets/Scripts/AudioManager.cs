@@ -48,7 +48,24 @@ public partial class AudioManager : MonoBehaviour
         As.volume = s.volume;
         As.pitch = s.pitch;
         As.loop = s.loop;
-        As.clip = s.clips[UnityEngine.Random.Range(0, s.clips.Length)];
+    
+        if (s.randomPlay)
+        {
+            As.clip = s.clips[UnityEngine.Random.Range(0, s.clips.Length)];
+        }
+        else
+        {
+            if (s.playIndex == s.clips.Length - 1)
+            {
+                s.playIndex = 0;
+            }
+            else
+            {
+                s.playIndex++;
+            }
+
+            As.clip = s.clips[s.playIndex];
+        }
 
         As.spatialBlend = 1;
         As.rolloffMode = AudioRolloffMode.Linear;

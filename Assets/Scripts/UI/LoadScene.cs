@@ -8,7 +8,7 @@ public class LoadScene : MonoBehaviour
 {
     public void Start()
     {
-        gameObject.SetActive(!NetworkRoomManager.singleton.GetComponent<NetworkManagerHUD>());
+        gameObject.SetActive(NetworkRoomManager.singleton.GetComponent<SteamLobby>());
     }
 
     public void LoadSpecificScene(string SceneName)

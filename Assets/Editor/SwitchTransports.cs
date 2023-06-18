@@ -12,11 +12,11 @@ using UnityEditor.Build.Reporting;
 public class SwitchTransports : NetworkManagerEditor
 {
     public static SwitchTransports instace;
-    NetworkRoomManagerExt nrme= null; 
+    NetworkRoomManagerExt nrme = null;
 
     bool isSteamTransport = false;
 
-    public override void OnInspectorGUI() 
+    public override void OnInspectorGUI()
     {
 
         instace = this;
@@ -33,12 +33,18 @@ public class SwitchTransports : NetworkManagerEditor
             nrme.gameObject.AddComponent<TelepathyTransport>();
             nrme.GetComponent<TelepathyTransport>().port = 25565;
             nrme.SetTransport(nrme.GetComponent<TelepathyTransport>());
+
+            DestroyImmediate(nrme.GetComponent<SteamLobby>());
+            DestroyImmediate(nrme.GetComponent<SteamManager>());
         }
 
         if (GUILayout.Button("Switch To Steam") && !isSteamTransport)
         {
             DestroyImmediate(nrme.GetComponent<NetworkManagerHUD>());
             DestroyImmediate(nrme.GetComponent<TelepathyTransport>());
+            
+            nrme.gameObject.AddComponent<SteamLobby>();
+            nrme.gameObject.AddComponent<SteamManager>();
             nrme.SetTransport(nrme.GetComponent<FizzySteamworks>());
         }
 

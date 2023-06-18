@@ -7,6 +7,8 @@ public class Sound
 {
     public string name;
 
+    public bool randomPlay = true;
+    [HideInInspector]public int playIndex = 0;
     public AudioClip[] clips;
 
     [Range(0f , 1f)]

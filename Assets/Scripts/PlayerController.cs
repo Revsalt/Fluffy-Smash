@@ -394,10 +394,11 @@ public class PlayerController : NetworkBehaviour
         RpcStartAbility(i, ntd);
     }
 
-    [ClientRpc]
+    [ClientRpc(includeOwner = false)]
     void RpcStartAbility(int i, NetworkIdentity ntd)
     {
         ntd.GetComponent<PlayerController>().StartAbility(i);
+        Debug.Log("StartAbility " + i + " by " + ntd.gameObject.name);
     }
 
     public bool GetIsAnyAbilityInPorgress()

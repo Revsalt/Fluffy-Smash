@@ -25,8 +25,11 @@ public class beetcatin : PlayerController
     [SerializeField] Transform OutRayPos;
 
     [Header("DrumAttack")]
-    int drumHitCount = 0;
-    int lastBeat = 0;
+
+    [SerializeField] GameObject KnockUpRing;
+
+    [SerializeField] int drumHitCount = 0;
+    [SerializeField] int lastBeat = 0;
 
     [Header("RingHolo")]
 
@@ -47,8 +50,24 @@ public class beetcatin : PlayerController
     {
         StartCoroutine(StartMetronome());
 
-        ability0.ability = delegate
+        ability0.ability = delegate // trumpet boost
         {
+            if (!isLocalPlayer)
+            {
+                StartCoroutine(TrumpetBoost());
+                ability0.End.Invoke();
+                return;
+            }
+
+            if (Onbeat && movementSpeed < 20)
+            {
+                Debug.Log("Boost");
+                movementSpeed += 2.5f;
+            }
+            else if (!Onbeat)
+            {
+                movementSpeed = GetOriginalSpeeed();
+            }
 
             if (boostAmount > 0)
             {
@@ -62,48 +81,34 @@ public class beetcatin : PlayerController
                     boostAmount = 3;
                 }
             }
-
-            if (Onbeat && movementSpeed < 20)
+            else
             {
-                Debug.Log("Boost");
-                movementSpeed += 2.5f;
+                ability0.End.Invoke();
             }
-            else if (!Onbeat)
-            {
-                movementSpeed = GetOriginalSpeeed();
-            }
-
-            ability0.End.Invoke();
         };
 
         ability0.events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() };
 
         ability1.ability = delegate
         {
-            StartCoroutine(StartDrumSequence());
+            if (!isLocalPlayer) return;
 
-            IEnumerator StartDrumSequence()
+            if (Onbeat && beat != lastBeat)
             {
-                if (Onbeat && beat != lastBeat)
+                lastBeat = beat;
+                drumHitCount++;
+
+                switch (drumHitCount)
                 {
-                    lastBeat = beat;
-                    drumHitCount++;
-                    Debug.Log("hit drum " + drumHitCount);
-
-                    switch (drumHitCount)
-                    {
-                        case 1: animator.Play("StartDrum"); ability1.skipNextCoolDown = true; break;
-                        case 2: animator.Play("drum 2"); ability1.skipNextCoolDown = true; break;
-                        case 3: animator.Play("drum 3"); Debug.Log("LuanchAttack"); drumHitCount = 0; ability1.skipNextCoolDown = false; lastBeat = 0; break;
-                        default: break;
-                    }
+                    case 1: animator.Play("StartDrum"); { CmdStartDrum(0, GetComponent<NetworkIdentity>()); } ability1.skipNextCoolDown = true; AudioManager.instance.Play("OrchestraDrums", transform.position, transform); break;
+                    case 2: animator.Play("drum 2"); { CmdStartDrum(1, GetComponent<NetworkIdentity>()); } ability1.skipNextCoolDown = true; break;
+                    case 3: animator.Play("drum 3"); { CmdStartDrum(2, GetComponent<NetworkIdentity>()); } drumHitCount = 0; ability1.skipNextCoolDown = false; lastBeat = 0; break;
+                    default: break;
                 }
-                else { drumHitCount = 0; ability1.skipNextCoolDown = false; lastBeat = 0; animator.Play("Idle"); }
-
-                ability1.End.Invoke();
-
-                yield return null;
             }
+            else { drumHitCount = 0; ability1.skipNextCoolDown = false; lastBeat = 0; animator.Play("Idle"); Debug.Log("no"); }
+
+            ability1.End.Invoke();
         };
 
         ability1.events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() };
@@ -112,29 +117,6 @@ public class beetcatin : PlayerController
         {
             ability = delegate
             {
-                if (!isLocalPlayer) { ability_Attack.End.Invoke(); return; } // to stop the other clients from creating a mess (or keeping them from replication the event twice)
-                /*
-                if (Onbeat)
-                {
-                    HoloLv++;
-                }
-                else
-                {
-                    HoloLv = 1;
-                    animator.SetTrigger("FailedBeat");
-                }
-
-                if (HoloLv == 3)
-                {
-                    TagPing.Invoke();
-                    HoloLv = 1;
-                }
-
-                animator.SetInteger("HoloLv_Attack", HoloLv);
-                StartCoroutine(HoloRing(HoloLv));
-
-                CmdStartTagAttack(GetComponent<NetworkIdentity>(), HoloLv);
-                */
                 ability_Attack.End.Invoke();
             }
             ,
@@ -143,15 +125,11 @@ public class beetcatin : PlayerController
             events = new UnityEvent[2] { GetComponent<Health>().StartAttack, GetComponent<Health>().EndAttack }
 
         };
-
-        if (isLocalPlayer)
-        {
-            Instantiate(Resources.Load("PointerCanvas"));
-        }
     }
 
     IEnumerator TrumpetBoost()
     {
+        AudioManager.instance.Play("trumpet1", transform.position, null);
         Vector3 dirc = cineCamera.transform.position + cineCamera.transform.forward * 10;
         animator.SetTrigger("IsPlatform_Attack");
         StartCoroutine(looktime());
@@ -162,6 +140,8 @@ public class beetcatin : PlayerController
         ShakeCamera(1.5f, .2f);
         ResetPlayerVelocity();
         AddImpact(-cineCamera.transform.forward, boostForce, false);
+
+        ability0.End.Invoke();
 
         IEnumerator looktime()
         {
@@ -176,14 +156,22 @@ public class beetcatin : PlayerController
 
     new void Update()
     {
-        base.Update();
-
         if (!isLocalPlayer) return;
+
+        base.Update();
 
         bool isRunning = moveDirection != Vector3.zero;
         animator.SetBool("IsWalk", isRunning);
         animator.SetBool("IsJump", !isGroundeed());
         animator.SetFloat("runSpeed", movementSpeed / 7);
+        if (characterController.velocity.magnitude > 10)
+        {
+            animator.SetFloat("playerMagnitude", Mathf.Lerp(animator.GetFloat("playerMagnitude") , 2 , 8 * Time.deltaTime));
+        }
+        else
+        {
+            animator.SetFloat("playerMagnitude", Mathf.Lerp(animator.GetFloat("playerMagnitude") , 0 , 8 * Time.deltaTime));
+        }
 
         if (moveDirection != Vector3.zero)
         {
@@ -235,6 +223,8 @@ public class beetcatin : PlayerController
 
     IEnumerator StartMetronome()
     {
+        if (!isLocalPlayer) yield break;
+
         for (float i = 0; i < (60 / bpm) - beatErorrMargin; i += Time.deltaTime)
         {
             bpm_slider_1.value = i / ((60 / bpm) - beatErorrMargin);
@@ -246,30 +236,46 @@ public class beetcatin : PlayerController
 
         AudioManager.instance.Play("HiHat", transform.position, transform);
         yield return new WaitForSeconds(beatErorrMargin);
-        
-        if (beat == 4) {
+
+        if (beat == 4)
+        {
             beat = 1;
-        } else { beat++; }
+        }
+        else { beat++; }
 
         Onbeat = false;
         StartCoroutine(StartMetronome());
     }
 
-    #region TagAttackReplication
+    #region DrumNetworks
 
-    [Command]
-    void CmdStartTagAttack(NetworkIdentity ntd, int i)
+    [Server]
+    void SpawnKnockUpRing(float m, NetworkIdentity ntd)
     {
-        RpcStartTagAttack(ntd, i);
+        GameObject g = Instantiate(KnockUpRing, transform.position, Quaternion.identity);
+        g.GetComponent<KnockUpRing>().knockUpCaster = ntd;
+        g.GetComponent<KnockUpRing>().sizeMultiplier = m;
+        NetworkServer.Spawn(g);
+
+        StartCoroutine(DestroyAfterFive(g));
+
+        IEnumerator DestroyAfterFive(GameObject k)
+        {
+            yield return new WaitForSeconds(5);
+            NetworkServer.Destroy(k);
+        }
     }
 
-    [ClientRpc]
-    void RpcStartTagAttack(NetworkIdentity ntd, int i)
+    [Command(requiresAuthority = false)]
+    void CmdStartDrum(int whichDrum, NetworkIdentity ntd)
     {
-        if (ntd.isLocalPlayer) return;
-
-        StartCoroutine(HoloRing(i));
-
+        beetcatin bt = ntd.GetComponent<beetcatin>();
+        switch (whichDrum)
+        {
+            case 0: bt.SpawnKnockUpRing(1.5f, ntd); break;
+            case 1: bt.SpawnKnockUpRing(3f, ntd); break;
+            case 2: bt.SpawnKnockUpRing(5f, ntd); break;
+        }
     }
 
     #endregion
