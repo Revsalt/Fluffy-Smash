@@ -21,8 +21,10 @@ public class PlayerController : NetworkBehaviour
 
     bool disableMovement = false;
     bool disableInput = false;
+    bool disableRotationInput = false;
     float originalMovementSpeed = 0;
     float originalJumpHeight = 0;
+    float originalGravity = 0;
     Vector3 groundNormal = Vector3.zero;
 
     [HideInInspector] public CinemachineVirtualCamera cineCamera;
@@ -78,6 +80,7 @@ public class PlayerController : NetworkBehaviour
         folllowTarget = transform;
         originalJumpHeight = jumpHeight;
         originalMovementSpeed = movementSpeed;
+        originalGravity = gravity;
         onJump += delegate { };
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -165,7 +168,7 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        if (moveDirection != Vector3.zero)
+        if (moveDirection != Vector3.zero && !disableRotationInput)
             transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
 
         //Movement and impact
@@ -278,6 +281,10 @@ public class PlayerController : NetworkBehaviour
     {
         return originalJumpHeight;
     }
+    public float GetOriginalGraivty()
+    {
+        return originalGravity;
+    }
 
     public float GetOriginalSpeeed()
     {
@@ -294,6 +301,11 @@ public class PlayerController : NetworkBehaviour
     public void DisableInput(bool enabled)
     {
         disableInput = enabled;
+    }
+
+    public void DisableRotationInput(bool enabled)
+    {
+        disableRotationInput = enabled;
     }
 
     public void DisableMovment(bool enabled)
@@ -313,6 +325,12 @@ public class PlayerController : NetworkBehaviour
     {
         return disableInput;
     }
+
+    public bool GetDisableRotationInput()
+    {
+        return disableInput;
+    }
+
 
     public float DistanceBetweenGround()
     {
@@ -346,7 +364,7 @@ public class PlayerController : NetworkBehaviour
     {
         Ability abilityRef = new Ability[3] { ability0, ability1, ability_Attack }[i];
 
-        if (!abilityRef.canCast || abilityInProgress) return;
+        if (!abilityRef.canCast || abilityInProgress || abilityRef.isDisabled) return;
 
         CmdStartAbility(i, GetComponent<NetworkIdentity>());
 
@@ -569,5 +587,11 @@ public class Ability
 
     [HideInInspector] public bool canCast = true;
     [HideInInspector] public bool skipNextCoolDown = false;
+     public bool isDisabled = false;
+
+    public void DisableAbility(bool b)
+    {
+        isDisabled = b;
+    }
 
 }

@@ -139,7 +139,7 @@ public class beetcatin : PlayerController
         trumpetBoostPS.Play();
         ShakeCamera(1.5f, .2f);
         ResetPlayerVelocity();
-        AddImpact(-cineCamera.transform.forward, boostForce, false);
+        AddImpact(cineCamera.transform.forward, boostForce, false);
 
         ability0.End.Invoke();
 
@@ -147,7 +147,7 @@ public class beetcatin : PlayerController
         {
             for (float y = 0; y < .5f; y += Time.deltaTime)
             {
-                playerModel.transform.LookAt(dirc);
+                playerModel.transform.LookAt(cineCamera.transform.position - cineCamera.transform.forward * 10);
                 yield return null;
             }
         }

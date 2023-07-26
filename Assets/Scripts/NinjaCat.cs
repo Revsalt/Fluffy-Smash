@@ -101,34 +101,9 @@ public class NinjaCat : PlayerController
 
         //wall running
 
-        if (wallDirection != Vector3.zero && Input.GetButtonDown("Jump") && !GetDisableInput())
+        if (wallDirection != Vector3.zero && (Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(1)) && !GetDisableInput())
         {
-            StartCoroutine(ChkIfJumped());
-
-            DisableMovment(false);
-
-            playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
-            animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
-            animator.SetBool("isWallGrab", false);
-
-            transform.rotation = Quaternion.Euler(Vector3.zero);
-
-            if (Physics.Raycast(transform.position, -wallDirection, 10, layerMask))
-            {
-                if (isRunning)
-                {
-                    ResetPlayerVelocity();
-                    AddImpact(Vector3.up, wallJumpForce, true);
-                    AddImpact(wallDirection, 60, true);
-                }
-                else
-                {
-                    ResetPlayerVelocity();
-                    AddImpact(wallDirection, 20, true);
-                }
-            }
-
-            wallDirection = Vector3.zero;
+            OffWall(true);
         }
 
         if (GetDisableInput()) return;
@@ -144,6 +119,55 @@ public class NinjaCat : PlayerController
         AddImpact(playerModel.transform.forward, 50, true);
     }
 
+    void OffWall(bool withDirectionalBoost)
+    {
+        DisableRotationInput(false);
+
+        StopCoroutine(PlayerFallOnWall());
+
+        ability_Attack.DisableAbility(false);
+        ability1.DisableAbility(false);
+
+        StartCoroutine(disableinputforabit());
+
+        bool isRunning = moveDirection != Vector3.zero;
+
+        StartCoroutine(ChkIfJumped());
+
+        gravity = GetOriginalGraivty();
+        movementSpeed = GetOriginalSpeeed() * 2;
+
+        playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
+        animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
+        animator.SetBool("isWallGrab", false);
+
+        transform.rotation = Quaternion.Euler(Vector3.zero);
+
+        if (Physics.Raycast(transform.position, -wallDirection, 10, layerMask))
+        {
+            if (isRunning && withDirectionalBoost)
+            {
+                ResetPlayerVelocity();
+                AddImpact(Vector3.up, wallJumpForce, true);
+                AddImpact(wallDirection + (moveDirection / 1.2f), 60, true);
+            }
+            else
+            {
+                ResetPlayerVelocity();
+                AddImpact(wallDirection, 20, true);
+            }
+        }
+
+        wallDirection = Vector3.zero;
+
+        IEnumerator disableinputforabit()
+        {
+            DisableInput(true);
+            yield return new WaitForSeconds(.2f);
+            DisableInput(false);
+        }
+    }
+
     public override void OnControllerColliderHit(ControllerColliderHit hit)
     {
         base.OnControllerColliderHit(hit);
@@ -151,13 +175,21 @@ public class NinjaCat : PlayerController
         if (wallDirection != Vector3.zero)
             return;
 
-        Debug.Log(Vector3.Dot(Vector3.up, hit.normal));
-        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed() && Vector3.Dot(Vector3.up, hit.normal) < 0.7f && Vector3.Dot(Vector3.up, hit.normal) > -0.7f)
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 
+            && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal) && !isGroundeed() 
+            && Vector3.Dot(Vector3.up, hit.normal) < 0.7f && Vector3.Dot(Vector3.up, hit.normal) > -0.7f && !GetIsAnyAbilityInPorgress())
         {
+            ability_Attack.DisableAbility(true);
+            ability1.DisableAbility(true);
+
+            DisableRotationInput(true);
+
+            StartCoroutine(PlayerFallOnWall());
             playerModel.GetComponentInChildren<ModelAnimationSounds>().playSoundWalkFootStep();
             animator.SetBool("isWallGrab", true);
 
-            DisableMovment(true);
+            movementSpeed = 0;
+            gravity = 0;
             ResetPlayerVelocity();
 
             RaycastHit hitLine;
@@ -169,12 +201,27 @@ public class NinjaCat : PlayerController
         }
     }
 
-    float originalgravity;
+    IEnumerator PlayerFallOnWall()
+    {
+        yield return new WaitForSeconds(.25f);
+
+        if (wallDirection == Vector3.zero) yield break;
+
+        
+        gravity = -0.5f;
+
+        while (!isGroundeed() && Physics.Raycast(transform.position , -wallDirection , 2f))
+        {
+            Debug.Log("OnWall");
+            yield return null;
+        }
+
+        OffWall(false);
+
+    }
 
     IEnumerator AttackSequence()
     {
-        originalgravity = gravity;
-
         DisableInput(true);
         gravity = 0; ResetPlayerVelocity();
         animator.SetBool("isPersonGrab", true);
@@ -238,7 +285,7 @@ public class NinjaCat : PlayerController
         yield return new WaitForSeconds(.5f);
         animator.SetBool("isPersonGrab", false);
         DisableInput(false);
-        gravity = originalgravity;
+        gravity = GetOriginalGraivty();
         GetComponent<Health>().SetCanAttack(false);
 
         leafDashParticleSystem.Stop();

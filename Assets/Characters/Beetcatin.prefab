@@ -1194,7 +1194,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   trumpetBoostPS: {fileID: 5619449125301583917}
-  boostForce: 100
+  boostForce: 200
   boostAmount: 3
 --- !u!114 &2041527776
 MonoBehaviour:

@@ -10628,7 +10628,7 @@ MonoBehaviour:
   slopeForce: 0
   slopeForceRayLength: 0
   slideFriction: 0
-  airResistence: 60
+  airResistence: 40
   jumpHeight: 80
   layerMask:
     serializedVersion: 2
@@ -10638,21 +10638,21 @@ MonoBehaviour:
   - {fileID: 3814039662561590340}
   - {fileID: 3814039664436481325}
   ability0:
-    coolDown: 1
+    coolDown: 0
     coolDown_current_value: 0
     abilityName: NoName (please assign a name)
     events: []
     canCast: 1
     skipNextCoolDown: 0
   ability1:
-    coolDown: 1
+    coolDown: 0
     coolDown_current_value: 0
     abilityName: NoName (please assign a name)
     events: []
     canCast: 1
     skipNextCoolDown: 0
   ability_Attack:
-    coolDown: 5
+    coolDown: 0
     coolDown_current_value: 0
     abilityName: NoName (please assign a name)
     events: []
@@ -11066,8 +11066,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3814039662561590340}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 1, y: 0.5, z: -4.5}
+  m_LocalRotation: {x: 0.006094907, y: 0.9794454, z: 0.062789455, w: -0.191591}
+  m_LocalPosition: {x: 26.307, y: 3.65, z: 21.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3814039664436481324}
@@ -11098,9 +11098,9 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.01
-  far clip plane: 999.33
-  field of view: 35
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 40
   orthographic: 0
   orthographic size: 5
   m_Depth: 1
@@ -11344,8 +11344,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3814039664436481325}
-  m_LocalRotation: {x: -0.02323984, y: -0.996371, z: -0.052489743, w: 0.06284685}
-  m_LocalPosition: {x: 26.1659, y: -6.939566, z: 22.81165}
+  m_LocalRotation: {x: -0.006094907, y: -0.9794454, z: -0.062789455, w: -0.191591}
+  m_LocalPosition: {x: 13.857984, y: -7.1249094, z: 32.602436}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3814039663305753172}
