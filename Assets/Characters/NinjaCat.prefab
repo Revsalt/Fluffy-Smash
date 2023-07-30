@@ -104,6 +104,7 @@ MonoBehaviour:
     events: []
     canCast: 1
     skipNextCoolDown: 0
+    isDisabled: 0
   ability1:
     coolDown: 0
     coolDown_current_value: 0
@@ -111,13 +112,15 @@ MonoBehaviour:
     events: []
     canCast: 1
     skipNextCoolDown: 0
+    isDisabled: 0
   ability_Attack:
-    coolDown: 2
+    coolDown: 4
     coolDown_current_value: 0
     abilityName: SakuraBreeze
     events: []
     canCast: 1
     skipNextCoolDown: 0
+    isDisabled: 0
   Result_: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   chargeParticleSystem: {fileID: 5280127289521539745}

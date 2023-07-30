@@ -68,6 +68,8 @@ public class PlayerController : NetworkBehaviour
     }
     private void Awake()
     {
+        InitializeAbilities();
+
         airResistence *= Time.fixedDeltaTime;
         //platformMovingChild = new GameObject("platformMovingChild");
 
@@ -96,6 +98,8 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
+
+    public virtual void InitializeAbilities() {  }
 
     Vector3 inputAxis = Vector3.zero;
     bool isJumpPressed = false;

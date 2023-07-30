@@ -72,6 +72,7 @@ public class LobbyServerControles : NetworkBehaviour
         {
             case 0: gameModeName_ = "TagGameMode"; break;
             case 1: gameModeName_ = "TouchDownGameMode"; break;
+            case 2: gameModeName_ = "CaptureTheFlagGameMode"; break;
             default: break;
         }
 

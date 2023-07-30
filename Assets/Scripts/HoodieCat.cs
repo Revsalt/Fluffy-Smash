@@ -25,12 +25,8 @@ public class HoodieCat : PlayerController
     bool canBringLoliPop = true;
     float oldGravity;
 
-    private void Start()
+    public override void InitializeAbilities()
     {
-        animator = playerModel.GetComponentInChildren<Animator>();
-
-        oldGravity = gravity;
-
         Health health = GetComponent<Health>();
 
         ability0.ability = delegate
@@ -51,7 +47,13 @@ public class HoodieCat : PlayerController
             StartCoroutine(AttackSquence0());
         };
         ability_Attack.events = new UnityEvent[] { health.StartAttack, health.EndAttack };
+    }
 
+    private void Start()
+    {
+        animator = playerModel.GetComponentInChildren<Animator>();
+
+        oldGravity = gravity;
     }
 
     bool canPickUp = true;
@@ -245,7 +247,9 @@ public class HoodieCat : PlayerController
         ZoomIn(false);
         gravity = oldGravity;
         AddImpact(cineCamera.transform.forward + Vector3.up * 0.5f, 220, false);
+
         yield return new WaitForSeconds(.1f);
+
         for (float i = 0; !isGroundeed(); i += Time.deltaTime)
         {
             if (Input.GetMouseButtonDown(0))

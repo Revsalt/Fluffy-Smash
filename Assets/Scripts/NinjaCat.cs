@@ -22,16 +22,8 @@ public class NinjaCat : PlayerController
     [SerializeField] float swordSlashDistance = 200;
     Vector3 wallDirection = Vector3.zero;
 
-    void Start()
+    public override void InitializeAbilities()
     {
-        movementSpeed = GetOriginalSpeeed() * 2f;
-
-        onJump += delegate
-        {
-            if (playerModel.GetComponentInChildren<ModelAnimationSounds>() != null) playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
-            animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
-        };
-
         Health health = GetComponent<Health>();
 
         ability0.ability = delegate
@@ -68,7 +60,6 @@ public class NinjaCat : PlayerController
                 }
 
                 movementSpeed = GetOriginalSpeeed() * 2f;
-                Debug.Log("set fast");
 
                 ability1.End.Invoke();
             }
@@ -80,8 +71,19 @@ public class NinjaCat : PlayerController
         {
             StartCoroutine(AttackSequence());
         };
-        
+
         ability_Attack.events = new UnityEvent[] { health.StartAttack, health.EndAttack };
+    }
+
+    void Start()
+    {
+        movementSpeed = GetOriginalSpeeed() * 2f;
+
+        onJump += delegate
+        {
+            if (playerModel.GetComponentInChildren<ModelAnimationSounds>() != null) playerModel.GetComponentInChildren<ModelAnimationSounds>().PlayAirSwooshSound();
+            animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
+        };
     }
 
     new void Update()

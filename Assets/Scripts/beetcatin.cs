@@ -25,19 +25,9 @@ public class beetcatin : PlayerController
     [SerializeField] Transform OutRayPos;
 
     [Header("DrumAttack")]
-
     [SerializeField] GameObject KnockUpRing;
-
-    [SerializeField] int drumHitCount = 0;
-    [SerializeField] int lastBeat = 0;
-
-    [Header("RingHolo")]
-
-    int HoloLv = 1;
-    [SerializeField] GameObject HoloRingObj;
-    [SerializeField] float lerpduration = 500f;
-    [SerializeField] float ScaleMulti = 1f;
-    [SerializeField] UnityEvent TagPing;
+    int drumHitCount = 0;
+    int lastBeat = 0;
 
     [Header("ParticleSystem")]
     [SerializeField] ParticleSystem trumpetBoostPS;
@@ -46,10 +36,8 @@ public class beetcatin : PlayerController
     [SerializeField] float boostForce = 10;
     [SerializeField] int boostAmount = 3;
 
-    void Start()
+    public override void InitializeAbilities()
     {
-        StartCoroutine(StartMetronome());
-
         ability0.ability = delegate // trumpet boost
         {
             if (!isLocalPlayer)
@@ -61,7 +49,6 @@ public class beetcatin : PlayerController
 
             if (Onbeat && movementSpeed < 20)
             {
-                Debug.Log("Boost");
                 movementSpeed += 2.5f;
             }
             else if (!Onbeat)
@@ -127,6 +114,11 @@ public class beetcatin : PlayerController
         };
     }
 
+    void Start()
+    {
+        StartCoroutine(StartMetronome());
+    }
+
     IEnumerator TrumpetBoost()
     {
         AudioManager.instance.Play("trumpet1", transform.position, null);
@@ -178,8 +170,6 @@ public class beetcatin : PlayerController
             playerModel.transform.forward = moveDirection;
         }
 
-        HoloRingObj.transform.Rotate(Vector3.up * 50 * Time.deltaTime * HoloLv, Space.World);
-
         if (movementSpeed > 7f)
         {
             movementSpeed -= Time.deltaTime;
@@ -189,24 +179,6 @@ public class beetcatin : PlayerController
 
     }
 
-    IEnumerator HoloRing(int level)
-    {
-        if (level >= 2)
-        {
-            ScaleMulti += 2;
-        }
-        else if (level == 1)
-        {
-            ScaleMulti = 1f;
-        }
-
-        for (float i = 0; i < lerpduration; i += Time.deltaTime)
-        {
-            HoloRingObj.transform.localScale = Vector3.Lerp(HoloRingObj.transform.localScale, Vector3.one * ScaleMulti, 5 * Time.deltaTime);
-            yield return null;
-        }
-
-    }
     public static Vector3 Bezier2(Vector3 p0, Vector3 p1, Vector3 p2, float t)
     {
         var clamped_t = Mathf.Clamp(t, 0, 1);
@@ -252,12 +224,18 @@ public class beetcatin : PlayerController
     [Server]
     void SpawnKnockUpRing(float m, NetworkIdentity ntd)
     {
-        GameObject g = Instantiate(KnockUpRing, transform.position, Quaternion.identity);
-        g.GetComponent<KnockUpRing>().knockUpCaster = ntd;
-        g.GetComponent<KnockUpRing>().sizeMultiplier = m;
-        NetworkServer.Spawn(g);
+        StartCoroutine(delay());
 
-        StartCoroutine(DestroyAfterFive(g));
+        IEnumerator delay()
+        {
+            yield return new WaitForSeconds(.2f);
+            GameObject g = Instantiate(KnockUpRing, transform.position, Quaternion.identity);
+            g.GetComponent<KnockUpRing>().knockUpCaster = ntd;
+            g.GetComponent<KnockUpRing>().sizeMultiplier = m;
+            NetworkServer.Spawn(g);
+
+            StartCoroutine(DestroyAfterFive(g));
+        }
 
         IEnumerator DestroyAfterFive(GameObject k)
         {
