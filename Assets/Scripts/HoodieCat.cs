@@ -20,6 +20,7 @@ public class HoodieCat : PlayerController
     [SerializeField] Transform loliPopParent;
     [SerializeField] GameObject LoliPop;
     [SerializeField] GameObject[] modelHidden, modelNormal;
+    private bool SkippedAttack = false;
 
     bool canBringLoliPop = true;
     float oldGravity;
@@ -95,7 +96,6 @@ public class HoodieCat : PlayerController
             {
                 CmdPickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3), GetComponent<NetworkIdentity>());
                 PickUp(!(Vector3.Distance(transform.position, LoliPop.transform.position) > 3), GetComponent<NetworkIdentity>());
-
             }
         }
     }
@@ -158,7 +158,6 @@ public class HoodieCat : PlayerController
         GameObject lolipop_ = ntd.GetComponent<HoodieCat>().LoliPop;
 
         StartCoroutine(delay());
-
         IEnumerator delay()
         {
             canBringLoliPop = false;
@@ -166,7 +165,6 @@ public class HoodieCat : PlayerController
             lolipop_.gameObject.layer = LayerMask.NameToLayer("PlayerIgnore");
             lolipop_.GetComponent<CapsuleCollider>().enabled = false;
             lolipop_.GetComponent<Rigidbody>().isKinematic = true;
-
             if (!Teleport)
             {
 
@@ -183,8 +181,7 @@ public class HoodieCat : PlayerController
                     yield return null;
                 }
 
-            }
-            else { AddImpact(moveDirection, 50, false); }
+            }  else { AddImpact(moveDirection, 50, false); }
 
             lolipop_.transform.SetParent(ntd.GetComponent<HoodieCat>().loliPopParent);
             lolipop_.transform.localPosition = Vector3.zero;
@@ -247,11 +244,24 @@ public class HoodieCat : PlayerController
         playerModel.transform.rotation = Quaternion.LookRotation(new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z));
         ZoomIn(false);
         gravity = oldGravity;
-        AddImpact(cineCamera.transform.forward, 220, false);
-
+        AddImpact(cineCamera.transform.forward + Vector3.up * 0.5f, 220, false);
+        yield return new WaitForSeconds(.1f);
         for (float i = 0; !isGroundeed(); i += Time.deltaTime)
         {
-            yield return null;
+            if (Input.GetMouseButtonDown(0))
+            {
+                animator.SetBool("isAttackJump", false);
+                GetComponent<Health>().SetCanAttack(false);
+                DisableMovment(false);
+                DisableInput(false);
+
+                ability_Attack.End.Invoke();
+                yield break;
+            }
+            else
+            {
+                yield return null;   
+            }
         }
 
         animator.SetBool("isAttackJump", false);
@@ -348,7 +358,7 @@ public class HoodieCat : PlayerController
                 LoliPop.transform.rotation = Quaternion.LookRotation((LoliPop.transform.position - GoToPos_).normalized);
                 yield return null;
             }
-
+            
             LoliPop.gameObject.layer = LayerMask.NameToLayer("Default");
             LoliPop.transform.rotation = Quaternion.LookRotation(lastHitNormal);
             AudioManager.instance.Play("HoodieCatLoliPopStickInWall", LoliPop.transform.position, null);
@@ -364,6 +374,7 @@ public class HoodieCat : PlayerController
             for (float i = 0; Vector3.Distance(transform.position, GoToPos) > .3f; i += Time.deltaTime)
             {
                 transform.position = Bezier2(startpos, ((startpos + GoToPos) / 2) + Vector3.up * 5, GoToPos, i * 2);
+                ResetPlayerVelocity();
                 yield return null;
             }
             #endregion

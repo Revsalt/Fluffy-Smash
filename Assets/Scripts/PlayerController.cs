@@ -173,6 +173,15 @@ public class PlayerController : NetworkBehaviour
 
         //Movement and impact
 
+        if (isGroundeed())
+        {
+            airResistence = 6.2f;
+        }
+        else
+        {
+            airResistence = 0.8f;
+        }
+
         Vector3 Result = Vector3.zero;
 
         if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
