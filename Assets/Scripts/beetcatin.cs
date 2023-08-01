@@ -29,6 +29,9 @@ public class beetcatin : PlayerController
     int drumHitCount = 0;
     int lastBeat = 0;
 
+    [Header("CymbalAttack")]
+    [SerializeField] GameObject cymbal;
+
     [Header("ParticleSystem")]
     [SerializeField] ParticleSystem trumpetBoostPS;
 
@@ -107,7 +110,8 @@ public class beetcatin : PlayerController
                 }
                 else
                 {
-                    //throw cymbal
+                    GameObject cym = Instantiate(cymbal, transform.position, Quaternion.identity);
+                    cym.transform.forward = cineCamera.transform.forward;
                 }
 
                 ability_Attack.End.Invoke();

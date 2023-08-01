@@ -1160,6 +1160,7 @@ MonoBehaviour:
     events: []
     canCast: 1
     skipNextCoolDown: 0
+    isDisabled: 0
   ability1:
     coolDown: 2
     coolDown_current_value: 0
@@ -1167,6 +1168,7 @@ MonoBehaviour:
     events: []
     canCast: 1
     skipNextCoolDown: 0
+    isDisabled: 0
   ability_Attack:
     coolDown: 0
     coolDown_current_value: 0
@@ -1174,6 +1176,7 @@ MonoBehaviour:
     events: []
     canCast: 1
     skipNextCoolDown: 0
+    isDisabled: 0
   Result_: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   bpm: 80
@@ -1185,14 +1188,7 @@ MonoBehaviour:
   OutRayPos: {fileID: 1707558695}
   KnockUpRing: {fileID: 8227792678629675336, guid: a9a7840bb4eca964bade331a0a547d0a,
     type: 3}
-  drumHitCount: 0
-  lastBeat: 0
-  HoloRingObj: {fileID: 5295151529277977354}
-  lerpduration: 2
-  ScaleMulti: 1
-  TagPing:
-    m_PersistentCalls:
-      m_Calls: []
+  cymbal: {fileID: 996377789612066974, guid: d664169f23a1ff049822b13981a991a8, type: 3}
   trumpetBoostPS: {fileID: 5619449125301583917}
   boostForce: 200
   boostAmount: 3
@@ -3736,12 +3732,6 @@ Animator:
 --- !u!4 &7730126054397488875 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -6628946290642260338, guid: 6f3a6b388dde54549a2cd4338da94ae0,
-    type: 3}
-  m_PrefabInstance: {fileID: 5712724630058647653}
-  m_PrefabAsset: {fileID: 0}
---- !u!1 &5295151529277977354 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: -8774273718944812177, guid: 6f3a6b388dde54549a2cd4338da94ae0,
     type: 3}
   m_PrefabInstance: {fileID: 5712724630058647653}
   m_PrefabAsset: {fileID: 0}
