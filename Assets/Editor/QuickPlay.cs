@@ -12,21 +12,43 @@ public class QuickPlay : EditorWindow
         GetWindow<QuickPlay>("uwu");
     }
 
-    bool once = false;
+    static QuickPlay()
+    {
+        EditorApplication.playModeStateChanged += AddQuickPlay;
+    }
+
+    GameObject chara = null;
     private void OnGUI()
     {
-        GUILayout.BeginHorizontal();
-        if (GUILayout.Button("QuickPlay UwU"))
+        GUILayout.BeginVertical();
+
+        if (GUILayout.Button("QuickPlay"))
         {
             EditorApplication.EnterPlaymode();
-            once = true;
         }
 
-        if (EditorApplication.isPlaying && once)
+        GUILayout.BeginHorizontal();
+
+        GUILayout.Label("PlayCharacter ");
+
+        chara = (GameObject)EditorGUILayout.ObjectField(chara, typeof(GameObject), true);
+    }
+
+    private void Update()
+    {
+        if ( NetworkManager.singleton != null && NetworkManager.singleton.gameObject.name == "QuickPlay" && !NetworkManager.singleton.isNetworkActive)
         {
-            GameObject g = (GameObject)Instantiate(Resources.Load("QuickPlay"), Vector3.zero, Quaternion.identity);
-            g.GetComponentInChildren<NetworkManager>().StartHost();
-            once = false;
+            NetworkManager.singleton.playerPrefab = chara;
+            NetworkManager.singleton.StartHost();
+            NetworkManager.singleton.GetComponent<NetworkManagerHUD>().enabled = false;
+        }
+    }
+
+    private static void AddQuickPlay(PlayModeStateChange state)
+    {
+        if (state == PlayModeStateChange.EnteredPlayMode)
+        {
+            GameObject g = Instantiate(Resources.Load("QuickPlay") as GameObject, Vector3.zero, Quaternion.identity);
         }
     }
 }

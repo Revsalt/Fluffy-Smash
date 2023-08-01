@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 2287347302153463197}
   - component: {fileID: 2287347302153463194}
   m_Layer: 0
-  m_Name: NetManager
+  m_Name: QuickPlay
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
