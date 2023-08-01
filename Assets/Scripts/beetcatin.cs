@@ -1,5 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Animations.Rigging;
 using Cinemachine;
@@ -9,6 +11,8 @@ using UnityEngine.EventSystems;
 using Mirror;
 using TMPro;
 using Unity.Mathematics;
+using UnityEngine.SocialPlatforms;
+using Random = Unity.Mathematics.Random;
 
 public class beetcatin : PlayerController
 {
@@ -37,6 +41,7 @@ public class beetcatin : PlayerController
     private GameObject PianoPrefab;
     [SerializeField] AnimationCurve PianoYvalue;
     [SerializeField] private float PianoSpeed = 50f;
+    [SerializeField] private AudioClip Piano_Crash_sound;
 
 
     [Header("ParticleSystem")]
@@ -64,13 +69,6 @@ public class beetcatin : PlayerController
             {
                 StartCoroutine(TrumpetBoost());
                 boostAmount--;
-                ability0.skipNextCoolDown = true;
-
-                if (boostAmount == 0)
-                {
-                    ability0.skipNextCoolDown = false;
-                    boostAmount = 3;
-                }
             }
             else
             {
@@ -148,7 +146,7 @@ public class beetcatin : PlayerController
         for (float i = 0; Input.GetMouseButton(0); i += Time.deltaTime)
         {
             Physics.Raycast(cineCamera.transform.position, cineCamera.transform.forward, out hit, 40, layerMask);
-            if (hit.collider) //  hit.normal.y * 90f >= -20 && hit.normal.y * 90f == 0
+            if (Vector3.Angle(hit.normal.normalized,Vector3.up) <= 30) //  hit.normal.y * 90f >= -20 && hit.normal.y * 90f == 0
             {
                 CrossPointer.transform.position = hit.point;
                 CrossPointer.transform.rotation = Quaternion.LookRotation(cineCamera.transform.forward);
@@ -167,17 +165,23 @@ public class beetcatin : PlayerController
             GameObject Piano = Instantiate(PianoPrefab, new Vector3(CrossPointer.transform.position.x,CrossPointer.transform.position.y + 50,CrossPointer.transform.position.z), quaternion.identity, null);
             float animationTime = 0;
             animationTime += Time.deltaTime;
-            while (Vector3.Distance(Piano.transform.position,hit.point) > 0.2f)
+            while (Vector3.Distance(Piano.transform.position,hit.point) > 0.5f)
             {
                 Piano.transform.position -= new Vector3(0, Piano.transform.position.y, 0)  * PianoYvalue.Evaluate(animationTime) * PianoSpeed;
                 yield return null;
             }
+            Piano.GetComponent<Rigidbody>().AddForce(new Vector3(UnityEngine.Random.Range(-10f,10f),UnityEngine.Random.Range(0,10f),UnityEngine.Random.Range(-10f,10f)),ForceMode.Impulse);
+            if(CrossPointer != null) { Destroy(CrossPointer); }
+            GameObject Crack = Instantiate(Resources.Load("Crack") as GameObject, hit.point, Quaternion.Euler(90, 0, 0), null);
+            Crack.GetComponent<AudioSource>().clip = Piano_Crash_sound;
+            Crack.GetComponent<AudioSource>().Play();
+            Destroy(Crack.gameObject, 5);
 
-            yield return new WaitForSeconds(0.5f);
+            ShakeCamera(6, .5f);
+            yield return new WaitForSeconds(5f);
             if(Piano != null)Destroy(Piano);
         }
-        Destroy(CrossPointer);
-        ability0.End.Invoke();
+        ability_Attack.End.Invoke();
         yield return null;
     }
     IEnumerator TrumpetBoost()
@@ -212,7 +216,10 @@ public class beetcatin : PlayerController
         if (!isLocalPlayer) return;
 
         base.Update();
-
+        if (isGroundeed())
+        {
+            boostAmount = 3;
+        }
         bool isRunning = moveDirection != Vector3.zero;
         animator.SetBool("IsWalk", isRunning);
         animator.SetBool("IsJump", !isGroundeed());

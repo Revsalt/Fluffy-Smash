@@ -1155,7 +1155,7 @@ MonoBehaviour:
   - {fileID: 8206218322169739880}
   - {fileID: 8206218320823569153}
   ability0:
-    coolDown: 1
+    coolDown: 0.6
     coolDown_current_value: 0
     abilityName: TrumpetBoost
     events: []
@@ -1217,6 +1217,7 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   PianoSpeed: 500
+  Piano_Crash_sound: {fileID: 8300000, guid: a5594106a35e9db43bae4bc5bc56423b, type: 3}
   trumpetBoostPS: {fileID: 5619449125301583917}
   boostForce: 200
   boostAmount: 3
