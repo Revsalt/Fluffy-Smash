@@ -47,14 +47,8 @@ public class beetcatin : PlayerController
                 return;
             }
 
-            if (Onbeat && movementSpeed < 20)
-            {
-                movementSpeed += 2.5f;
-            }
-            else if (!Onbeat)
-            {
-                movementSpeed = GetOriginalSpeeed();
-            }
+            if (Onbeat) movementSpeed = Mathf.Clamp(movementSpeed + 2.5f , GetOriginalSpeeed(), 20);
+            else movementSpeed = Mathf.Clamp(movementSpeed - 5f , GetOriginalSpeeed() , 20);
 
             if (boostAmount > 0)
             {
@@ -72,6 +66,7 @@ public class beetcatin : PlayerController
             {
                 ability0.End.Invoke();
             }
+
         };
 
         ability0.events = new UnityEvent[2] { new UnityEvent(), new UnityEvent() };
@@ -104,6 +99,17 @@ public class beetcatin : PlayerController
         {
             ability = delegate
             {
+                if (isGroundeed())
+                {
+                    //@hilado
+                    //drop piano ( on input hold should cast a circle displayed on the ground and when input up -> it drops the piano where the circle is dealing damage
+                    //(use a cube for now))
+                }
+                else
+                {
+                    //throw cymbal
+                }
+
                 ability_Attack.End.Invoke();
             }
             ,
