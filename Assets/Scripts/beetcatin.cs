@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using UnityEngine.EventSystems;
 using Mirror;
 using TMPro;
+using Unity.Mathematics;
 
 public class beetcatin : PlayerController
 {
@@ -28,9 +29,15 @@ public class beetcatin : PlayerController
     [SerializeField] GameObject KnockUpRing;
     int drumHitCount = 0;
     int lastBeat = 0;
-
+    
     [Header("CymbalAttack")]
     [SerializeField] GameObject cymbal;
+
+    [Header("PianoAttack")] [SerializeField]
+    private GameObject PianoPrefab;
+    [SerializeField] AnimationCurve PianoYvalue;
+    [SerializeField] private float PianoSpeed = 50f;
+
 
     [Header("ParticleSystem")]
     [SerializeField] ParticleSystem trumpetBoostPS;
@@ -107,6 +114,7 @@ public class beetcatin : PlayerController
                     //@hilado
                     //drop piano ( on input hold should cast a circle displayed on the ground and when input up -> it drops the piano where the circle is dealing damage
                     //(use a cube for now))
+                    StartCoroutine(PianoAttack());
                 }
                 else
                 {
@@ -129,6 +137,49 @@ public class beetcatin : PlayerController
         StartCoroutine(StartMetronome());
     }
 
+    IEnumerator PianoAttack()
+    {
+        GameObject CrossPointer = Instantiate(Resources.Load("RoundMarker") as GameObject, new Vector3(0, -100, 0), Quaternion.identity, null);
+
+        RaycastHit hit = new RaycastHit();
+        Vector3 lastHitNormal = Vector3.zero;
+
+        ZoomIn(true);
+        for (float i = 0; Input.GetMouseButton(0); i += Time.deltaTime)
+        {
+            Physics.Raycast(cineCamera.transform.position, cineCamera.transform.forward, out hit, 40, layerMask);
+            if (hit.collider) //  hit.normal.y * 90f >= -20 && hit.normal.y * 90f == 0
+            {
+                CrossPointer.transform.position = hit.point;
+                CrossPointer.transform.rotation = Quaternion.LookRotation(cineCamera.transform.forward);
+
+                CrossPointer.SetActive(true);
+                lastHitNormal = hit.normal;
+            }
+            else
+                CrossPointer.SetActive(false);
+
+            yield return null;
+        }
+        ZoomIn(false);
+        if (Vector3.Angle(lastHitNormal,Vector3.up) <= 30 && CrossPointer.activeSelf)
+        {
+            GameObject Piano = Instantiate(PianoPrefab, new Vector3(CrossPointer.transform.position.x,CrossPointer.transform.position.y + 50,CrossPointer.transform.position.z), quaternion.identity, null);
+            float animationTime = 0;
+            animationTime += Time.deltaTime;
+            while (Vector3.Distance(Piano.transform.position,hit.point) > 0.2f)
+            {
+                Piano.transform.position -= new Vector3(0, Piano.transform.position.y, 0)  * PianoYvalue.Evaluate(animationTime) * PianoSpeed;
+                yield return null;
+            }
+
+            yield return new WaitForSeconds(0.5f);
+            if(Piano != null)Destroy(Piano);
+        }
+        Destroy(CrossPointer);
+        ability0.End.Invoke();
+        yield return null;
+    }
     IEnumerator TrumpetBoost()
     {
         AudioManager.instance.Play("trumpet1", transform.position, null);
