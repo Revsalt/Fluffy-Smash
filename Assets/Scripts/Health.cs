@@ -7,7 +7,7 @@ using Mirror;
 public class Health : NetworkBehaviour
 {
     [SyncVar(hook = nameof(OnChangeDamageState))] public bool canInfluenceDamage = false;
-    [SyncVar(hook = nameof(OnChangeTeam))] public string TeamName = "none";
+
     bool CanAttack = false;
     public float damageRadius = 2;
 
@@ -34,14 +34,9 @@ public class Health : NetworkBehaviour
 
     }
 
-    public void OnChangeTeam(string olds , string news)
+    public void OnChangeTeam(Team olds , Team news)
     {
-        Color c = Color.black;
-        
-        if (news == "RedTeam") { c = Color.red; } 
-        else if (news == "BlueTeam"){ c = Color.blue;}
-
-        GetComponent<PlayerController>().playerModel.GetComponentInChildren<OutLineColor>().SetColor(c);
+        GetComponent<PlayerController>().playerModel.GetComponentInChildren<OutLineColor>().SetColor(news.teamColor);
     }
 
     void Update()
@@ -51,9 +46,13 @@ public class Health : NetworkBehaviour
 
         if (CanAttack)
         {
-            foreach (var player in FindObjectsOfType<Health>())
+            foreach (var player in FindObjectsOfType<PlayerNetworkManager>())
             {
-                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && (TeamName != player.TeamName || TeamName == "none" || player.TeamName == "none") && Vector3.Distance(player.transform.position , transform.position) < damageRadius) // if anyone is close to me
+                Team team = GetComponent<PlayerNetworkManager>().Team_m;
+
+                if (!player.GetComponent<NetworkIdentity>().isLocalPlayer && (team != player.Team_m || team == Team.None 
+                    || player.Team_m == Team.None) 
+                    && Vector3.Distance(player.transform.position , transform.position) < damageRadius) // if anyone is close to me
                 {
                     Kill(player.GetComponent<NetworkIdentity>() , GetComponent<NetworkIdentity>());
                     CanAttack = false;
@@ -119,7 +118,7 @@ public class Health : NetworkBehaviour
         {
             yield return new WaitForSeconds(time);
 
-            myPlayer.SetPlayerPosition(NetworkStartPosition.GetSpawnPoistionRandomAtTeam(TeamName));
+            myPlayer.SetPlayerPosition(NetworkStartPositionTeams.GetSpawnPoistionRandomAtTeam(GetComponent<PlayerNetworkManager>().Team_m));
             myPlayer.DisableInput(false);
 
             myPlayer.folllowTarget = transform;
@@ -130,7 +129,7 @@ public class Health : NetworkBehaviour
 
     public void QuickRespawn()
     {
-        myPlayer.SetPlayerPosition(NetworkStartPosition.GetSpawnPoistionRandomAtTeam(TeamName));
+        myPlayer.SetPlayerPosition(NetworkStartPositionTeams.GetSpawnPoistionRandomAtTeam(GetComponent<PlayerNetworkManager>().Team_m));
         myPlayer.DisableInput(false);
 
         myPlayer.folllowTarget = transform;

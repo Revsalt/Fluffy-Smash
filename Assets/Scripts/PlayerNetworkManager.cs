@@ -9,7 +9,9 @@ using Cinemachine;
 
 public class PlayerNetworkManager : NetworkBehaviour
 {
-    [SyncVar]public NetworkRoomPlayer nrp;
+    [SyncVar] public Team Team_m = Team.None;
+
+    [SyncVar] public NetworkRoomPlayer nrp;
 
     [HideInInspector] public TextMeshProUGUI usernametxt;
 

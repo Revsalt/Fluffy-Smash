@@ -15,6 +15,7 @@ public class RoundSystem : NetworkBehaviour
     [SerializeField] Text countdown = null;
     [SerializeField] Text winText = null;
     [SerializeField] public float roundTimeInMinutes = 2;
+    [SerializeField] bool hasTeams = false; 
 
     private NetworkRoomManagerExt room;
     private NetworkRoomManagerExt Room
@@ -30,7 +31,6 @@ public class RoundSystem : NetworkBehaviour
     {
         instance = this;
         animator = GetComponent<Animator>();
-
     }
 
     public void CountdownEnded()
@@ -195,6 +195,44 @@ public class RoundSystem : NetworkBehaviour
 
         RoundsEnded();
     }
+    
 
     #endregion
+}
+
+[Serializable]
+public class Team
+{
+    public static Team Red = new Team()
+    {
+        teamColor = Color.red,
+        teamName = "Red"
+    };
+
+    public static Team Blue = new Team()
+    {
+        teamColor = Color.blue,
+        teamName = "Blue"
+    };
+
+    public static Team Yellow = new Team()
+    {
+        teamColor = Color.yellow,
+        teamName = "Yellow"
+    };
+
+    public static Team Green = new Team()
+    {
+        teamColor = Color.green,
+        teamName = "Green"
+    };
+
+    public static Team None = new Team()
+    {
+        teamColor = Color.gray,
+        teamName = "None"
+    };
+
+    public string teamName;
+    public Color teamColor;
 }

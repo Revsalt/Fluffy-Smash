@@ -112,6 +112,8 @@ public class beetcatin : PlayerController
                 {
                     GameObject cym = Instantiate(cymbal, transform.position, Quaternion.identity);
                     cym.transform.forward = cineCamera.transform.forward;
+                    cym.GetComponent<Cymbal>().myCam = cineCamera.transform;
+                    cym.GetComponent<Cymbal>().player = transform;
                 }
 
                 ability_Attack.End.Invoke();
@@ -186,7 +188,6 @@ public class beetcatin : PlayerController
         }
 
         if (Onbeat) { bpm_image.color = Color.green; } else { bpm_image.color = Color.red; }
-
     }
 
     public static Vector3 Bezier2(Vector3 p0, Vector3 p1, Vector3 p2, float t)
