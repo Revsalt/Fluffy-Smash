@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
-using Mirror.Examples.NetworkRoom;
 using System.Linq;
 using System;
 using TMPro;

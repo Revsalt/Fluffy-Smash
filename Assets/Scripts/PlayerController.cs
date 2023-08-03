@@ -42,9 +42,9 @@ public class PlayerController : NetworkBehaviour
     [Header("Movement")]
     bool HasJumped = true;
     public float movementSpeed = 5;
-    [SerializeField] private float slopeForce;
-    [SerializeField] private float slopeForceRayLength;
-    [SerializeField] private float slideFriction;
+    //[SerializeField] private float slopeForce;
+    //[SerializeField] private float slopeForceRayLength;
+    //[SerializeField] private float slideFriction;
     [SerializeField] float airResistence;
 
     [Header("Jumping")]
@@ -218,8 +218,8 @@ public class PlayerController : NetworkBehaviour
 
         if (groundNormal != Vector3.zero && characterController.isGrounded)
         {
-            AddImpact(new Vector3(groundNormal.y, -groundNormal.x, 0), (1f - groundNormal.y) * groundNormal.x * (1f - slideFriction), false);
-            AddImpact(new Vector3(0, -groundNormal.z, groundNormal.y), (1f - groundNormal.y) * groundNormal.z * (1f - slideFriction), false);
+            //AddImpact(new Vector3(groundNormal.y, -groundNormal.x, 0), (1f - groundNormal.y) * groundNormal.x * (1f - slideFriction), false);
+            //AddImpact(new Vector3(0, -groundNormal.z, groundNormal.y), (1f - groundNormal.y) * groundNormal.z * (1f - slideFriction), false);
         }
 
         //Vector3 translation = platformMovingChild.transform.position - transform.position;
@@ -234,11 +234,12 @@ public class PlayerController : NetworkBehaviour
 
         //platformMovingChild.transform.position = transform.position;
 
+        /*
         if ((moveDirection != Vector3.zero) && OnSlope() && HasJumped)
         {
-            Debug.Log("on");
             characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime);
         }
+        */
 
         //Abilities
 
@@ -467,6 +468,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    /*
     private bool OnSlope()
     {
         RaycastHit hit;
@@ -478,6 +480,7 @@ public class PlayerController : NetworkBehaviour
             }
         return false;
     }
+    */
 
     public virtual void OnControllerColliderHit(ControllerColliderHit hit)
     {

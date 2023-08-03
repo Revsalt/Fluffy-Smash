@@ -5,7 +5,7 @@ using UnityEngine;
 using Mirror;
 using System.Linq;
 
-public class TabScreen : NetworkBehaviour
+public class TabScreen : MonoBehaviour
 {
     [SerializeField]
     private GameObject TabScreenObject;
@@ -24,6 +24,7 @@ public class TabScreen : NetworkBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Tab))
         {
+            UpdatePlayerList();
             TabScreenObject.SetActive(true);
         }
 
@@ -31,15 +32,11 @@ public class TabScreen : NetworkBehaviour
         {
             TabScreenObject.SetActive(false);
         }
+    }
 
-
+    void UpdatePlayerList()
+    {
         List<PlayerNetworkManager> AllPlayers = FindObjectsOfType<PlayerNetworkManager>().ToList();
-
-
-        foreach (Transform x in PlayersListObject.transform)
-        {
-            Destroy(x.gameObject);
-        }
 
         foreach (Transform x in PlayersListObject.transform)
         {
@@ -51,7 +48,7 @@ public class TabScreen : NetworkBehaviour
             //Taggers
             TabScreenPlayer tabScreenPlayer = Instantiate(TabScreenPlayerPrefab, PlayersListObject.transform);
             tabScreenPlayer.PlayerName = newPlayer.nrp.username;
-            tabScreenPlayer.PlayerRole = true;
+            tabScreenPlayer.PlayerRole = newPlayer.Team_m;
             tabScreenPlayer.PlayerPing = Convert.ToInt32(newPlayer.nrp.ping);
         }
     }

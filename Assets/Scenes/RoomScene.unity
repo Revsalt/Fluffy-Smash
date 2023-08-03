@@ -6058,7 +6058,7 @@ RectTransform:
   - {fileID: 1505644730}
   m_Father: {fileID: 1278110896}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -89.172, y: -250.80899, z: 71.45}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
@@ -6113,7 +6113,7 @@ Canvas:
   m_Enabled: 1
   serializedVersion: 3
   m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_Camera: {fileID: 894031186}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
@@ -6477,7 +6477,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 575305672}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: 0.00000058114523}
+  m_LocalRotation: {x: 0.00000028211196, y: 0.87426937, z: 0.4854412, w: 0.00000050807785}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -6488,7 +6488,7 @@ Transform:
   - {fileID: 478731452}
   m_Father: {fileID: 0}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
+  m_LocalEulerAnglesHint: {x: -58.083, y: 180, z: 0}
 --- !u!1 &576708744
 GameObject:
   m_ObjectHideFlags: 0
@@ -9134,7 +9134,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1278110892}
   m_LocalRotation: {x: 0.0023363875, y: -0.0055969763, z: 0.006839964, w: 0.9999582}
-  m_LocalPosition: {x: 0.06, y: 0.06, z: -6.06}
+  m_LocalPosition: {x: 0.06, y: 3.88, z: -4.99}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 353351693}
@@ -9238,6 +9238,8 @@ MonoBehaviour:
     - m_Text: Race
       m_Image: {fileID: 0}
     - m_Text: Castle
+      m_Image: {fileID: 0}
+    - m_Text: TouchDownDefault
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:
@@ -10194,6 +10196,8 @@ MonoBehaviour:
     - m_Text: TouchDown
       m_Image: {fileID: 0}
     - m_Text: CaptureTheFlag
+      m_Image: {fileID: 0}
+    - m_Text: Race
       m_Image: {fileID: 0}
   m_OnValueChanged:
     m_PersistentCalls:

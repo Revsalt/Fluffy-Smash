@@ -118,7 +118,7 @@ public class Health : NetworkBehaviour
         {
             yield return new WaitForSeconds(time);
 
-            myPlayer.SetPlayerPosition(NetworkStartPositionTeams.GetSpawnPoistionRandomAtTeam(GetComponent<PlayerNetworkManager>().Team_m));
+            myPlayer.SetPlayerPosition(NetworkStartPositionTeams.GetSpawnPoistionRandomAtTeam(GetComponent<PlayerNetworkManager>().Team_m).position);
             myPlayer.DisableInput(false);
 
             myPlayer.folllowTarget = transform;
@@ -129,7 +129,7 @@ public class Health : NetworkBehaviour
 
     public void QuickRespawn()
     {
-        myPlayer.SetPlayerPosition(NetworkStartPositionTeams.GetSpawnPoistionRandomAtTeam(GetComponent<PlayerNetworkManager>().Team_m));
+        myPlayer.SetPlayerPosition(NetworkStartPositionTeams.GetSpawnPoistionRandomAtTeam(GetComponent<PlayerNetworkManager>().Team_m).position);
         myPlayer.DisableInput(false);
 
         myPlayer.folllowTarget = transform;

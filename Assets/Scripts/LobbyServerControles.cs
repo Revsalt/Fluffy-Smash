@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
@@ -73,6 +74,7 @@ public class LobbyServerControles : NetworkBehaviour
             case 0: gameModeName_ = "TagGameMode"; break;
             case 1: gameModeName_ = "TouchDownGameMode"; break;
             case 2: gameModeName_ = "CaptureTheFlagGameMode"; break;
+            case 3: gameModeName_ = "RaceGameMode"; break;
             default: break;
         }
 
@@ -80,7 +82,53 @@ public class LobbyServerControles : NetworkBehaviour
         (Resources.Load(gameModeName_) as GameObject).GetComponent<RoundSystem>().roundTimeInMinutes = time_round;
         SynchronizeMatchData(gameModeName_ , time_round);
 
+        if ((Resources.Load(gameModeName_) as GameObject).GetComponent<RoundSystem>().hasTeams)
+        {
+            if (room.numPlayers == 1) return;
+
+            SetUpTeams();
+        }
+
         Room.ServerChangeScene(Room.GameplayScene);
+    }
+
+    [Server]
+    private void SetUpTeams()
+    {
+        List<NetworkRoomPlayerExt> plist = FindObjectsOfType<NetworkRoomPlayerExt>().ToList();
+
+        int team_size = plist.Count / 2;
+
+        Shuffle<NetworkRoomPlayerExt>(plist);
+
+        int last_team_num = 0;
+
+        for (int i = 0; i < team_size; i++)
+        {
+            plist[i].team_m = Team.Red;
+        }
+
+        for (int i = team_size; i < team_size * 2; i++)
+        {
+            last_team_num = i;
+            plist[i].team_m = Team.Blue;
+        }
+
+    }
+
+    private System.Random rng = new System.Random();
+
+    public void Shuffle<T>(List<T> list)
+    {
+        int n = list.Count;
+        while (n > 1)
+        {
+            n--;
+            int k = rng.Next(n + 1);
+            T value = list[k];
+            list[k] = list[n];
+            list[n] = value;
+        }
     }
 
     [ClientRpc]

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using Mirror;
-using Mirror.Examples.NetworkRoom;
 using Cinemachine;
 
 public class CharacterSelect : NetworkBehaviour

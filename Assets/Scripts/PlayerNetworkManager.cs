@@ -31,7 +31,7 @@ public class PlayerNetworkManager : NetworkBehaviour
             //GameObject g = (GameObject)Instantiate(Resources.Load("IndicatorController"), transform.position, transform.rotation);
             //g.GetComponent<UIController>().cam = GetComponent<DefaultCharacterEffects>().m_Camera;
 
-            GetComponent<PlayerController>().DisableMovment(false);
+            GetComponent<PlayerController>().DisableMovment(true);
             GetComponent<Health>().canInfluenceDamage = true;
         }
         else
@@ -50,6 +50,15 @@ public class PlayerNetworkManager : NetworkBehaviour
 
         if (transform.position.y < -40)
             GetComponent<Health>().QuickRespawn();
+
+        foreach (var item in GetComponent<PlayerController>().playerModel.GetComponentsInChildren<SkinnedMeshRenderer>())
+        {
+            foreach (var z in item.materials)
+            {
+                z.SetColor("_OutlineColor", Team_m.teamColor);
+            }
+        }
+       
     }
 
     bool IsCurrentSceneLoaded()

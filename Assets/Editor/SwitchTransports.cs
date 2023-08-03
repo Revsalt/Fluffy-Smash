@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Mirror;
-using Mirror.Examples.NetworkRoom;
 using Mirror.FizzySteam;
 using UnityEditor.Build;
 using UnityEditor.Build.Reporting;

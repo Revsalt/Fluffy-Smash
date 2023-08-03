@@ -15,10 +15,10 @@ public class RoundSystem : NetworkBehaviour
     [SerializeField] Text countdown = null;
     [SerializeField] Text winText = null;
     [SerializeField] public float roundTimeInMinutes = 2;
-    [SerializeField] bool hasTeams = false; 
+    public bool hasTeams = false;
 
-    private NetworkRoomManagerExt room;
-    private NetworkRoomManagerExt Room
+    public NetworkRoomManagerExt room;
+    public NetworkRoomManagerExt Room
     {
         get
         {
@@ -31,6 +31,8 @@ public class RoundSystem : NetworkBehaviour
     {
         instance = this;
         animator = GetComponent<Animator>();
+
+        OnSceneLoad();
     }
 
     public void CountdownEnded()
@@ -82,7 +84,7 @@ public class RoundSystem : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void RoundsEnded(string endText)
+    public virtual void RoundsEnded(string endText)
     {
         RpcEndRound(endText);
 
@@ -96,7 +98,7 @@ public class RoundSystem : NetworkBehaviour
     }
 
     [ServerCallback]
-    public void RoundsEnded()
+    public virtual void RoundsEnded()
     {
         RpcEndRound("");
 
@@ -104,39 +106,29 @@ public class RoundSystem : NetworkBehaviour
     }
 
     [ClientRpc]
-    private void RpcEndRound(string winScreen)
+    public void RpcEndRound(string winScreen)
     {
         winText.text = winScreen;
     }
 
-    int readyPlayers = 0;
-
     [Server]
     private void CheckToStartRound(NetworkConnection conn)
     {
-        RpcArePlayersReady();
+        StartCoroutine(AllPlayersLoaded());
 
-        Debug.Log(Room.numPlayers + " || " + readyPlayers);
+        IEnumerator AllPlayersLoaded()
+        {
+            while (Room.allPlayersReady == false)
+            {
+                yield return null;
+            }
 
-        if (Room.numPlayers != readyPlayers) { return; }
+            yield return new WaitForSeconds(2);
 
-        animator.enabled = true;
+            animator.enabled = true;
 
-        RpcStartCountdown();
-    }
-
-    [ClientRpc]
-    public void RpcArePlayersReady()
-    {
-        if (SceneManager.GetActiveScene().isLoaded)
-            PlayerIsReady();
-
-    }
-
-    [Command(requiresAuthority = false)]
-    public void PlayerIsReady()
-    {
-        readyPlayers++;
+            RpcStartCountdown();
+        }
     }
 
     public virtual void OnPlayerKill(NetworkIdentity theKiller)
@@ -145,6 +137,11 @@ public class RoundSystem : NetworkBehaviour
     }
 
     public virtual void OnRoundStart()
+    {
+        // on roundStarts
+    }
+
+    public virtual void OnSceneLoad()
     {
         // on roundStarts
     }
@@ -167,7 +164,7 @@ public class RoundSystem : NetworkBehaviour
     [ClientRpc]
     private void RpcStartRound()
     {
-        foreach (var item in FindObjectsOfType<PlayerNetworkManager>())
+        foreach (var item in GetAllPlayers())
         {
             if (item.GetComponent<NetworkIdentity>().isLocalPlayer)
                 item.GetComponent<PlayerController>().DisableMovment(false);
@@ -195,7 +192,7 @@ public class RoundSystem : NetworkBehaviour
 
         RoundsEnded();
     }
-    
+
 
     #endregion
 }
@@ -229,8 +226,16 @@ public class Team
 
     public static Team None = new Team()
     {
-        teamColor = Color.gray,
+        teamColor = Color.black,
         teamName = "None"
+    };
+
+    public static Team[] AllTeams = new Team[5] {
+    Red,
+    Blue,
+    Green,
+    Yellow,
+    None
     };
 
     public string teamName;

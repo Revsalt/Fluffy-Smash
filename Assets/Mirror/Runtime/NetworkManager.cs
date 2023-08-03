@@ -781,8 +781,6 @@ namespace Mirror
 
                 yield return new WaitForSeconds(TransitionUI.instance.TranstionTime);
 
-                Debug.Log("changing");
-
                 // Debug.Log($"ServerChangeScene {newSceneName}");
                 NetworkServer.SetAllClientsNotReady();
                 networkSceneName = newSceneName;
@@ -816,76 +814,85 @@ namespace Mirror
 
         internal void ClientChangeScene(string newSceneName, SceneOperation sceneOperation = SceneOperation.Normal, bool customHandling = false)
         {
-            if (string.IsNullOrEmpty(newSceneName))
+            StartCoroutine(Transition());
+
+            IEnumerator Transition()
             {
-                Debug.LogError("ClientChangeScene empty scene name");
-                return;
+                if (string.IsNullOrEmpty(newSceneName))
+                {
+                    Debug.LogError("ClientChangeScene empty scene name");
+                    yield break;
+                }
+
+                //Debug.Log($"ClientChangeScene newSceneName: {newSceneName} networkSceneName{networkSceneName}");
+
+                TransitionUI.instance.FadeIn();
+
+                yield return new WaitForSeconds(TransitionUI.instance.TranstionTime);
+
+                // Let client prepare for scene change
+                OnClientChangeScene(newSceneName, sceneOperation, customHandling);
+
+                // After calling OnClientChangeScene, exit if server since server is already doing
+                // the actual scene change, and we don't need to do it for the host client
+                if (NetworkServer.active)
+                    yield break;
+
+                // set client flag to stop processing messages while loading scenes.
+                // otherwise we would process messages and then lose all the state
+                // as soon as the load is finishing, causing all kinds of bugs
+                // because of missing state.
+                // (client may be null after StopClient etc.)
+                // Debug.Log("ClientChangeScene: pausing handlers while scene is loading to avoid data loss after scene was loaded.");
+                NetworkClient.isLoadingScene = true;
+
+                // Cache sceneOperation so we know what was requested by the
+                // Scene message in OnClientChangeScene and OnClientSceneChanged
+                clientSceneOperation = sceneOperation;
+
+                // scene handling will happen in overrides of OnClientChangeScene and/or OnClientSceneChanged
+                // Do not call FinishLoadScene here. Custom handler will assign loadingSceneAsync and we need
+                // to wait for that to finish. UpdateScene already checks for that to be not null and isDone.
+                if (customHandling)
+                    yield break;
+
+                switch (sceneOperation)
+                {
+                    case SceneOperation.Normal:
+                        loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
+                        break;
+                    case SceneOperation.LoadAdditive:
+                        // Ensure additive scene is not already loaded on client by name or path
+                        // since we don't know which was passed in the Scene message
+                        if (!SceneManager.GetSceneByName(newSceneName).IsValid() && !SceneManager.GetSceneByPath(newSceneName).IsValid())
+                            loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
+                        else
+                        {
+                            Debug.LogWarning($"Scene {newSceneName} is already loaded");
+
+                            // Reset the flag that we disabled before entering this switch
+                            NetworkClient.isLoadingScene = false;
+                        }
+                        break;
+                    case SceneOperation.UnloadAdditive:
+                        // Ensure additive scene is actually loaded on client by name or path
+                        // since we don't know which was passed in the Scene message
+                        if (SceneManager.GetSceneByName(newSceneName).IsValid() || SceneManager.GetSceneByPath(newSceneName).IsValid())
+                            loadingSceneAsync = SceneManager.UnloadSceneAsync(newSceneName, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
+                        else
+                        {
+                            Debug.LogWarning($"Cannot unload {newSceneName} with UnloadAdditive operation");
+
+                            // Reset the flag that we disabled before entering this switch
+                            NetworkClient.isLoadingScene = false;
+                        }
+                        break;
+                }
+
+                // don't change the client's current networkSceneName when loading additive scene content
+                if (sceneOperation == SceneOperation.Normal)
+                    networkSceneName = newSceneName;
             }
-
-            //Debug.Log($"ClientChangeScene newSceneName: {newSceneName} networkSceneName{networkSceneName}");
-
-            // Let client prepare for scene change
-            OnClientChangeScene(newSceneName, sceneOperation, customHandling);
-
-            // After calling OnClientChangeScene, exit if server since server is already doing
-            // the actual scene change, and we don't need to do it for the host client
-            if (NetworkServer.active)
-                return;
-
-            // set client flag to stop processing messages while loading scenes.
-            // otherwise we would process messages and then lose all the state
-            // as soon as the load is finishing, causing all kinds of bugs
-            // because of missing state.
-            // (client may be null after StopClient etc.)
-            // Debug.Log("ClientChangeScene: pausing handlers while scene is loading to avoid data loss after scene was loaded.");
-            NetworkClient.isLoadingScene = true;
-
-            // Cache sceneOperation so we know what was requested by the
-            // Scene message in OnClientChangeScene and OnClientSceneChanged
-            clientSceneOperation = sceneOperation;
-
-            // scene handling will happen in overrides of OnClientChangeScene and/or OnClientSceneChanged
-            // Do not call FinishLoadScene here. Custom handler will assign loadingSceneAsync and we need
-            // to wait for that to finish. UpdateScene already checks for that to be not null and isDone.
-            if (customHandling)
-                return;
-
-            switch (sceneOperation)
-            {
-                case SceneOperation.Normal:
-                    loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName);
-                    break;
-                case SceneOperation.LoadAdditive:
-                    // Ensure additive scene is not already loaded on client by name or path
-                    // since we don't know which was passed in the Scene message
-                    if (!SceneManager.GetSceneByName(newSceneName).IsValid() && !SceneManager.GetSceneByPath(newSceneName).IsValid())
-                        loadingSceneAsync = SceneManager.LoadSceneAsync(newSceneName, LoadSceneMode.Additive);
-                    else
-                    {
-                        Debug.LogWarning($"Scene {newSceneName} is already loaded");
-
-                        // Reset the flag that we disabled before entering this switch
-                        NetworkClient.isLoadingScene = false;
-                    }
-                    break;
-                case SceneOperation.UnloadAdditive:
-                    // Ensure additive scene is actually loaded on client by name or path
-                    // since we don't know which was passed in the Scene message
-                    if (SceneManager.GetSceneByName(newSceneName).IsValid() || SceneManager.GetSceneByPath(newSceneName).IsValid())
-                        loadingSceneAsync = SceneManager.UnloadSceneAsync(newSceneName, UnloadSceneOptions.UnloadAllEmbeddedSceneObjects);
-                    else
-                    {
-                        Debug.LogWarning($"Cannot unload {newSceneName} with UnloadAdditive operation");
-
-                        // Reset the flag that we disabled before entering this switch
-                        NetworkClient.isLoadingScene = false;
-                    }
-                    break;
-            }
-
-            // don't change the client's current networkSceneName when loading additive scene content
-            if (sceneOperation == SceneOperation.Normal)
-                networkSceneName = newSceneName;
         }
 
         // support additive scene loads:

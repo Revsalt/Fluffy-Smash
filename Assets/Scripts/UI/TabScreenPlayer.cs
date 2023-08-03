@@ -2,17 +2,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class TabScreenPlayer : MonoBehaviour
 {
     [SerializeField]
-    private Text playerNameText;
+    private TextMeshProUGUI playerNameText;
 
     [SerializeField]
-    private Text playerRoleText;
+    private TextMeshProUGUI playerRoleText;
 
     [SerializeField]
-    private Text playerPingText;
+    private TextMeshProUGUI playerPingText;
 
 
     private string playerName;
@@ -25,13 +26,14 @@ public class TabScreenPlayer : MonoBehaviour
         }
     }
 
-    private bool playerRole;
-    public bool PlayerRole
+    private Team playerRole;
+    public Team PlayerRole
     {
         set
         {
             playerRole = value;
-            playerRoleText.text = playerRole ? "RedTeam" : "BlueTeam";
+            playerRoleText.text = playerRole.teamName;
+            playerRoleText.color = playerRole.teamColor;
         }
     }
 
