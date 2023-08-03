@@ -18,8 +18,10 @@ public class CaptureZone : NetworkBehaviour
     Coroutine charge_coroutine = null;
     Coroutine zone_coroutine = null;
 
-    [Header("Preview")]
-    [SerializeField] bool viewModel = false;
+    private void Start()
+    {
+        transform.GetChild(0).gameObject.SetActive(false);
+    }
 
     public void Activate()
     {
@@ -162,11 +164,6 @@ public class CaptureZone : NetworkBehaviour
 
     private void OnDrawGizmos()
     {
-        if (!EditorApplication.isPlaying)
-            transform.GetChild(0).gameObject.SetActive(viewModel);
-        else 
-            return;
-
         if (!transform.GetChild(0).gameObject.activeInHierarchy) return;
 
         Gizmos.color = Color.cyan;

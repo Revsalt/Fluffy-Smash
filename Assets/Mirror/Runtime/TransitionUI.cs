@@ -11,6 +11,8 @@ namespace Mirror
 
         Animator anim;
 
+        bool fade_state = false;
+
         // Start is called before the first frame update
         void Start()
         {
@@ -27,11 +29,17 @@ namespace Mirror
 
         public void FadeIn()
         {
+            if (fade_state) return;
+
+            fade_state = true;
             anim.Play("in");
         }
 
         public void FadeOut()
         {
+            if (!fade_state) return;
+
+            fade_state = false;
             anim.Play("out");
         }
 

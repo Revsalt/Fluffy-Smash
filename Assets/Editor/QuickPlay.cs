@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using Mirror;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 public class QuickPlay : EditorWindow
 {
-    [MenuItem("UwU/QuickPlay")]
+    [MenuItem("UwU/QuickPlayThisScene")]
     public static void ShowWindow()
     {
         GetWindow<QuickPlay>("uwu");
@@ -22,7 +23,7 @@ public class QuickPlay : EditorWindow
     {
         GUILayout.BeginVertical();
 
-        if (GUILayout.Button("QuickPlay"))
+        if (GUILayout.Button("QuickPlayThisScene"))
         {
             EditorApplication.EnterPlaymode();
         }

@@ -168,7 +168,7 @@ MonoBehaviour:
   current_charge_time: 0
   max_charge_time: 5
   teamZoneCounters: []
-  viewModel: 1
+  viewModel: 0
 --- !u!114 &6532773995053389866
 MonoBehaviour:
   m_ObjectHideFlags: 0
