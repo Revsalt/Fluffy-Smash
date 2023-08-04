@@ -10651,7 +10651,7 @@ MonoBehaviour:
     skipNextCoolDown: 0
     isDisabled: 0
   ability_Attack:
-    coolDown: 2.5
+    coolDown: 1
     coolDown_current_value: 0
     abilityName: NoName (please assign a name)
     events: []

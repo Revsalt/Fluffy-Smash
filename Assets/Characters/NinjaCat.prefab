@@ -14,12 +14,11 @@ GameObject:
   - component: {fileID: 4097870006058671203}
   - component: {fileID: 6435042394493189592}
   - component: {fileID: 1373193218838475886}
-  - component: {fileID: -9218091509796099498}
-  - component: {fileID: 7022690057247796476}
   - component: {fileID: 7179160013567609580}
   - component: {fileID: -7452015145682520640}
   - component: {fileID: 1027678777448782296}
   - component: {fileID: 4672922393138554058}
+  - component: {fileID: 3204974425330387776}
   m_Layer: 8
   m_Name: NinjaCat
   m_TagString: Player
@@ -257,65 +256,6 @@ MonoBehaviour:
   visible: 0
   m_AssetId: 6f71b832f06ab0e4ba3b015b2ea606e2
   hasSpawned: 0
---- !u!114 &-9218091509796099498
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646360425263456792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f74aedd71d9a4f55b3ce499326d45fb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
-  sendInterval: 0.01
-  syncPosition: 1
-  syncRotation: 1
-  syncScale: 0
-  interpolatePosition: 1
-  interpolateRotation: 0
-  interpolateScale: 0
-  bufferTimeMultiplier: 1
-  bufferSizeLimit: 64
-  catchupThreshold: 4
-  catchupMultiplier: 0.1
-  showGizmos: 1
-  showOverlay: 0
-  overlayColor: {r: 0.0620358, g: 1, b: 0, a: 0.5}
---- !u!114 &7022690057247796476
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646360425263456792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 734b48bea0b204338958ee3d885e11f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncMode: 0
-  syncInterval: 0.1
-  clientAuthority: 1
-  sendInterval: 0.05
-  syncPosition: 0
-  syncRotation: 1
-  syncScale: 0
-  interpolatePosition: 0
-  interpolateRotation: 1
-  interpolateScale: 0
-  bufferTimeMultiplier: 1
-  bufferSizeLimit: 64
-  catchupThreshold: 4
-  catchupMultiplier: 0.1
-  showGizmos: 0
-  showOverlay: 0
-  overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
-  target: {fileID: 1646360426110567442}
 --- !u!114 &7179160013567609580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -435,6 +375,28 @@ MonoBehaviour:
   m_DefaultActionMap: Gameplay
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &3204974425330387776
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646360425263456792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0be96db9398bb846a461bd6f3dbc94d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
+  clientInput:
+    movementAxis: {x: 0, y: 0}
+    cameraRotation: {x: 0, y: 0, z: 0, w: 1}
+    jump: 0
+    l_mouse: 0
+    r_mouse: 0
+    l_shift: 0
+  server_position: {fileID: 0}
 --- !u!1 &1646360425379016323
 GameObject:
   m_ObjectHideFlags: 0

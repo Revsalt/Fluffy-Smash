@@ -48,6 +48,9 @@ public class NinjaCat : PlayerController
 
         ability1.ability = delegate
         {
+            ability1.End.Invoke();
+            return;
+
             movementSpeed = GetOriginalSpeeed();
 
             StartCoroutine(Sprint());
@@ -89,21 +92,11 @@ public class NinjaCat : PlayerController
     new void Update()
     {
 
-        if (!isLocalPlayer)
-            return;
-
         base.Update();
-
-        //Animations
-
-        bool isRunning = moveDirection != Vector3.zero;
-        animator.SetBool("isRun", isRunning);
-        animator.SetBool("isJump", !isGroundeed());
-        animator.SetFloat("runSpeed", movementSpeed / 7);
 
         //wall running
 
-        if (wallDirection != Vector3.zero && (Input.GetButtonDown("Jump") || Input.GetMouseButtonDown(1)) && !GetDisableInput())
+        if (wallDirection != Vector3.zero && (GetComponent<ServerAuthoritativeTransform>().clientInput.jump || GetComponent<ServerAuthoritativeTransform>().clientInput.r_mouse) && !GetDisableInput())
         {
             OffWall(true);
         }
@@ -114,6 +107,16 @@ public class NinjaCat : PlayerController
             playerModel.transform.LookAt(playerModel.transform.position + moveDirection);
         else
             playerModel.transform.localRotation = Quaternion.identity;
+
+        if (!isLocalPlayer)
+            return;
+
+        //Animations
+
+        bool isRunning = moveDirection != Vector3.zero;
+        animator.SetBool("isRun", isRunning);
+        animator.SetBool("isJump", !isGroundeed());
+        animator.SetFloat("runSpeed", movementSpeed / 7);
     }
 
     public void RollOnHarshFall()
@@ -232,9 +235,9 @@ public class NinjaCat : PlayerController
         ZoomIn(true);
         AudioManager.instance.Play("NinjaCatSwordWhindUp", transform.position, null);
         float DistanceDuration = 0.1f;
-        for (float i = 0; Input.GetMouseButton(0) && i < 1f; i += Time.deltaTime)
+        for (float i = 0; GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && i < 1f; i += Time.deltaTime)
         {
-            playerModel.transform.LookAt(cineCamera.transform.position + cineCamera.transform.forward * 1000);
+            playerModel.transform.LookAt(piviot_M.transform.position + piviot_M.transform.forward * 1000);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
             DistanceDuration = i * 0.1f;
@@ -244,27 +247,11 @@ public class NinjaCat : PlayerController
 
         ZoomIn(false);
 
-        if (isLocalPlayer)
-        {
-            CmdSendChargeDuration(DistanceDuration);
-            StartCoroutine(Dash(DistanceDuration));
-        }
+        StartCoroutine(Dash(DistanceDuration));
+        
     }
 
     #region DashReplication
-
-    [Command]
-    void CmdSendChargeDuration(float distanceDuration, NetworkConnectionToClient sender = null)
-    {
-        RpcSendChargeDuration(distanceDuration, sender.identity);
-    }
-
-    [ClientRpc]
-    void RpcSendChargeDuration(float distanceDuration, NetworkIdentity ntd)
-    {
-        if (!ntd.isLocalPlayer)
-            ntd.GetComponent<NinjaCat>().StartCoroutine(Dash(distanceDuration));
-    }
 
     IEnumerator Dash(float duration)
     {

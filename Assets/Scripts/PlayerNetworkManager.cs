@@ -21,7 +21,7 @@ public class PlayerNetworkManager : NetworkBehaviour
     {
         if (isLocalPlayer)
         {
-            GetComponent<PlayerController>().DisableMovment(true);
+            //GetComponent<PlayerController>().DisableMovment(true);
 
             foreach (var item in GetComponent<PlayerController>().Cameras)
             {
@@ -31,7 +31,7 @@ public class PlayerNetworkManager : NetworkBehaviour
             //GameObject g = (GameObject)Instantiate(Resources.Load("IndicatorController"), transform.position, transform.rotation);
             //g.GetComponent<UIController>().cam = GetComponent<DefaultCharacterEffects>().m_Camera;
 
-            GetComponent<PlayerController>().DisableMovment(true);
+            //GetComponent<PlayerController>().DisableMovment(false);
             GetComponent<Health>().canInfluenceDamage = true;
         }
         else

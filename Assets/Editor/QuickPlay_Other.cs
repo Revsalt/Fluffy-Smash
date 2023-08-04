@@ -12,7 +12,8 @@ public class QuickPlay_Other
     [MenuItem("UwU/QuickPlay" , false , 5)]
     public static void QuickPlay_M()
     {
-        File.WriteAllText(Application.persistentDataPath + "/scene.txt", EditorSceneManager.GetActiveScene().path);
+        JsonFile js = new JsonFile() { path = EditorSceneManager.GetActiveScene().path, hasPlayed = true };
+        File.WriteAllText(Application.persistentDataPath + "/scene.txt", JsonUtility.ToJson(js));
 
         EditorSceneManager.OpenScene("Assets/Scenes/MainMenu.unity");
         EditorApplication.EnterPlaymode();
@@ -30,8 +31,19 @@ public class QuickPlay_Other
             if (File.Exists(Application.persistentDataPath + "/scene.txt"))
             {
                 string s = File.ReadAllText(Application.persistentDataPath + "/scene.txt");
-                EditorSceneManager.OpenScene(s);
+                JsonFile js = JsonUtility.FromJson<JsonFile>(s);
+                if (js.hasPlayed)
+                    EditorSceneManager.OpenScene(js.path);
+
+                js.hasPlayed = false;
+                File.WriteAllText(Application.persistentDataPath + "/scene.txt", JsonUtility.ToJson(js));
             }
         }
     }
+}
+
+public class JsonFile
+{
+    public string path = "";
+    public bool hasPlayed = false;
 }

@@ -6,79 +6,47 @@ using System;
 
 public class TouchDownBall : NetworkBehaviour
 {
-    Rigidbody rb;
+    public static TouchDownBall instance;
 
-    void Start()
+    private void Start()
     {
-        if (isServer) rb = gameObject.AddComponent<Rigidbody>();
+        instance = this;
     }
 
-    [ServerCallback]
-    void OnCollisionEnter(Collision collision)
+    [SerializeField] KeyCode throwKeyBind;
+
+    private void Update()
     {
-        if (collision.collider.tag == "Player" && !transform.parent)
+        if (isLocalPlayer)
         {
-            GetComponent<SphereCollider>().enabled = false;
-            rb.isKinematic = true;
-            transform.SetParent(collision.collider.transform);
-            transform.localPosition = new Vector3(0, 1.5f, 0);
-
-            RpcPickUpBall(transform, collision.collider.transform);
-
-            collision.collider.transform.GetComponent<Health>().canInfluenceDamage = true;
+            if (Input.GetKeyDown(throwKeyBind) && transform.parent.GetComponent<NetworkIdentity>().isLocalPlayer)
+            {
+                
+            }
         }
     }
 
     [ServerCallback]
-    public void Drop()
+    private void OnTriggerEnter(Collider other)
     {
-        transform.SetParent(null);
-        GetComponent<SphereCollider>().enabled = true;
-        rb.isKinematic = false;
-
-        RpcDropBall(gameObject);
-    }
-
-    [ClientRpc]
-    void RpcPickUpBall(Transform ball, Transform player)
-    {
-        ball.SetParent(player.transform);
-        ball.transform.localPosition = new Vector3(0, 1.5f, 0);
-    }
-
-    [ClientRpc]
-    public void RpcDropBall(GameObject ball)
-    {
-        ball.transform.SetParent(null);
-    }
-
-    [ServerCallback]
-    public void ResetBall()
-    {
-        GetComponent<SphereCollider>().enabled = true;
-        rb.isKinematic = false;
-        transform.SetParent(null);
-
-        transform.position = FindObjectsOfType<NetworkStartPosition>()
-        [UnityEngine.Random.Range(0, FindObjectsOfType<NetworkStartPosition>().Length)].transform.position;
-    }
-
-    /*
-    [ServerCallback]
-    void FixedUpdate()
-    {
-        if (transform.parent != null && transform.parent.GetComponent<Health>().IsDead)
+        if (other.GetComponent<PlayerNetworkManager>())
         {
-            //GetComponent<SphereCollider>().enabled = true;
-            //GetComponent<Rigidbody>().isKinematic = false;
-            transform.parent.GetComponent<Health>().canInfluenceDamage = true;
-            transform.SetParent(null);
-            RpcDropBall(gameObject , transform.position);
+            CarryBall(other.GetComponent<NetworkIdentity>());
         }
-
-        if (transform.position.y < -60)
-            transform.position = Vector3.zero;
     }
-    */
 
+
+    [Command]
+    void LaunchBall(Vector3 dir)
+    {
+        transform.parent = null;
+
+    }
+
+    [ClientRpc]
+    private void CarryBall(NetworkIdentity ntd)
+    {
+        TouchDownBall.instance.transform.SetParent(ntd.transform);
+        TouchDownBall.instance.transform.localPosition = new Vector3(0, 2, 0);
+    }
 }

@@ -40,8 +40,7 @@ public class QuickPlay : EditorWindow
         if ( NetworkManager.singleton != null && NetworkManager.singleton.gameObject.name == "QuickPlay" && !NetworkManager.singleton.isNetworkActive)
         {
             NetworkManager.singleton.playerPrefab = chara;
-            NetworkManager.singleton.StartHost();
-            NetworkManager.singleton.GetComponent<NetworkManagerHUD>().enabled = false;
+            //NetworkManager.singleton.StartHost();
         }
     }
 

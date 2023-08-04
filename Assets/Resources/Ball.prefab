@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 6676679442415297620}
   - component: {fileID: 3572727138759193112}
   - component: {fileID: 7122326289504324822}
+  - component: {fileID: 5049260811921798520}
   m_Layer: 0
   m_Name: Ball
   m_TagString: Untagged
@@ -116,6 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
+  throwKeyBind: 0
 --- !u!135 &3572727138759193112
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -146,10 +148,10 @@ MonoBehaviour:
   clientAuthority: 0
   sendInterval: 0.05
   syncPosition: 1
-  syncRotation: 1
+  syncRotation: 0
   syncScale: 0
   interpolatePosition: 1
-  interpolateRotation: 1
+  interpolateRotation: 0
   interpolateScale: 0
   bufferTimeMultiplier: 1
   bufferSizeLimit: 64
@@ -158,3 +160,16 @@ MonoBehaviour:
   showGizmos: 0
   showOverlay: 0
   overlayColor: {r: 0, g: 0, b: 0, a: 0.5}
+--- !u!135 &5049260811921798520
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7217512833681114730}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 1.26
+  m_Center: {x: 0, y: 0, z: 0}

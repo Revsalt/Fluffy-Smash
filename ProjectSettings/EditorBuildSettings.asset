@@ -23,6 +23,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Race Level.unity
     guid: 61929efab3c83454582d5d686d788d54
+  - enabled: 1
+    path: Assets/Scenes/New Map.unity
+    guid: 5e63f09aeee762c4c9f76f919c5ac2b5
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 3ba30a344de09c746a961566e7794d24,
       type: 2}

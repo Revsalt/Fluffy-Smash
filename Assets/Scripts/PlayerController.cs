@@ -66,15 +66,12 @@ public class PlayerController : NetworkBehaviour
         if (characterController == null)
             characterController = GetComponent<CharacterController>();
     }
+
     private void Awake()
     {
         InitializeAbilities();
 
         airResistence *= Time.fixedDeltaTime;
-        //platformMovingChild = new GameObject("platformMovingChild");
-
-        //platformMovingChild.transform.SetParent(transform);
-        //platformMovingChild.transform.position = transform.position;
 
         Cameras[0].transform.parent.SetParent(null);
 
@@ -101,81 +98,61 @@ public class PlayerController : NetworkBehaviour
 
     public virtual void InitializeAbilities() {  }
 
-    Vector3 inputAxis = Vector3.zero;
-    bool isJumpPressed = false;
-    public void Move(InputAction.CallbackContext ctx)
-    {
-        var inputValue = ctx.ReadValue<Vector2>();
-        inputAxis = new Vector3(inputValue.x, 0f, inputValue.y);
-    }
-
-    public void JumpInput(InputAction.CallbackContext ctx)
-    {
-        if (!ctx.performed) { return; }
-
-        isJumpPressed = true;
-    }
-
     private void LateUpdate()
     {
         //CameraPosistionAdjustment
-
+        
         piviot_M.transform.position = folllowTarget.position;
 
         //Camera Movement
 
-        rotX += Input.GetAxis("Mouse X") * sensitvity * Time.deltaTime;
-        rotY += Input.GetAxis("Mouse Y") * sensitvity * Time.deltaTime;
-
-        rotY = Mathf.Clamp(rotY, -80f, 80f);
-
-        piviot_M.transform.localRotation = Quaternion.Euler(-rotY, rotX, 0f);
-
-        if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+        if (isLocalPlayer)
         {
-            sensitvity += 15;
-        }
-        else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
-        {
-            sensitvity -= 15;
-        }
+            rotX += Input.GetAxis("Mouse X") * sensitvity * Time.deltaTime;
+            rotY += Input.GetAxis("Mouse Y") * sensitvity * Time.deltaTime;
 
-        if (Input.GetKeyDown(KeyCode.F11))
-        {
-            Screen.fullScreen = !Screen.fullScreen;
+            rotY = Mathf.Clamp(rotY, -80f, 80f);
+
+            piviot_M.transform.localRotation = Quaternion.Euler(-rotY, rotX, 0f);
+
+
+            if (Input.GetAxis("Mouse ScrollWheel") > 0f) // forward
+            {
+                sensitvity += 15;
+            }
+            else if (Input.GetAxis("Mouse ScrollWheel") < 0f) // backwards
+            {
+                sensitvity -= 15;
+            }
+
+            if (Input.GetKeyDown(KeyCode.F11))
+            {
+                Screen.fullScreen = !Screen.fullScreen;
+            }
         }
     }
+
     [SerializeField] Vector3 Result_ = Vector3.zero;
 
     float rotX, rotY;
     [HideInInspector] public Vector3 moveDirection = Vector3.zero;
 
-    public void Update()
+    public void ProcessMovement()
     {
+
+        characterController.enabled = isServer;
+
         if (!disableInput)
         {
-            moveDirection = new Vector3(cineCamera.transform.right.x, 0, cineCamera.transform.right.z).normalized * inputAxis.x +
-                new Vector3(cineCamera.transform.forward.x, 0, cineCamera.transform.forward.z).normalized * inputAxis.z;
+            moveDirection = new Vector3(folllowTarget.transform.right.x, 0, folllowTarget.transform.right.z).normalized * GetComponent<ServerAuthoritativeTransform>().clientInput.movementAxis.x +
+                new Vector3(folllowTarget.transform.forward.x, 0, folllowTarget.transform.forward.z).normalized * GetComponent<ServerAuthoritativeTransform>().clientInput.movementAxis.y;
         }
         else { moveDirection = Vector3.zero; }
 
-        //Movement
-
-        if (disableMovement)
-        {
-            //Vector3 _translation = platformMovingChild.transform.position - transform.position;
-
-            //characterController.Move(_translation);
-
-            //platformMovingChild.transform.position = transform.position;
-
-            return;
-        }
+        //Movement and impact
 
         if (moveDirection != Vector3.zero && !disableRotationInput)
             transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
-
-        //Movement and impact
 
         if (isGroundeed())
         {
@@ -205,7 +182,7 @@ public class PlayerController : NetworkBehaviour
 
         Result += moveDirection.normalized * Time.deltaTime * movementSpeed;
 
-        if (isJumpPressed && isGroundeed() && !GetDisableInput())
+        if (GetComponent<ServerAuthoritativeTransform>().clientInput.jump && isGroundeed() && !GetDisableInput())
         {
             ResetPlayerVelocity();
             AddImpact(Vector3.up , jumpHeight , false);
@@ -214,60 +191,41 @@ public class PlayerController : NetworkBehaviour
             onJump();
         }
 
-        isJumpPressed = false;
-
-        if (groundNormal != Vector3.zero && characterController.isGrounded)
-        {
-            //AddImpact(new Vector3(groundNormal.y, -groundNormal.x, 0), (1f - groundNormal.y) * groundNormal.x * (1f - slideFriction), false);
-            //AddImpact(new Vector3(0, -groundNormal.z, groundNormal.y), (1f - groundNormal.y) * groundNormal.z * (1f - slideFriction), false);
-        }
-
-        //Vector3 translation = platformMovingChild.transform.position - transform.position;
-
-        if (!characterController.isGrounded)
-        {
-            //playerVelocity.y += gravity * Time.deltaTime * 3;
-        }
-
         Result_ = Result;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
 
-        //platformMovingChild.transform.position = transform.position;
-
-        /*
-        if ((moveDirection != Vector3.zero) && OnSlope() && HasJumped)
-        {
-            characterController.Move(Vector3.down * characterController.height / 2 * slopeForce * Time.deltaTime);
-        }
-        */
-
         //Abilities
 
-        if (Input.GetMouseButtonDown(1) && !GetDisableInput())
+        if (!isServer) return;
+
+        if (GetComponent<ServerAuthoritativeTransform>().clientInput.r_mouse && !GetDisableInput())
         {
             StartAbility(0);
-        }
+            RpcStartAbility(0 , GetComponent<NetworkIdentity>());
+        }   
 
-        if (Input.GetKeyDown(KeyCode.LeftShift) && !GetDisableInput())
+        if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_shift && !GetDisableInput())
         {
             StartAbility(1);
+            RpcStartAbility(1 , GetComponent<NetworkIdentity>());
         }
 
-        if (Input.GetMouseButtonDown(0) && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
+        //if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
+        if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && !GetDisableInput())
         {
             StartAbility(2);
+            RpcStartAbility(2 , GetComponent<NetworkIdentity>());
         }
 
     }
 
+    [ServerCallback]
     void FixedUpdate()
     {
         if (!characterController.isGrounded)
         {
-            //playerVelocity.y += gravity * Time.deltaTime * 3;
             AddImpact(Vector3.up , gravity , false);
         }
-
     }
 
     public IEnumerator ChkIfJumped()
@@ -380,8 +338,6 @@ public class PlayerController : NetworkBehaviour
 
         if (!abilityRef.canCast || abilityInProgress || abilityRef.isDisabled) return;
 
-        CmdStartAbility(i, GetComponent<NetworkIdentity>());
-
         abilityRef.End += delegate
         {
             abilityRef.events[1].Invoke();
@@ -413,24 +369,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-
-    void CmdStartAbility(int i, NetworkIdentity ntd)
-    {
-        if (isLocalPlayer)
-            StartAbilityCmd(i, ntd);
-    }
-
-    [Command]
-    void StartAbilityCmd(int i, NetworkIdentity ntd)
-    {
-        RpcStartAbility(i, ntd);
-    }
-
-    [ClientRpc(includeOwner = false)]
+    [ClientRpc]
     void RpcStartAbility(int i, NetworkIdentity ntd)
     {
         ntd.GetComponent<PlayerController>().StartAbility(i);
-        Debug.Log("StartAbility " + i + " by " + ntd.gameObject.name);
     }
 
     public bool GetIsAnyAbilityInPorgress()

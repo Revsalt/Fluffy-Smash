@@ -246,7 +246,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41f84591ce72545258ea98cb7518d8b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TeamName: None
 --- !u!4 &474453620
 Transform:
   m_ObjectHideFlags: 0
@@ -451,6 +450,101 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -27.4, y: 0, z: 0}
+--- !u!1 &1317388138
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1317388142}
+  - component: {fileID: 1317388141}
+  - component: {fileID: 1317388140}
+  - component: {fileID: 1317388139}
+  m_Layer: 0
+  m_Name: Cube (4)
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!65 &1317388139
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317388138}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
+--- !u!23 &1317388140
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317388138}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &1317388141
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317388138}
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!4 &1317388142
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1317388138}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 23.72, y: 16.81, z: 24.996101}
+  m_LocalScale: {x: 5, y: 5, z: 15}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &1335458934
 GameObject:
   m_ObjectHideFlags: 0
@@ -1373,7 +1467,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh57224
+  m_Name: pb_Mesh411106
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -1531,3 +1625,526 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!114 &1836426911184828463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7714341379088313188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 0}
+--- !u!1 &3596212448220132459
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3596212448220132461}
+  - component: {fileID: 3596212448220132460}
+  m_Layer: 0
+  m_Name: AudioManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &3596212448220132460
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596212448220132459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e1b723f89be48274f8c879b3c89a4d9a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: HoodieCatFootSteps
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: b8c54fd3790e33a419ea5c46edfb98aa, type: 3}
+    - {fileID: 8300000, guid: 09407ed045089bd4190321bc37f4769c, type: 3}
+    volume: 1
+    pitch: 1
+    maxDistance: 14.35
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: NinjaCatFootSteps
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: e525b7638d6eb2f429f0f78b9eb056d5, type: 3}
+    - {fileID: 8300000, guid: 40c044c9447b13d42b7114f0f6f82bfc, type: 3}
+    - {fileID: 8300000, guid: 077c06456061b1244bfec2cf173afaca, type: 3}
+    - {fileID: 8300000, guid: 9ec0ff9ff40b4b146ad2b4e0279ccab2, type: 3}
+    - {fileID: 8300000, guid: d34e1a6491fb3eb4f8ddb8b9579dae8a, type: 3}
+    - {fileID: 8300000, guid: 2c3ff60166d59934eaf22181d27cf9cd, type: 3}
+    - {fileID: 8300000, guid: 4df04b7cd9954dd4a9f5f2144291ad32, type: 3}
+    volume: 0.675
+    pitch: 1
+    maxDistance: 10
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: NinjaCatLand
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: d34e1a6491fb3eb4f8ddb8b9579dae8a, type: 3}
+    - {fileID: 8300000, guid: 2c3ff60166d59934eaf22181d27cf9cd, type: 3}
+    - {fileID: 8300000, guid: 4df04b7cd9954dd4a9f5f2144291ad32, type: 3}
+    volume: 0.675
+    pitch: 1
+    maxDistance: 10
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: HoodieCatThrowLoliPop
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 49c404dc57c8be64caa67edba9424493, type: 3}
+    volume: 0.98
+    pitch: 1
+    maxDistance: 15
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: HoodieCatLoliPopStickInWall
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 85166ccc0610e6343aff5bb26a6c3424, type: 3}
+    volume: 0.235
+    pitch: 1
+    maxDistance: 30
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: HoodieCatOffTheGround
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: d5d2c4c202524e740a81cd18ec219462, type: 3}
+    volume: 0.731
+    pitch: 1
+    maxDistance: 14
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: Dash
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: a77b720e4dd80494eb2d1497a355d3bf, type: 3}
+    volume: 0.305
+    pitch: 1
+    maxDistance: 10.97
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: AirSwoosh
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 52b5034d1f03d294799de6ebff049b63, type: 3}
+    volume: 0.514
+    pitch: 1
+    maxDistance: 12.28
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: NinjaCatSwordSlash
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 5f173035342befc4e9b381abb0f23188, type: 3}
+    volume: 0.514
+    pitch: 1
+    maxDistance: 15.23
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: HoodieCatStunCircleGrow
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 673eb145a6f31b445afdda2d0d2662a6, type: 3}
+    volume: 0.514
+    pitch: 1
+    maxDistance: 15.23
+    randompitch: 1
+    loop: 0
+    source: {fileID: 0}
+  - name: ThemeSong
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 69825302d5b324849874658d33d8faad, type: 3}
+    volume: 0
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: DeathAudio
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: b67eab87e42c07343aefbe0d947ec322, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: HiHat
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 95f34078a07632d47b0e2936b894425f, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: BumpPieceSound
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: b8c54fd3790e33a419ea5c46edfb98aa, type: 3}
+    volume: 0.671
+    pitch: 1
+    maxDistance: 19.1
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: NinjaCatSwordWhindUp
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 6d740c274f67f3a46ace3b9bd72c61c1, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: CountDown1
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 4961838ddfb3eda42b195e3a15b69d41, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 10
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: CountDown2
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 4961838ddfb3eda42b195e3a15b69d41, type: 3}
+    volume: 0.691
+    pitch: 1.1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: CountDown3
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 4961838ddfb3eda42b195e3a15b69d41, type: 3}
+    volume: 0.691
+    pitch: 1.2
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: StartRound
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 43e297c7ca688474f817ddaa4c824af7, type: 3}
+    volume: 0.728
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: BattleMusic
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: ac69942da18b39949921661254698392, type: 3}
+    volume: 0.057
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: Drum
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: bf866e2e71e111349b7a9d983bbca61a, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: Rim
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: fcfd47416910f764b98ebd4c7a85840e, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: Woop
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: cdc3b5cc0bd598148acfafa323628e3b, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 0
+    source: {fileID: 0}
+  - name: wind
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: 5fb46c98c991b334f85d26b95a6e841d, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: trumpet1
+    randomPlay: 0
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: a8f1883646b0a5a40ad4800b38234127, type: 3}
+    - {fileID: 8300000, guid: ffd7169308c4959499ea8610b0eae050, type: 3}
+    - {fileID: 8300000, guid: 6175e5b37cfb0294daf36d5c7e183d04, type: 3}
+    - {fileID: 8300000, guid: c77843f9c381b4a43a165279c3ae090d, type: 3}
+    volume: 0.691
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
+  - name: OrchestraDrums
+    randomPlay: 1
+    playIndex: 0
+    clips:
+    - {fileID: 8300000, guid: c39be4cf834e9b84fa5daaff96fe9d2f, type: 3}
+    volume: 0.164
+    pitch: 1
+    maxDistance: 13.8
+    randompitch: 0
+    loop: 1
+    source: {fileID: 0}
+--- !u!4 &3596212448220132461
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596212448220132459}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4582193644512974505}
+  m_RootOrder: 1
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &3596212450053200105
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 3596212450053200108}
+  - component: {fileID: 3596212450053200107}
+  - component: {fileID: 3596212450053200106}
+  - component: {fileID: 3596212450053200109}
+  m_Layer: 0
+  m_Name: QuickPlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &3596212450053200106
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596212450053200105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Port: 7777
+  DualMode: 1
+  NoDelay: 1
+  Interval: 10
+  Timeout: 10000
+  FastResend: 2
+  CongestionWindow: 0
+  SendWindowSize: 4096
+  ReceiveWindowSize: 4096
+  NonAlloc: 1
+  debugLog: 0
+  statisticsGUI: 0
+  statisticsLog: 0
+--- !u!114 &3596212450053200107
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596212450053200105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8aab4c8111b7c411b9b92cf3dbc5bd4e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 1
+  PersistNetworkManagerToOfflineScene: 0
+  runInBackground: 1
+  autoStartServerBuild: 1
+  serverTickRate: 60
+  offlineScene: 
+  onlineScene: 
+  transport: {fileID: 3596212450053200106}
+  networkAddress: localhost
+  maxConnections: 100
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 1646360425263456792, guid: 6f71b832f06ab0e4ba3b015b2ea606e2,
+    type: 3}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  spawnPrefabs: []
+--- !u!4 &3596212450053200108
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596212450053200105}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 49.11609, y: 7.30646, z: 20.401592}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4582193644512974505}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &3596212450053200109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3596212450053200105}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  offsetX: 0
+  offsetY: 0
+--- !u!4 &4582193644512974505
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5660069036284411730}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 3596212450053200108}
+  - {fileID: 3596212448220132461}
+  - {fileID: 8552848079230486662}
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5660069036284411730
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4582193644512974505}
+  m_Layer: 0
+  m_Name: QuickPlay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!1 &7714341379088313188
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8552848079230486662}
+  - component: {fileID: 1836426911184828463}
+  m_Layer: 0
+  m_Name: Global Volume
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8552848079230486662
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7714341379088313188}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.69291115, y: 14.26558, z: -22.416796}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4582193644512974505}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
