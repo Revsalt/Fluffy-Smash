@@ -58,8 +58,6 @@ public class PlayerController : NetworkBehaviour
     public Ability ability0;
     public Ability ability1, ability_Attack;
 
-    //GameObject platformMovingChild = null;
-
     bool HasJumpUp = false, HasSpeedUp = false, HasCoolUp = false;
     void OnValidate()
     {
@@ -71,7 +69,7 @@ public class PlayerController : NetworkBehaviour
     {
         InitializeAbilities();
 
-        airResistence *= Time.fixedDeltaTime;
+        airResistence *= TickRate.GetMinTimeBetweenTicks();
 
         Cameras[0].transform.parent.SetParent(null);
 
@@ -98,10 +96,105 @@ public class PlayerController : NetworkBehaviour
 
     public virtual void InitializeAbilities() {  }
 
-    private void LateUpdate()
+    float rotX, rotY;
+    [HideInInspector] public Vector3 moveDirection = Vector3.zero;
+    public ClientInput input_m;
+
+    public Action resultantMovement;
+
+    public MovementResult ResultantMovement(ClientInput input)
+    {
+        input_m = input;
+
+        resultantMovement.Invoke();
+
+        piviot_M.transform.localRotation = input.cameraRotation;
+
+        if (!disableInput)
+        {
+            moveDirection = new Vector3(folllowTarget.transform.right.x, 0, folllowTarget.transform.right.z).normalized * input.movementAxis.x +
+                new Vector3(folllowTarget.transform.forward.x, 0, folllowTarget.transform.forward.z).normalized * input.movementAxis.y;
+        }
+        else { moveDirection = Vector3.zero; }
+
+        //Movement and impact
+
+        if (moveDirection != Vector3.zero && !disableRotationInput)
+            transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
+
+        if (isGroundeed())
+        {
+            airResistence = 6.2f;
+        }
+        else
+        {
+            airResistence = 0.8f;
+        }
+
+        Vector3 Result = Vector3.zero;
+
+        if (impact.magnitude > 0.2) Result += impact * TickRate.GetMinTimeBetweenTicks();
+
+        if (impact.magnitude > 0.2)
+        {
+            impact -= new Vector3(impact.x * airResistence, impact.y * airResistence, impact.z * airResistence) * TickRate.GetMinTimeBetweenTicks();
+        }
+
+        if (impact.magnitude < 0)
+            impact = Vector3.zero;
+
+        if (isGroundeed() && playerVelocity.y < 0)
+        {
+            playerVelocity.y = 0;
+        }
+
+        Result += moveDirection.normalized * TickRate.GetMinTimeBetweenTicks() * movementSpeed;
+
+        if (input.inputs[0] && isGroundeed() && !GetDisableInput())
+        {
+            ResetPlayerVelocity();
+            AddImpact(Vector3.up, jumpHeight, false);
+            StartCoroutine(ChkIfJumped());
+            //Callin the event for children classes
+            onJump();
+        }
+
+        //Abilites
+
+        if (input.inputs[3] && !GetDisableInput())
+        {
+            StartAbility(0);
+        }
+
+        if (input.inputs[1] && !GetDisableInput())
+        {
+            StartAbility(1);
+        }
+
+        //if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
+        if (input.inputs[2] && !GetDisableInput())
+        {
+            StartAbility(2);
+        }
+
+        if (!characterController.isGrounded)
+        {
+            AddImpact(Vector3.up, gravity, false);
+        }
+
+        characterController.Move(Result + (playerVelocity * TickRate.GetMinTimeBetweenTicks()));
+
+        return new MovementResult()
+        {
+            position = transform.position,
+            tick = input.tick
+        };
+    }
+
+    public void Update()
     {
         //CameraPosistionAdjustment
-        
+
         piviot_M.transform.position = folllowTarget.position;
 
         //Camera Movement
@@ -129,102 +222,6 @@ public class PlayerController : NetworkBehaviour
             {
                 Screen.fullScreen = !Screen.fullScreen;
             }
-        }
-    }
-
-    [SerializeField] Vector3 Result_ = Vector3.zero;
-
-    float rotX, rotY;
-    [HideInInspector] public Vector3 moveDirection = Vector3.zero;
-
-    public void ProcessMovement()
-    {
-
-        characterController.enabled = isServer;
-
-        if (!disableInput)
-        {
-            moveDirection = new Vector3(folllowTarget.transform.right.x, 0, folllowTarget.transform.right.z).normalized * GetComponent<ServerAuthoritativeTransform>().clientInput.movementAxis.x +
-                new Vector3(folllowTarget.transform.forward.x, 0, folllowTarget.transform.forward.z).normalized * GetComponent<ServerAuthoritativeTransform>().clientInput.movementAxis.y;
-        }
-        else { moveDirection = Vector3.zero; }
-
-        //Movement and impact
-
-        if (moveDirection != Vector3.zero && !disableRotationInput)
-            transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
-
-        if (isGroundeed())
-        {
-            airResistence = 6.2f;
-        }
-        else
-        {
-            airResistence = 0.8f;
-        }
-
-        Vector3 Result = Vector3.zero;
-
-        if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
-
-        if (impact.magnitude > 0.2)
-        {
-            impact -= new Vector3(impact.x * airResistence, impact.y * airResistence, impact.z * airResistence) * Time.deltaTime;
-        }
-
-        if (impact.magnitude < 0)
-            impact = Vector3.zero;
-
-        if (isGroundeed() && playerVelocity.y < 0)
-        {
-            playerVelocity.y = 0;
-        }
-
-        Result += moveDirection.normalized * Time.deltaTime * movementSpeed;
-
-        if (GetComponent<ServerAuthoritativeTransform>().clientInput.jump && isGroundeed() && !GetDisableInput())
-        {
-            ResetPlayerVelocity();
-            AddImpact(Vector3.up , jumpHeight , false);
-            StartCoroutine(ChkIfJumped());
-            //Callin the event for children classes
-            onJump();
-        }
-
-        Result_ = Result;
-        characterController.Move(Result + (playerVelocity * Time.deltaTime));
-
-        //Abilities
-
-        if (!isServer) return;
-
-        if (GetComponent<ServerAuthoritativeTransform>().clientInput.r_mouse && !GetDisableInput())
-        {
-            StartAbility(0);
-            RpcStartAbility(0 , GetComponent<NetworkIdentity>());
-        }   
-
-        if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_shift && !GetDisableInput())
-        {
-            StartAbility(1);
-            RpcStartAbility(1 , GetComponent<NetworkIdentity>());
-        }
-
-        //if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
-        if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && !GetDisableInput())
-        {
-            StartAbility(2);
-            RpcStartAbility(2 , GetComponent<NetworkIdentity>());
-        }
-
-    }
-
-    [ServerCallback]
-    void FixedUpdate()
-    {
-        if (!characterController.isGrounded)
-        {
-            AddImpact(Vector3.up , gravity , false);
         }
     }
 
@@ -353,26 +350,25 @@ public class PlayerController : NetworkBehaviour
             abilityRef.ability.Invoke();
             abilityRef.canCast = false;
 
+            float timer = abilityRef.coolDown;
+
             if (!abilityRef.skipNextCoolDown)
             {
-                for (float z = 0; z < abilityRef.coolDown * CoolDownReducer; z += Time.deltaTime)
+                int c_tick = TickRate.Instance.currentTick;
+
+                for (float z = c_tick; z < c_tick + (abilityRef.coolDown * TickRate.SERVER_TICK_RATE);)
                 {
-                    abilityRef.coolDown_current_value = z;
-                    yield return null;
+                    z = TickRate.Instance.currentTick;
+                    abilityRef.coolDown_current_value = (z - c_tick) / TickRate.SERVER_TICK_RATE;
                 }
             }
             else
                 abilityRef.skipNextCoolDown = true;
-            yield return null;
 
             abilityRef.canCast = true;
-        }
-    }
 
-    [ClientRpc]
-    void RpcStartAbility(int i, NetworkIdentity ntd)
-    {
-        ntd.GetComponent<PlayerController>().StartAbility(i);
+            yield return null;
+        }
     }
 
     public bool GetIsAnyAbilityInPorgress()
@@ -436,7 +432,7 @@ public class PlayerController : NetworkBehaviour
             forcedirection.y = 0;
             forcedirection.Normalize();
 
-            rigidbody.AddForceAtPosition((forcedirection * 25 / rigidbody.mass) * Time.deltaTime, transform.position, ForceMode.Impulse);
+            rigidbody.AddForceAtPosition((forcedirection * 25 / rigidbody.mass) * TickRate.GetMinTimeBetweenTicks(), transform.position, ForceMode.Impulse);
         }
 
         if ((characterController.collisionFlags & CollisionFlags.CollidedAbove) != 0)
@@ -536,7 +532,7 @@ public class Ability
     public Action ability;
 
     public float coolDown;
-    [HideInInspector] public float coolDown_current_value = 0;
+    public float coolDown_current_value = 0;
 
     public string abilityName = "NoName (please assign a name)";
 

@@ -1,19 +1,21 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public class TickRate : MonoBehaviour
 {
     public static TickRate Instance;
 
-    private float timer;
-    private int currentTick;
-    private float minTimeBetweenTicks;
-    private const float SERVER_TICK_RATE = 30f;
-    private const int BUFFER_SIZE = 1024;
+    public float timer;
+    public int currentTick;
+    [HideInInspector] public float minTimeBetweenTicks;
+    [HideInInspector] public const float SERVER_TICK_RATE = 60f;
+    [HideInInspector] public const int BUFFER_SIZE = 1024;
 
-    private StatePayload[] stateBuffer;
-    private Queue<InputPayload> inputQueue;
+    public Action OnTick;
+    public Action OnStartTickRate;
 
     void Awake()
     {
@@ -23,9 +25,8 @@ public class TickRate : MonoBehaviour
     private void Start()
     {
         minTimeBetweenTicks = 1f / SERVER_TICK_RATE;
-
-        stateBuffer = new StatePayload[BUFFER_SIZE];
-        inputQueue = new Queue<InputPayload>();
+        if (OnStartTickRate != null)
+            OnStartTickRate.Invoke();
     }
 
     void Update()
@@ -35,30 +36,24 @@ public class TickRate : MonoBehaviour
         while (timer >= minTimeBetweenTicks)
         {
             timer -= minTimeBetweenTicks;
-            //HandleTick();
+            HandleTick();
             currentTick++;
         }
     }
 
-    /*
     void HandleTick()
     {
-        // Process the input queue
-        int bufferIndex = -1;
-        while (inputQueue.Count > 0)
-        {
-            InputPayload inputPayload = inputQueue.Dequeue();
-
-            bufferIndex = inputPayload.tick % BUFFER_SIZE;
-
-            StatePayload statePayload = ProcessMovement(inputPayload);
-            stateBuffer[bufferIndex] = statePayload;
-        }
-
-        if (bufferIndex != -1)
-        {
-            StartCoroutine(SendToClient(stateBuffer[bufferIndex]));
-        }
+        if (OnTick != null)
+            OnTick.Invoke();
     }
-    */
+
+    public static float GetMinTimeBetweenTicks()
+    {
+        return (1f / SERVER_TICK_RATE);
+    }
+
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(Screen.width - 100, 0, 80, 20) , (currentTick / 60).ToString() + "| tick / time");
+    }
 }

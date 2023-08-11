@@ -6,70 +6,171 @@ using Mirror;
 
 public class ServerAuthoritativeTransform : NetworkBehaviour
 {
-    Vector3 old_serv_pos = Vector3.zero;
+    [SerializeField] ClientInput[] inputBuffer;
+    [SerializeField] MovementResult[] stateBuffer;
 
-    [SyncVar] public ClientInput clientInput = new ClientInput();
+    [SerializeField] private MovementResult[] stateBuffer_server;
+    [SerializeField] private Queue<ClientInput> inputQueue;
 
-    ClientInput old_ci = new ClientInput();
-
-    [HideInInspector] public GameObject server_position;
+    [SerializeField] private MovementResult latestServerState;
+    [SerializeField] private MovementResult lastProcessedState;
 
     private void Start()
     {
-        if (isClient)
+        stateBuffer = new MovementResult[TickRate.BUFFER_SIZE];
+        inputBuffer = new ClientInput[TickRate.BUFFER_SIZE];
+
+        stateBuffer_server = new MovementResult[TickRate.BUFFER_SIZE];
+        inputQueue = new Queue<ClientInput>();
+
+        if (isLocalPlayer)
         {
-            server_position = Instantiate(Resources.Load("Player_Visualization") as GameObject, Vector3.zero, Quaternion.identity);
+            TickRate.Instance.OnTick += H_Tick_client;
         }
-        
-        old_serv_pos = transform.position;
-    }
 
-    private void Update()
-    {
-        if (!isLocalPlayer) return;
-
-        clientInput.cameraRotation = GetComponent<PlayerController>().piviot_M.transform.localRotation;
-        clientInput.movementAxis = new Vector2(Input.GetAxisRaw("Horizontal") , Input.GetAxisRaw("Vertical"));
-
-        if (!old_ci.Equals(clientInput.movementAxis))
+        if (isServer)
         {
-            SendInput(clientInput);
-
-            old_ci.movementAxis = clientInput.movementAxis;
-            old_ci.cameraRotation = clientInput.cameraRotation;
+            TickRate.Instance.OnTick += H_Tick_server;
         }
-    }
-       
-    [Command]
-    void SendInput(ClientInput ci , NetworkConnectionToClient sender = null)
-    {
-        sender.identity.gameObject.GetComponent<ServerAuthoritativeTransform>().clientInput = ci;
+
     }
 
     [ServerCallback]
-    private void FixedUpdate()
+    void H_Tick_server()
     {
-        GetComponent<PlayerController>().piviot_M.transform.localRotation = clientInput.cameraRotation;
-
-        if (old_serv_pos != transform.position)
+        // Process the input queue
+        int bufferIndex = -1;
+        while (inputQueue.Count > 0)
         {
-            SendNewPosition(transform.position , GetComponent<NetworkIdentity>());
-            old_serv_pos = transform.position;
+            ClientInput inputPayload = inputQueue.Dequeue();
+
+            bufferIndex = inputPayload.tick % TickRate.BUFFER_SIZE;
+
+            MovementResult statePayload = GetComponent<PlayerController>().ResultantMovement(inputPayload);
+            stateBuffer_server[bufferIndex] = statePayload;
+        }
+
+        if (bufferIndex != -1)
+        {
+            SendToClient(GetComponent<NetworkIdentity>().connectionToClient , stateBuffer_server[bufferIndex]);
+            SendToClients(GetComponent<NetworkIdentity>() , stateBuffer_server[bufferIndex]);
         }
     }
 
-    [ClientRpc]
-    public void SendNewPosition(Vector3 new_pos , NetworkIdentity identity)
+    [ClientCallback]
+    void H_Tick_client()
     {
-        identity.GetComponent<ServerAuthoritativeTransform>().server_position.transform.position = new_pos;
-        identity.transform.position = new_pos;
+        if (!latestServerState.Equals(default(MovementResult)) &&
+            (lastProcessedState.Equals(default(MovementResult)) ||
+            !latestServerState.Equals(lastProcessedState)))
+        {
+            HandleServerReconciliation();
+        }
+
+        int bufferIndex = TickRate.Instance.currentTick % TickRate.BUFFER_SIZE;
+
+        // Add payload to inputBuffer
+        ClientInput inputPayload = new ClientInput();
+        inputPayload.tick = TickRate.Instance.currentTick;
+
+        inputPayload.movementAxis = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        inputPayload.cameraRotation = GetComponent<PlayerController>().piviot_M.transform.localRotation;
+        inputPayload.inputs = new bool[4] { Input.GetKey(KeyCode.Space) , Input.GetKey(KeyCode.LeftShift) , Input.GetMouseButton(0) , Input.GetMouseButton(1) };
+
+        inputBuffer[bufferIndex] = inputPayload;
+
+        // Add payload to stateBuffer
+        stateBuffer[bufferIndex] = GetComponent<PlayerController>().ResultantMovement(inputPayload);
+
+        // Send input to server
+        SendInput(inputPayload);
+    }
+
+    [TargetRpc]
+    public void SendToClient(NetworkConnection target , MovementResult statePayload)
+    {
+        target.identity.GetComponent<ServerAuthoritativeTransform>().latestServerState = statePayload;
+    }
+
+    [ClientRpc]
+    public void SendToClients(NetworkIdentity ntd, MovementResult statePayload)
+    {
+        if (ntd.isLocalPlayer) return;
+
+        ntd.transform.position = statePayload.position;
+        ntd.GetComponent<PlayerController>().transform.localRotation = statePayload.rotation;
+    }
+
+    [Command]
+    void SendInput(ClientInput ci, NetworkConnectionToClient sender = null)
+    {
+        sender.identity.gameObject.GetComponent<ServerAuthoritativeTransform>().inputQueue.Enqueue(ci);
+    }
+
+    void HandleServerReconciliation()
+    {
+        lastProcessedState = latestServerState;
+
+        int serverStateBufferIndex = latestServerState.tick % TickRate.BUFFER_SIZE;
+
+        float positionError = Vector3.Distance(latestServerState.position, stateBuffer[serverStateBufferIndex].position);
+
+        if (positionError > .3f)
+        {
+            Debug.Log("We have to reconcile bro");
+            // Rewind & Replay
+
+            GetComponent<CharacterController>().enabled = false;
+            GetComponent<CharacterController>().transform.position = latestServerState.position;
+            GetComponent<CharacterController>().enabled = true;
+
+            // Update buffer at index of latest server state
+            stateBuffer[serverStateBufferIndex] = latestServerState;
+
+            // Now re-simulate the rest of the ticks up to the current tick on the client
+            int tickToProcess = latestServerState.tick + 1;
+
+            while (tickToProcess < TickRate.Instance.currentTick)
+            {
+                int bufferIndex = tickToProcess % TickRate.BUFFER_SIZE;
+
+                // Process new movement with reconciled state
+                MovementResult statePayload = GetComponent<PlayerController>().ResultantMovement(inputBuffer[bufferIndex]);
+
+                // Update buffer with recalculated state
+                stateBuffer[bufferIndex] = statePayload;
+
+                tickToProcess++;
+            }
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        foreach (var item in stateBuffer)
+        {
+            Gizmos.DrawWireSphere(item.position, 0.1f);
+        }
+
+        Gizmos.color = Color.blue;
+        Gizmos.DrawWireSphere(latestServerState.position, 0.3f);
     }
 }
 
 [Serializable]
-public class ClientInput
+public struct ClientInput
 {
-    public Vector2 movementAxis = new Vector2() { x = 0 , y = 0 };
-    public Quaternion cameraRotation = Quaternion.identity;
-    public bool jump , l_mouse , r_mouse , l_shift;
+    public int tick;
+    public Vector2 movementAxis;
+    public Quaternion cameraRotation;
+    public bool[] inputs;
+}
+
+[Serializable]
+public struct MovementResult
+{
+    public int tick;
+    public Vector3 position;
+    public Quaternion rotation;
 }

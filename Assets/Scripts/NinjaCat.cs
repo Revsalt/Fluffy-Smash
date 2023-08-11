@@ -28,20 +28,12 @@ public class NinjaCat : PlayerController
 
         ability0.ability = delegate
         {
-            StartCoroutine(Dash());
+            if (moveDirection != Vector3.zero)
+                AddImpact(moveDirection.normalized, dashForce, true);
+            else
+                AddImpact(Vector3.up, dashForce, false);
 
-            IEnumerator Dash()
-            {
-                if (moveDirection != Vector3.zero)
-                    AddImpact(moveDirection.normalized, dashForce, true);
-                else
-                    AddImpact(Vector3.up, dashForce, false);
-
-                yield return new WaitForSeconds(0.1f);
-
-                ability0.End.Invoke();
-            }
-
+            ability0.End.Invoke();
         };
 
         ability0.events = new UnityEvent[2] { inDashStart, inDashEnd };
@@ -57,7 +49,7 @@ public class NinjaCat : PlayerController
 
             IEnumerator Sprint()
             {
-                for (float i = 0; !Input.GetKeyUp(KeyCode.LeftShift); i += Time.deltaTime)
+                for (float i = 0; !input_m.inputs[1]; i += Time.deltaTime)
                 {
                     yield return null;
                 }
@@ -80,6 +72,8 @@ public class NinjaCat : PlayerController
 
     void Start()
     {
+        resultantMovement += wallJumping;
+
         movementSpeed = GetOriginalSpeeed() * 2f;
 
         onJump += delegate
@@ -89,17 +83,19 @@ public class NinjaCat : PlayerController
         };
     }
 
-    new void Update()
+    void wallJumping()
     {
-
-        base.Update();
-
-        //wall running
-
-        if (wallDirection != Vector3.zero && (GetComponent<ServerAuthoritativeTransform>().clientInput.jump || GetComponent<ServerAuthoritativeTransform>().clientInput.r_mouse) && !GetDisableInput())
+        if (wallDirection != Vector3.zero && (input_m.inputs[0] || input_m.inputs[3] && !GetDisableInput()))
         {
             OffWall(true);
         }
+    }
+
+    new void Update()
+    {
+        base.Update();
+
+        //wall running
 
         if (GetDisableInput()) return;
 
@@ -235,26 +231,47 @@ public class NinjaCat : PlayerController
         ZoomIn(true);
         AudioManager.instance.Play("NinjaCatSwordWhindUp", transform.position, null);
         float DistanceDuration = 0.1f;
-        for (float i = 0; GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && i < 1f; i += Time.deltaTime)
+
+        for (float i = 0; input_m.inputs[2] && i < 1; i += Time.deltaTime)
         {
             playerModel.transform.LookAt(piviot_M.transform.position + piviot_M.transform.forward * 1000);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
-            DistanceDuration = i * 0.1f;
+            DistanceDuration = (float)System.Math.Round(i * .1f, 2);
             ShakeCamera(i, 1);
+
             yield return null;
         }
 
+        StartCoroutine(Dash(DistanceDuration));
+
         ZoomIn(false);
 
-        StartCoroutine(Dash(DistanceDuration));
-        
+        // this section could still be adjusteed as to am sending the duration at which the player held the input , which is not ideal ,
+        // the best way was to make sure both client and server hold the input for the same duration which is not easy and i hope to be able to
+        // change that for the future
+        /*
+        if (isClient)
+        {
+            CmdSendDuration(DistanceDuration);
+            StartCoroutine(Dash(DistanceDuration));
+        }
+        */
+    }
+
+    [Command]
+    void CmdSendDuration(float d, NetworkConnectionToClient sender = null)
+    {
+        sender.identity.GetComponent<NinjaCat>();
+
+        StartCoroutine(Dash(d));
     }
 
     #region DashReplication
 
     IEnumerator Dash(float duration)
     {
+        Debug.Log(duration);
         chargeParticleSystem.Stop();
         chargeParticleSystem.Clear();
         leafDashParticleSystem.Play();
@@ -269,7 +286,7 @@ public class NinjaCat : PlayerController
         AudioManager.instance.Play("NinjaCatSwordSlash", transform.position, transform);
         HidePlayerModel(true);
         ResetPlayerVelocity();
-        AddImpact(playerModel.transform.forward, 70, false);
+        AddImpact(playerModel.transform.forward, 70 , false);
 
         yield return new WaitForSeconds(.5f);
         animator.SetBool("isPersonGrab", false);

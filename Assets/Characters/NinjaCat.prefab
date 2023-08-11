@@ -82,7 +82,7 @@ MonoBehaviour:
   animator: {fileID: 0}
   playerModel: {fileID: 1646360426110567441}
   piviot_M: {fileID: 5230716323925670244}
-  sensitvity: 300
+  sensitvity: 200
   movementSpeed: 7
   airResistence: 80
   jumpHeight: 80
@@ -117,8 +117,12 @@ MonoBehaviour:
     canCast: 1
     skipNextCoolDown: 0
     isDisabled: 0
-  Result_: {x: 0, y: 0, z: 0}
   moveDirection: {x: 0, y: 0, z: 0}
+  input_m:
+    tick: 0
+    movementAxis: {x: 0, y: 0}
+    cameraRotation: {x: 0, y: 0, z: 0, w: 0}
+    inputs: 
   chargeParticleSystem: {fileID: 5280127289521539745}
   leafDashParticleSystem: {fileID: 3830502617292365957}
   inDashStart:
@@ -152,7 +156,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   wallJumpForce: 70
-  dashForce: 60
+  dashForce: 80
   swordSlashDistance: 1200
 --- !u!114 &4097870006058671203
 MonoBehaviour:
@@ -389,14 +393,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   syncMode: 0
   syncInterval: 0.1
-  clientInput:
-    movementAxis: {x: 0, y: 0}
-    cameraRotation: {x: 0, y: 0, z: 0, w: 1}
-    jump: 0
-    l_mouse: 0
-    r_mouse: 0
-    l_shift: 0
-  server_position: {fileID: 0}
+  inputBuffer: []
+  stateBuffer: []
+  stateBuffer_server: []
+  latestServerState:
+    tick: 0
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
+  lastProcessedState:
+    tick: 0
+    position: {x: 0, y: 0, z: 0}
+    rotation: {x: 0, y: 0, z: 0, w: 0}
 --- !u!1 &1646360425379016323
 GameObject:
   m_ObjectHideFlags: 0

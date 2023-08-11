@@ -6,26 +6,8 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/MainMenu.unity
-    guid: 08344b4edadd3eb46b1f25c09d6dad11
-  - enabled: 1
-    path: Assets/Scenes/RoomScene.unity
-    guid: eb753f0bf278ef64aac21e4d228d628f
-  - enabled: 1
-    path: Assets/Scenes/TouchDownMap.unity
-    guid: 300e7cd3babbb65448903b7f4351fd2a
-  - enabled: 1
-    path: Assets/Scenes/TouchDownSplatoonLikeMap.unity
-    guid: cd97a1250310e7b448b33e2ec9d9f57a
-  - enabled: 1
-    path: Assets/Scenes/Rings level.unity
-    guid: 088db2b6d9f9a4ed5b8deead5b635ce8
-  - enabled: 1
-    path: Assets/Scenes/Race Level.unity
-    guid: 61929efab3c83454582d5d686d788d54
-  - enabled: 1
-    path: Assets/Scenes/New Map.unity
-    guid: 5e63f09aeee762c4c9f76f919c5ac2b5
+    path: Assets/Scenes/test map.unity
+    guid: e92277a0f869f9b46bdc3f01b623edc5
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: 3ba30a344de09c746a961566e7794d24,
       type: 2}

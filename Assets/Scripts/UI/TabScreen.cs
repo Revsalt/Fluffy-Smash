@@ -47,8 +47,8 @@ public class TabScreen : MonoBehaviour
         {
             //Taggers
             TabScreenPlayer tabScreenPlayer = Instantiate(TabScreenPlayerPrefab, PlayersListObject.transform);
-            tabScreenPlayer.PlayerName = newPlayer.nrp.username;
-            tabScreenPlayer.PlayerRole = newPlayer.Team_m;
+            //tabScreenPlayer.PlayerName = newPlayer.nrp.username;
+            //tabScreenPlayer.PlayerRole = newPlayer.Team_m;
             tabScreenPlayer.PlayerPing = Convert.ToInt32(newPlayer.nrp.ping);
         }
     }

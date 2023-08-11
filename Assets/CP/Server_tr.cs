@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
-public class Server_tr : MonoBehaviour
+public class Server_tr : NetworkBehaviour
 {
     public static Server_tr Instance;
 
@@ -15,6 +16,8 @@ public class Server_tr : MonoBehaviour
     private StatePayload[] stateBuffer;
     private Queue<InputPayload> inputQueue;
 
+    public float latency = 0.02f, p_speed = 5;
+
     void Awake()
     {
         Instance = this;
@@ -22,6 +25,8 @@ public class Server_tr : MonoBehaviour
 
     void Start()
     {
+        enabled = isServer;
+
         minTimeBetweenTicks = 1f / SERVER_TICK_RATE;
 
         stateBuffer = new StatePayload[BUFFER_SIZE];
@@ -45,10 +50,9 @@ public class Server_tr : MonoBehaviour
         inputQueue.Enqueue(inputPayload);
     }
 
-    IEnumerator SendToClient(StatePayload statePayload)
+    [ClientRpc]
+    public void SendToClient(StatePayload statePayload)
     {
-        yield return new WaitForSeconds(0.02f);
-
         Client_tr.Instance.OnServerMovementState(statePayload);
     }
 
@@ -68,14 +72,14 @@ public class Server_tr : MonoBehaviour
 
         if (bufferIndex != -1)
         {
-            StartCoroutine(SendToClient(stateBuffer[bufferIndex]));
+            SendToClient(stateBuffer[bufferIndex]);
         }
     }
 
     StatePayload ProcessMovement(InputPayload input)
     {
         // Should always be in sync with same function on Client
-        transform.position += input.inputVector * 5f * minTimeBetweenTicks;
+        transform.position += input.inputVector * p_speed * minTimeBetweenTicks;
 
         return new StatePayload()
         {
@@ -83,5 +87,4 @@ public class Server_tr : MonoBehaviour
             position = transform.position,
         };
     }
-    
 }

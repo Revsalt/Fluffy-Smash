@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Mirror;
 
 public struct InputPayload
 {
@@ -14,7 +15,7 @@ public struct StatePayload
     public Vector3 position;
 }
 
-public class Client_tr : MonoBehaviour
+public class Client_tr : NetworkBehaviour
 {
     public static Client_tr Instance;
 
@@ -35,6 +36,8 @@ public class Client_tr : MonoBehaviour
 
     void Awake()
     {
+        enabled = isClient;
+
         Instance = this;
     }
 
@@ -68,10 +71,9 @@ public class Client_tr : MonoBehaviour
         latestServerState = serverState;
     }
 
-    IEnumerator SendToServer(InputPayload inputPayload)
+    [Command(requiresAuthority =false)]
+    void SendToServer(InputPayload inputPayload)
     {
-        yield return new WaitForSeconds(0.02f);
-
         Server_tr.Instance.OnClientInput(inputPayload);
     }
 
@@ -90,19 +92,20 @@ public class Client_tr : MonoBehaviour
         InputPayload inputPayload = new InputPayload();
         inputPayload.tick = currentTick;
         inputPayload.inputVector = new Vector3(horizontalInput, 0, verticalInput);
+
         inputBuffer[bufferIndex] = inputPayload;
 
         // Add payload to stateBuffer
         stateBuffer[bufferIndex] = ProcessMovement(inputPayload);
 
         // Send input to server
-        StartCoroutine(SendToServer(inputPayload));
+        SendToServer(inputPayload);
     }
 
     StatePayload ProcessMovement(InputPayload input)
     {
         // Should always be in sync with same function on Server
-        transform.position += input.inputVector * 5f * minTimeBetweenTicks;
+        transform.position += input.inputVector * Server_tr.Instance.p_speed * minTimeBetweenTicks;
 
         return new StatePayload()
         {
@@ -116,6 +119,7 @@ public class Client_tr : MonoBehaviour
         lastProcessedState = latestServerState;
 
         int serverStateBufferIndex = latestServerState.tick % BUFFER_SIZE;
+
         float positionError = Vector3.Distance(latestServerState.position, stateBuffer[serverStateBufferIndex].position);
 
         if (positionError > 0.001f)
