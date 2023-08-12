@@ -64,7 +64,7 @@ public class ServerAuthoritativeTransform : NetworkBehaviour
             (lastProcessedState.Equals(default(MovementResult)) ||
             !latestServerState.Equals(lastProcessedState)))
         {
-            HandleServerReconciliation();
+                HandleServerReconciliation();
         }
 
         int bufferIndex = TickRate.Instance.currentTick % TickRate.BUFFER_SIZE;

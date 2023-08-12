@@ -69,8 +69,6 @@ public class PlayerController : NetworkBehaviour
     {
         InitializeAbilities();
 
-        airResistence *= TickRate.GetMinTimeBetweenTicks();
-
         Cameras[0].transform.parent.SetParent(null);
 
         animator = playerModel.GetComponentInChildren<Animator>();
@@ -329,6 +327,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     bool abilityInProgress = false;
+
     public void StartAbility(int i)
     {
         Ability abilityRef = new Ability[3] { ability0, ability1, ability_Attack }[i];
@@ -345,21 +344,18 @@ public class PlayerController : NetworkBehaviour
 
         IEnumerator CoolDown()
         {
+            Debug.Log("started cooldown");
             abilityInProgress = true;
             abilityRef.events[0].Invoke();
             abilityRef.ability.Invoke();
             abilityRef.canCast = false;
 
-            float timer = abilityRef.coolDown;
-
             if (!abilityRef.skipNextCoolDown)
             {
-                int c_tick = TickRate.Instance.currentTick;
-
-                for (float z = c_tick; z < c_tick + (abilityRef.coolDown * TickRate.SERVER_TICK_RATE);)
+                for (float z = 0; z < (abilityRef.coolDown); z += TickRate.GetMinTimeBetweenTicks())
                 {
-                    z = TickRate.Instance.currentTick;
-                    abilityRef.coolDown_current_value = (z - c_tick) / TickRate.SERVER_TICK_RATE;
+                    abilityRef.coolDown_current_value = z;
+                    yield return new WaitForSeconds(TickRate.GetMinTimeBetweenTicks());
                 }
             }
             else
@@ -367,7 +363,7 @@ public class PlayerController : NetworkBehaviour
 
             abilityRef.canCast = true;
 
-            yield return null;
+            yield break;
         }
     }
 
@@ -539,7 +535,7 @@ public class Ability
     [HideInInspector] public UnityEvent[] events;
     [HideInInspector] public Action End;
 
-    [HideInInspector] public bool canCast = true;
+    public bool canCast = true;
     [HideInInspector] public bool skipNextCoolDown = false;
      public bool isDisabled = false;
 

@@ -35,6 +35,8 @@ namespace Mirror
         /// <summary>True if this object is on the client and has been spawned by the server.</summary>
         public bool isClient => netIdentity.isClient;
 
+        public bool isHost => (NetworkServer.connections.Count > 0);
+
         /// <summary>True if this object is the the client's own local player.</summary>
         public bool isLocalPlayer => netIdentity.isLocalPlayer;
 
