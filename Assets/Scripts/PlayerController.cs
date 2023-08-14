@@ -100,6 +100,8 @@ public class PlayerController : NetworkBehaviour
 
     public Action resultantMovement;
 
+    float cooldown = 1f;
+    float cooldownTimestamp;
     public MovementResult ResultantMovement(ClientInput input)
     {
         input_m = input;
@@ -146,7 +148,7 @@ public class PlayerController : NetworkBehaviour
             playerVelocity.y = 0;
         }
 
-        Result += moveDirection.normalized * TickRate.GetMinTimeBetweenTicks() * movementSpeed;
+        Result += moveDirection.normalized * movementSpeed * TickRate.GetMinTimeBetweenTicks();
 
         if (input.inputs[0] && isGroundeed() && !GetDisableInput())
         {
@@ -159,9 +161,12 @@ public class PlayerController : NetworkBehaviour
 
         //Abilites
 
-        if (input.inputs[3] && !GetDisableInput())
+        if (input.inputs[3] && TryShoot() && !GetDisableInput())
         {
-            StartAbility(0);
+            if (moveDirection != Vector3.zero)
+                AddImpact(moveDirection.normalized, 60, true);
+            else
+                AddImpact(Vector3.up, 60, false);
         }
 
         if (input.inputs[1] && !GetDisableInput())
@@ -180,13 +185,22 @@ public class PlayerController : NetworkBehaviour
             AddImpact(Vector3.up, gravity, false);
         }
 
-        characterController.Move(Result + (playerVelocity * TickRate.GetMinTimeBetweenTicks()));
+        characterController.Move((Result + playerVelocity * TickRate.GetMinTimeBetweenTicks()));
 
         return new MovementResult()
         {
             position = transform.position,
+            rotation = transform.rotation,
             tick = input.tick
         };
+    }
+
+    bool TryShoot()
+    {
+        if (TickRate.Instance.currentTick < cooldownTimestamp) return false;
+        cooldownTimestamp = TickRate.Instance.currentTick + (cooldown * 60);
+
+        return true;
     }
 
     public void Update()
@@ -312,7 +326,7 @@ public class PlayerController : NetworkBehaviour
         dir.Normalize();
         if (reflectOnGround)
             if (dir.y < 0) dir.y = -dir.y; // reflect down force on the ground
-        impact += dir.normalized * force / 3;
+        impact += dir.normalized * (force) / 3;
     }
 
     public void ResetPlayerVelocity()
