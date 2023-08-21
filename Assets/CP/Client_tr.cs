@@ -136,7 +136,7 @@ public class Client_tr : NetworkBehaviour
     StatePayload ProcessMovement(InputPayload input)
     {
         // Should always be in sync with same function on Server
-        cc.Move(input.inputVector * Server_tr.Instance.p_speed * minTimeBetweenTicks);
+        transform.position += (input.inputVector * Server_tr.Instance.p_speed * minTimeBetweenTicks);
 
         if (input.input && input.tick > my_tick + cooldown)
         {
@@ -146,7 +146,7 @@ public class Client_tr : NetworkBehaviour
 
         void Dash()
         {
-            cc.Move(input.inputVector * 50 * minTimeBetweenTicks);
+            transform.position += (input.inputVector * 50 * minTimeBetweenTicks);
         }
 
         return new StatePayload()
