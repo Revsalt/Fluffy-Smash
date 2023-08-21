@@ -36,6 +36,7 @@ public class Client_tr : NetworkBehaviour
     private float verticalInput;
 
     [SerializeField] Transform target;
+    [SerializeField] GameObject[] mycam;
 
     CharacterController cc;
 
@@ -49,6 +50,13 @@ public class Client_tr : NetworkBehaviour
 
     void Start()
     {
+        foreach (var item in mycam)
+        {
+            if (isLocalPlayer)
+            {
+                item.SetActive(true);
+            }
+        }
 
         //Create random color
         Color col1 = new Color(Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), Random.Range(0.0f, 1.0f), 1.0f);

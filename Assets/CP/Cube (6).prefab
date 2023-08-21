@@ -16,7 +16,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &9003351012384366283
 Transform:
   m_ObjectHideFlags: 0
@@ -295,6 +295,9 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   target: {fileID: 6787620782460395803}
+  mycam:
+  - {fileID: 8404569423638727354}
+  - {fileID: 857820280213061095}
 --- !u!114 &2632285959782825252
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -347,7 +350,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2890455011030648044
 Transform:
   m_ObjectHideFlags: 0
