@@ -161,7 +161,7 @@ public class PlayerController : NetworkBehaviour
 
         //Abilites
 
-        if (input.inputs[3] && TryShoot() && !GetDisableInput())
+        if (input.inputs[3] && TryShoot(input.tick) && !GetDisableInput())
         {
             Debug.Log("called");
             if (moveDirection != Vector3.zero)
@@ -196,10 +196,10 @@ public class PlayerController : NetworkBehaviour
         };
     }
 
-    bool TryShoot()
+    bool TryShoot(int my_tick)
     {
-        if (TickRate.Instance.currentTick < cooldownTimestamp) return false;
-        cooldownTimestamp = TickRate.Instance.currentTick + (cooldown * 60);
+        if (my_tick < cooldownTimestamp) return false;
+        cooldownTimestamp = my_tick + (cooldown * 60);
 
         return true;
     }
