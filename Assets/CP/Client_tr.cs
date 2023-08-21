@@ -78,6 +78,8 @@ public class Client_tr : NetworkBehaviour
 
     void Update()
     {
+        if (!isLocalPlayer) return;
+
         target.transform.position = Vector3.Lerp(target.transform.position , transform.position , 6 * Time.deltaTime);
         horizontalInput = Input.GetAxis("Horizontal");
         verticalInput = Input.GetAxis("Vertical");
