@@ -16,10 +16,13 @@ public class Server_tr : NetworkBehaviour
     private StatePayload[] stateBuffer;
     private Queue<InputPayload> inputQueue;
 
-    public float latency = 0.02f, p_speed = 5;
+    public float latency = 0.02f, p_speed = 30;
+
+    CharacterController cc;
 
     void Awake()
     {
+        cc = GetComponent<CharacterController>();
         Instance = this;
     }
 
@@ -76,10 +79,23 @@ public class Server_tr : NetworkBehaviour
         }
     }
 
+    int cooldown = 15;
+    int my_tick = 0;
     StatePayload ProcessMovement(InputPayload input)
     {
-        // Should always be in sync with same function on Client
-        transform.position += input.inputVector * p_speed * minTimeBetweenTicks;
+        // Should always be in sync with same function on Server
+        cc.Move(input.inputVector * Server_tr.Instance.p_speed * minTimeBetweenTicks);
+
+        if (input.input && input.tick > my_tick + cooldown)
+        {
+            my_tick = input.tick;
+            Dash();
+        }
+
+        void Dash()
+        {
+            cc.Move(input.inputVector * 20 * minTimeBetweenTicks);
+        }
 
         return new StatePayload()
         {

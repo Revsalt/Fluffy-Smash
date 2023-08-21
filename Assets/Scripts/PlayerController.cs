@@ -163,6 +163,7 @@ public class PlayerController : NetworkBehaviour
 
         if (input.inputs[3] && TryShoot() && !GetDisableInput())
         {
+            Debug.Log("called");
             if (moveDirection != Vector3.zero)
                 AddImpact(moveDirection.normalized, 60, true);
             else
