@@ -100,8 +100,6 @@ public class PlayerController : NetworkBehaviour
 
     public Action resultantMovement;
 
-    float cooldown = 1f;
-    float cooldownTimestamp;
     public MovementResult ResultantMovement(ClientInput input)
     {
         input_m = input;
@@ -161,24 +159,20 @@ public class PlayerController : NetworkBehaviour
 
         //Abilites
 
-        if (input.inputs[3] && TryShoot(input.tick) && !GetDisableInput())
+        if (input.inputs[3] && !GetDisableInput())
         {
-            Debug.Log("called");
-            if (moveDirection != Vector3.zero)
-                AddImpact(moveDirection.normalized, 60, true);
-            else
-                AddImpact(Vector3.up, 60, false);
+            StartAbility(0 , input.tick);
         }
 
         if (input.inputs[1] && !GetDisableInput())
         {
-            StartAbility(1);
+            StartAbility(1, input.tick);
         }
 
         //if (GetComponent<ServerAuthoritativeTransform>().clientInput.l_mouse && !GetDisableInput() && GetComponent<Health>().canInfluenceDamage)
         if (input.inputs[2] && !GetDisableInput())
         {
-            StartAbility(2);
+            StartAbility(2, input.tick);
         }
 
         if (!characterController.isGrounded)
@@ -191,17 +185,9 @@ public class PlayerController : NetworkBehaviour
         return new MovementResult()
         {
             position = transform.position,
-            rotation = transform.rotation,
+            rotation = playerModel.transform.rotation,
             tick = input.tick
         };
-    }
-
-    bool TryShoot(int my_tick)
-    {
-        if (my_tick < cooldownTimestamp) return false;
-        cooldownTimestamp = my_tick + (cooldown * 60);
-
-        return true;
     }
 
     public void Update()
@@ -343,7 +329,7 @@ public class PlayerController : NetworkBehaviour
 
     bool abilityInProgress = false;
 
-    public void StartAbility(int i)
+    public void StartAbility(int i , int this_tick)
     {
         Ability abilityRef = new Ability[3] { ability0, ability1, ability_Attack }[i];
 
@@ -365,12 +351,14 @@ public class PlayerController : NetworkBehaviour
             abilityRef.ability.Invoke();
             abilityRef.canCast = false;
 
+            float start_tick = this_tick;
+
             if (!abilityRef.skipNextCoolDown)
             {
-                for (float z = 0; z < (abilityRef.coolDown); z += TickRate.GetMinTimeBetweenTicks())
+                for (int z = 0; this_tick < start_tick + abilityRef.coolDown * 60; z++)
                 {
-                    abilityRef.coolDown_current_value = z;
-                    yield return new WaitForSeconds(TickRate.GetMinTimeBetweenTicks());
+                    abilityRef.coolDown_current_value = ((start_tick + abilityRef.coolDown * 60) - this_tick) / 60;
+                    yield return null;
                 }
             }
             else

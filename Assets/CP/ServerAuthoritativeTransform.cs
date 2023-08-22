@@ -99,7 +99,7 @@ public class ServerAuthoritativeTransform : NetworkBehaviour
         if (ntd.isLocalPlayer) return;
 
         ntd.transform.position = statePayload.position;
-        ntd.GetComponent<PlayerController>().transform.localRotation = statePayload.rotation;
+        ntd.GetComponent<PlayerController>().playerModel.transform.rotation = statePayload.rotation;
     }
 
     [Command]

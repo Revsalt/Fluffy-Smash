@@ -46,7 +46,7 @@ public class DefaultCharacterEffects : MonoBehaviour
         
         windAUD.volume = Mathf.Lerp(windAUD.volume , GetComponent<CharacterController>().velocity.magnitude * windVolumeMultiplaier , 2 * Time.deltaTime);
         //ParticleSystem
-        playerController.cineCamera.m_Lens.FieldOfView = Mathf.Lerp(playerController.cineCamera.m_Lens.FieldOfView , DefaultFOV + GetCharacterMagintude(playerController , .2f) , 5 * Time.deltaTime);
+        playerController.cineCamera.m_Lens.FieldOfView = Mathf.Lerp(playerController.cineCamera.m_Lens.FieldOfView , DefaultFOV + GetCharacterMagintude(playerController , .05f) , 5 * Time.deltaTime);
 
         ParticlesSystemEnabled(movementParticleSystem, playerController.isGroundeed());
         ParticlesSystemEnabled(runAirEffect, GetCharacterMagintude(playerController , 1) > 10f);
