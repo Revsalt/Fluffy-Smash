@@ -208,7 +208,6 @@ public class NinjaCat : PlayerController
 
         if (wallDirection == Vector3.zero) yield break;
 
-        
         gravity = -0.5f;
 
         while (!isGroundeed() && Physics.Raycast(transform.position , -wallDirection , 2f))
@@ -218,7 +217,6 @@ public class NinjaCat : PlayerController
         }
 
         OffWall(false);
-
     }
 
     IEnumerator AttackSequence()
@@ -232,13 +230,18 @@ public class NinjaCat : PlayerController
         AudioManager.instance.Play("NinjaCatSwordWhindUp", transform.position, null);
         float DistanceDuration = 0.1f;
 
-        for (float i = 0; input_m.inputs[2] && i < 1; i += Time.deltaTime)
+        int s_tick = input_m.tick;
+        while (input_m.tick < s_tick + 60 && input_m.inputs[2])
         {
+            float i = (input_m.tick - s_tick);
+
             playerModel.transform.LookAt(piviot_M.transform.position + piviot_M.transform.forward * 1000);
             var cps = chargeParticleSystem.main;
             cps.simulationSpeed = i + 1;
-            DistanceDuration = (float)System.Math.Round(i * .1f, 2);
+            DistanceDuration = i;
             ShakeCamera(i, 1);
+
+            Debug.Log(i);
 
             yield return null;
         }
@@ -282,13 +285,23 @@ public class NinjaCat : PlayerController
 
         GetComponent<Health>().SetCanAttack(true);
 
-        yield return new WaitForSeconds(duration);
+        int c_tick = input_m.tick;
+        while (input_m.tick < c_tick + duration)
+        {
+            yield return null;
+        }
+
         AudioManager.instance.Play("NinjaCatSwordSlash", transform.position, transform);
         HidePlayerModel(true);
         ResetPlayerVelocity();
         AddImpact(playerModel.transform.forward, 70 , false);
 
-        yield return new WaitForSeconds(.5f);
+        int c_tick2 = input_m.tick;
+        while (input_m.tick > c_tick + .5f * 60)
+        {
+            yield return null;
+        }
+
         animator.SetBool("isPersonGrab", false);
         DisableInput(false);
         gravity = GetOriginalGraivty();

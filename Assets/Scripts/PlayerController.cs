@@ -100,8 +100,6 @@ public class PlayerController : NetworkBehaviour
 
     public Action resultantMovement;
 
-    float cooldown = 1f;
-    float cooldownTimestamp;
     public MovementResult ResultantMovement(ClientInput input)
     {
         input_m = input;
@@ -161,13 +159,9 @@ public class PlayerController : NetworkBehaviour
 
         //Abilites
 
-        if (input.inputs[3] && TryShoot(input.tick) && !GetDisableInput())
+        if (input.inputs[3] && !GetDisableInput())
         {
-            Debug.Log("called");
-            if (moveDirection != Vector3.zero)
-                AddImpact(moveDirection.normalized, 60, true);
-            else
-                AddImpact(Vector3.up, 60, false);
+            StartAbility(0);
         }
 
         if (input.inputs[1] && !GetDisableInput())
@@ -194,14 +188,6 @@ public class PlayerController : NetworkBehaviour
             rotation = transform.rotation,
             tick = input.tick
         };
-    }
-
-    bool TryShoot(int my_tick)
-    {
-        if (my_tick < cooldownTimestamp) return false;
-        cooldownTimestamp = my_tick + (cooldown * 60);
-
-        return true;
     }
 
     public void Update()
@@ -355,22 +341,25 @@ public class PlayerController : NetworkBehaviour
             abilityInProgress = false;
         };
 
+        /*
         StartCoroutine(CoolDown());
 
         IEnumerator CoolDown()
         {
-            Debug.Log("started cooldown");
             abilityInProgress = true;
             abilityRef.events[0].Invoke();
             abilityRef.ability.Invoke();
             abilityRef.canCast = false;
 
+            int s_tick = input_m.tick;
+            abilityRef.coolDown_current_value = 0;
+
             if (!abilityRef.skipNextCoolDown)
             {
-                for (float z = 0; z < (abilityRef.coolDown); z += TickRate.GetMinTimeBetweenTicks())
+                while ((abilityRef.coolDown_current_value) < (abilityRef.coolDown * 60))
                 {
-                    abilityRef.coolDown_current_value = z;
-                    yield return new WaitForSeconds(TickRate.GetMinTimeBetweenTicks());
+                    abilityRef.coolDown_current_value = input_m.tick - s_tick;
+                    yield return null;
                 }
             }
             else
@@ -380,7 +369,41 @@ public class PlayerController : NetworkBehaviour
 
             yield break;
         }
+        */
+
+        #region no_Const_Update_CoolDown
+        
+        CallAbility();
+
+        void CallAbility()
+        {
+            if (!TryShoot(input_m.tick, ref abilityRef)) return;
+
+            abilityInProgress = true;
+            abilityRef.events[0].Invoke();
+            abilityRef.ability.Invoke();
+            abilityRef.canCast = false;
+
+            if (!abilityRef.skipNextCoolDown)
+            {
+                abilityRef.coolDown_current_value = Convert.ToInt32(input_m.tick + (abilityRef.coolDown * 60));
+            }
+            else abilityRef.skipNextCoolDown = true;
+
+            abilityRef.canCast = true;
+        }
+
+        bool TryShoot(int my_tick, ref Ability ability)
+        {
+            if (my_tick < ability.coolDown_current_value) 
+                return false;
+
+            return true;
+        }
+        
+        #endregion no_Const_Update_CoolDown
     }
+
 
     public bool GetIsAnyAbilityInPorgress()
     {
@@ -543,16 +566,17 @@ public class Ability
     public Action ability;
 
     public float coolDown;
-    public float coolDown_current_value = 0;
+    [HideInInspector] public float coolDown_current_value = 0;
+    [HideInInspector] public int coolDown_current_tick = 0;
 
     public string abilityName = "NoName (please assign a name)";
 
     [HideInInspector] public UnityEvent[] events;
     [HideInInspector] public Action End;
 
-    public bool canCast = true;
+    [HideInInspector] public bool canCast = true;
     [HideInInspector] public bool skipNextCoolDown = false;
-     public bool isDisabled = false;
+    [HideInInspector] public bool isDisabled = false;
 
     public void DisableAbility(bool b)
     {

@@ -59,8 +59,6 @@ public class ServerAuthoritativeTransform : NetworkBehaviour
     [ClientCallback]
     void H_Tick_client()
     {
-        Debug.Log("boom");
-
         if (!latestServerState.Equals(default(MovementResult)) &&
             (lastProcessedState.Equals(default(MovementResult)) ||
             !latestServerState.Equals(lastProcessedState)))
