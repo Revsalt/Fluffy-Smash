@@ -96,6 +96,7 @@ MonoBehaviour:
   ability0:
     coolDown: 0.5
     coolDown_current_value: 0
+    coolDown_current_tick: 0
     abilityName: QuickDash
     events: []
     canCast: 1
@@ -104,14 +105,16 @@ MonoBehaviour:
   ability1:
     coolDown: 0
     coolDown_current_value: 0
+    coolDown_current_tick: 0
     abilityName: Walk
     events: []
     canCast: 1
     skipNextCoolDown: 0
     isDisabled: 0
   ability_Attack:
-    coolDown: 4
+    coolDown: 0.5
     coolDown_current_value: 0
+    coolDown_current_tick: 0
     abilityName: SakuraBreeze
     events: []
     canCast: 1

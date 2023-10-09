@@ -28,12 +28,20 @@ public class NinjaCat : PlayerController
 
         ability0.ability = delegate
         {
-            if (moveDirection != Vector3.zero)
-                AddImpact(moveDirection.normalized, dashForce, true);
-            else
+            StartCoroutine(delayTest());
+            IEnumerator delayTest()
+            {
                 AddImpact(Vector3.up, dashForce, false);
 
-            ability0.End.Invoke();
+                yield return new WaitForSeconds(.5f);
+
+                if (moveDirection != Vector3.zero)
+                    AddImpact(moveDirection.normalized, dashForce, true);
+                else
+                    AddImpact(Vector3.up, dashForce, false);
+
+                ability0.End.Invoke();
+            }
         };
 
         ability0.events = new UnityEvent[2] { inDashStart, inDashEnd };
@@ -64,7 +72,7 @@ public class NinjaCat : PlayerController
 
         ability_Attack.ability = delegate
         {
-            StartCoroutine(AttackSequence());
+            StartCoroutine(AttackSequence_Test());
         };
 
         ability_Attack.events = new UnityEvent[] { health.StartAttack, health.EndAttack };
@@ -217,6 +225,22 @@ public class NinjaCat : PlayerController
         }
 
         OffWall(false);
+    }
+
+    IEnumerator AttackSequence_Test()
+    {
+        DisableInput(true);
+        AddImpact(Vector3.right, dashForce * 2, true);
+        int s_tick = input_m.tick;
+
+        while (input_m.tick < s_tick + 20)
+        {
+            Debug.Log("bro " + input_m.tick);
+            yield return null;
+        }
+
+        DisableInput(false);
+        ability_Attack.End.Invoke();
     }
 
     IEnumerator AttackSequence()
