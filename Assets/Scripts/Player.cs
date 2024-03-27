@@ -34,6 +34,7 @@ public class Player : PlayerController
     [SerializeField] Rig rigWeight;
 
     Vector3 wallDirection = Vector3.zero;
+    Vector3 wallSlide = Vector3.zero;
     float oldMovementSpeed = 0;
     bool canDash = true;
 
@@ -64,9 +65,12 @@ public class Player : PlayerController
     bool canwalk = false;
     bool canGrab = true;
     Bamboo lastbamboo = null;
-
+    bool highjump = false;
+    float slideTime = 0;
     new void Update()
     {
+
+
         if (playerModelIkTarget.transform.localPosition.z < 0)
             weight = 7 + Mathf.RoundToInt(playerModelIkTarget.transform.localPosition.z);
         else
@@ -121,6 +125,12 @@ public class Player : PlayerController
             }
         }
 
+        RaycastHit hitGround;
+        if (Physics.Raycast(transform.position + movementDirection , Vector3.down , out hitGround))
+        {
+            highjump = (Vector3.Distance(hitGround.point, transform.position + movementDirection) > 10);
+        }
+
         if (isGroundeed() && canBurstParticels)
         {
             hitGroundStart.Invoke();
@@ -147,6 +157,7 @@ public class Player : PlayerController
             {
                 harshFall = true;
             }
+            animator.SetFloat("timeInAir", time);
 
         }
         else
@@ -171,34 +182,6 @@ public class Player : PlayerController
         else if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             movementSpeed = oldMovementSpeed * 2f;
-        }
-
-        if (Input.GetMouseButton(0) && !GetDisableMovement() && canGrab)
-        {
-
-            StartCoroutine(PersonGrab());
-
-            IEnumerator PersonGrab()
-            {
-                canGrab = false;
-                movementSpeed = oldMovementSpeed * 1.3f;
-                animator.SetBool("isPersonGrab", true);
-                GetComponent<TagLogic>().CanTag = true;
-
-                for (float i = 0; i < 2; i += Time.deltaTime) //need to be tested
-                {
-                    if (GetComponent<TagLogic>().CanTag == false)
-                        break;
-                    yield return null;
-                }
-
-                movementSpeed = oldMovementSpeed * 2;
-                animator.SetBool("isPersonGrab", false);
-                GetComponent<TagLogic>().CanTag = false;
-
-                yield return new WaitForSeconds(.8f);
-                canGrab = true;
-            }
         }
 
         if (Input.GetMouseButton(1) && !GetDisableMovement())
@@ -227,7 +210,33 @@ public class Player : PlayerController
         if (Input.GetKeyDown(KeyCode.Space) && isGroundeed())
         {
             audioPlayer.PlayAirSwooshSound();
+            if (highjump) { animator.SetFloat("JumpNumber", 2); return; }
             animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
+        }
+
+        if (wallSlide != Vector3.zero)
+        {
+            RestrictMovement(true);
+            slideTime += Time.deltaTime;
+            playerVelocity += new Vector3(0,1, 0) * slideTime * .4f;
+            if (characterController.velocity.y > 0)
+            {
+                slideTime = 0;
+                RestrictMovement(false);
+
+                DisableMovment(true);
+                ResetPlayerVelocity();
+
+                transform.position += wallSlide / 2;
+
+                wallDirection = wallSlide;
+                transform.rotation = Quaternion.LookRotation(Vector3.up, wallSlide);
+
+                animator.SetBool("wallSlide", false);
+                animator.SetBool("isWallGrab", true);
+
+                wallSlide = Vector3.zero;
+            }
         }
 
         //wall running
@@ -262,6 +271,36 @@ public class Player : PlayerController
             }
 
             wallDirection = Vector3.zero;
+        }
+
+        if (wallSlide != Vector3.zero && Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("on");
+            RestrictMovement(false);
+            DisableMovment(false);
+
+            audioPlayer.PlayAirSwooshSound();
+            animator.SetBool("wallSlide", false);
+            slideTime = 0;
+            animator.SetBool("isWallGrab", false);
+            animator.SetBool("isBambooGrab", false);
+
+            transform.rotation = Quaternion.Euler(Vector3.zero);
+
+            if (Physics.Raycast(transform.position, -wallSlide, 10, layerMask))
+            {
+                if (isRunning)
+                {
+                    AddImpact(Vector3.up, wallJumpForce);
+                    AddImpact(wallSlide, 60);
+                }
+                else
+                {
+                    AddImpact(wallSlide, 20);
+                }
+            }
+
+            wallSlide = Vector3.zero;
         }
 
         Vector3 direction = transform.right * Input.GetAxisRaw("Horizontal") +
@@ -305,29 +344,44 @@ public class Player : PlayerController
 
         if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal))
         {
-            audioPlayer.playSoundWalkFootStep();
-
-            DisableMovment(true);
-            ResetPlayerVelocity();
-            transform.position += hit.normal / 2;
-
-            wallDirection = hit.normal;
-            transform.rotation = Quaternion.LookRotation(Vector3.up, wallDirection);
-
-            if (hit.collider.tag != "Bamboo")
+            if (characterController.velocity.y < -50)
             {
-                animator.SetBool("isWallGrab", true);
+                animator.SetBool("wallSlide", true);
+                wallSlide = hit.normal;
             }
             else
             {
-                lastbamboo = hit.collider.GetComponent<Bamboo>();
-                lastbamboo.StopBounce();
-                animator.SetBool("isBambooGrab", true);
+                GrabWall(hit);
             }
 
             canDash = true;
         }
     }
+
+    public void GrabWall(ControllerColliderHit hit)
+    {
+        audioPlayer.playSoundWalkFootStep();
+
+        ResetPlayerVelocity();
+        DisableMovment(true);
+        transform.position += hit.normal / 2;
+
+        wallDirection = hit.normal;
+        transform.rotation = Quaternion.LookRotation(Vector3.up, wallDirection);
+
+        if (hit.collider.tag != "Bamboo")
+        {
+            animator.SetBool("isWallGrab", true);
+        }
+        else
+        {
+            lastbamboo = hit.collider.GetComponent<Bamboo>();
+            lastbamboo.StopBounce();
+            animator.SetBool("isBambooGrab", true);
+        }
+
+    }
+
 
     void ParticlesSystemEnabled(ParticleSystem ps , bool b)
     {

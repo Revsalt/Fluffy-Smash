@@ -281,7 +281,7 @@ MonoBehaviour:
   PersistNetworkManagerToOfflineScene: 0
   runInBackground: 1
   autoStartServerBuild: 1
-  serverTickRate: 30
+  serverTickRate: 60
   offlineScene: 
   onlineScene: 
   transport: {fileID: 264944300}
@@ -294,6 +294,7 @@ MonoBehaviour:
   playerSpawnMethod: 1
   spawnPrefabs:
   - {fileID: 555757707498637005, guid: ac3f7ab04d8c2d34aa549775556ab484, type: 3}
+  - {fileID: 3271818127981240373, guid: 552e27f1eda6feb49a302ebad9856d98, type: 3}
   showRoomGUI: 1
   minPlayers: 1
   roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,

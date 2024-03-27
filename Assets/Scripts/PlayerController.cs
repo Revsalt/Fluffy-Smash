@@ -7,9 +7,10 @@ public class PlayerController : NetworkBehaviour
 {
     [HideInInspector]public CharacterController characterController;
     public GameObject piviot_M;
-    Vector3 playerVelocity = Vector3.zero;
+    public Vector3 playerVelocity = Vector3.zero;
     Vector3 impact = Vector3.zero;
     bool disableMovement = false;
+    bool restricMovment = false;
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
@@ -20,7 +21,10 @@ public class PlayerController : NetworkBehaviour
     [Header("Jumping")]
     [SerializeField]private float jumpHeight = 5;
     public LayerMask layerMask = 5;
-    [SerializeField] private float gravity = 5;
+    [SerializeField] public float gravity = 5;
+
+    [HideInInspector]
+    public float velocity;
 
     void OnValidate()
     {
@@ -37,6 +41,8 @@ public class PlayerController : NetworkBehaviour
     float rotX, rotY;
     public void Update()
     {
+        velocity = playerVelocity.magnitude;
+
         Vector3 move = transform.right * Input.GetAxisRaw("Horizontal") +
             transform.forward * Input.GetAxisRaw("Vertical");
 
@@ -73,6 +79,7 @@ public class PlayerController : NetworkBehaviour
             playerVelocity.y = 0;
         }
 
+        if (restricMovment) { move = Vector3.zero; }
         Result += move * Time.deltaTime * movementSpeed;
 
         if (Input.GetKeyDown(KeyCode.Space) && isGroundeed())
@@ -83,7 +90,6 @@ public class PlayerController : NetworkBehaviour
 
         playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
-
 
     }
 
@@ -98,6 +104,11 @@ public class PlayerController : NetworkBehaviour
         characterController.enabled = false;
         transform.position = newPosition;
         characterController.enabled = true;
+    }
+
+    public void RestrictMovement(bool b)
+    {
+        restricMovment = b;
     }
 
     public void DisableMovment(bool enabled)
@@ -131,6 +142,7 @@ public class PlayerController : NetworkBehaviour
     public void ResetPlayerVelocity()
     {
         playerVelocity = Vector3.zero;
+        characterController.velocity.Set(0, 0, 0);
     }
 
     public bool isGroundeed()

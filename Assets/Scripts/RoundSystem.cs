@@ -24,10 +24,21 @@ public class RoundSystem : NetworkBehaviour
 
     #region Server
 
+    [ServerCallback]
+    private void Update()
+    {
+
+    }
+
     public override void OnStartServer()
     {
         NetworkRoomManager.OnServerStopped += CleanUpServer;
         NetworkRoomManager.OnServerReadied += CheckToStartRound;
+    }
+
+    public void Win(string winner)
+    {
+
     }
 
     [ServerCallback]
@@ -43,6 +54,27 @@ public class RoundSystem : NetworkBehaviour
     [ServerCallback]
     public void StartRound()
     {
+        Player[] AllPlayer = FindObjectsOfType<Player>();
+
+        List<Player> TeamA = new List<Player>();
+        List<Player> TeamB = new List<Player>();
+
+        foreach (Player player in AllPlayer)
+        {
+            int TeamID = Random.Range(0, 1);
+
+            if (TeamID == 0)
+            {
+                player.GetComponent<PlayerNetworkManager>().Role = "TeamRed";
+                TeamA.Add(player);
+            }
+            else
+            {
+                player.GetComponent<PlayerNetworkManager>().Role = "TeamBlue";
+                TeamB.Add(player);
+            }
+        }
+
         RpcStartRound();
     }
 

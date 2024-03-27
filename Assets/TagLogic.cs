@@ -5,57 +5,61 @@ using Mirror;
 
 public class TagLogic : NetworkBehaviour
 {
-    [SyncVar] public bool isTagger = false;
-    [SyncVar]public bool isTagged = false;
-    public bool CanTag = false;
-    public Transform TagPosition;
-    public float TagRadius = 2;
+    [SyncVar]public string Role = "";
 
-    void Update()
+    private void Update()
     {
-        if (!isLocalPlayer)
-            return;
+        if (!isLocalPlayer) return;
 
-        if (CanTag)
+        if (Role == "Balls")
         {
-            Collider[] players = Physics.OverlapSphere(TagPosition.position , TagRadius);
-            foreach (var item in players)
+            if (Input.GetKeyDown(KeyCode.E))
             {
-                if (item.GetComponent<TagLogic>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer)
-                {
-                    CmdIsTagged(item.gameObject);
-                    CanTag = false;
-                }
-                return;
+                GetComponent<PlayerAnimations>().animator.SetBool("isPersonGrab", true);
+
+                SendGrab();
             }
         }
     }
 
-    [Command]
-    public void CmdIsTagged(GameObject item)
+    public void CloseGrabAnimation()
     {
-        item.GetComponent<TagLogic>().isTagged = true;
-        item.GetComponent<TagLogic>().isTagger = true;
-        MakeTagger(item.GetComponent<NetworkIdentity>().connectionToClient);
+        GetComponent<PlayerAnimations>().animator.SetBool("isPersonGrab", false);
     }
 
-    [TargetRpc]
-    public void MakeTagger(NetworkConnection ntd)
+    bool canGrab = true;
+    [Command(requiresAuthority = false)]
+    public void SendGrab(NetworkConnectionToClient sender = null)
     {
-        StartCoroutine(Tag());
+        if (!canGrab) return;
 
-        IEnumerator Tag()
+        StartCoroutine(Grab());
+
+        IEnumerator Grab()
         {
-            ntd.identity.GetComponent<Player>().enabled = false;
-            yield return new WaitForSeconds(2);
-            ntd.identity.GetComponent<Player>().enabled = true;
+            for (float i = 0; i < 2; i += Time.deltaTime)
+            {
+                Collider[] colliders = Physics.OverlapSphere(sender.identity.transform.position + sender.identity.transform.forward, 2);
+                foreach (Collider collider in colliders)
+                {
+                    if (collider.GetComponent<TagLogic>() && collider.GetComponent<TagLogic>().Role != "Balls")
+                    {
+                        collider.GetComponent<TagLogic>().Role = "Balls";
+                        GotGrabed(sender.identity.connectionToClient);
+                        yield break;
+                    }
+                }
+                yield return null;
+            }
+
+            GotGrabed(sender.identity.connectionToClient);
+
         }
     }
 
-    private void OnDrawGizmos()
+    [TargetRpc]
+    public void GotGrabed(NetworkConnection target)
     {
-        Gizmos.color = Color.red;
-
-        Gizmos.DrawSphere(TagPosition.position, TagRadius);
+        target.identity.GetComponent<TagLogic>().CloseGrabAnimation();
     }
 }
