@@ -29,9 +29,11 @@ public class Player : PlayerController
     [SerializeField] float wallJumpForce = 80;
     [SerializeField] float dashForce = 80;
     [SerializeField] Animator animator;
-    [SerializeField] GameObject playermodelchild;
+    public GameObject playermodelchild;
     [SerializeField] GameObject playerModelIkTarget;
     [SerializeField] Rig rigWeight;
+
+    public bool lockCamera = false;
 
     Vector3 wallDirection = Vector3.zero;
     Vector3 wallSlide = Vector3.zero;
@@ -63,7 +65,6 @@ public class Player : PlayerController
     float time = 0;
     bool cantrail = false;
     bool canwalk = false;
-    bool canGrab = true;
     Bamboo lastbamboo = null;
     bool highjump = false;
     float slideTime = 0;
@@ -303,16 +304,26 @@ public class Player : PlayerController
             wallSlide = Vector3.zero;
         }
 
-        Vector3 direction = transform.right * Input.GetAxisRaw("Horizontal") +
-        transform.forward * Input.GetAxisRaw("Vertical");
-
-        if (wallDirection == Vector3.zero)
-            playermodelchild.transform.LookAt(playermodelchild.transform.position + direction);
-        else
-            playermodelchild.transform.localRotation = Quaternion.identity;
-
         Vector3 pos = playerModel.transform.position + Camera.main.transform.forward * 10;
         playerModelIkTarget.transform.position = new Vector3(Mathf.RoundToInt(pos.x), Mathf.RoundToInt(pos.y), Mathf.RoundToInt(pos.z));
+    }
+
+    private void LateUpdate()
+    {
+        Vector3 direction = transform.right * Input.GetAxisRaw("Horizontal") +
+            transform.forward * Input.GetAxisRaw("Vertical");
+
+        if (!lockCamera)
+        {
+            if (wallDirection == Vector3.zero)
+                playermodelchild.transform.LookAt(playermodelchild.transform.position + direction);
+            else
+                playermodelchild.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            playermodelchild.transform.LookAt(playermodelchild.transform.position + transform.forward);
+        }
     }
 
     IEnumerator ReChargeDash()

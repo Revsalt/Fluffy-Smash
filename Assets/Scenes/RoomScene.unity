@@ -218,7 +218,6 @@ GameObject:
   - component: {fileID: 264944301}
   - component: {fileID: 264944300}
   - component: {fileID: 264944299}
-  - component: {fileID: 264944303}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -320,25 +319,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &264944303
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 264944298}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 96b149f511061407fb54895c057b7736, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  wrap: {fileID: 264944300}
-  latencySpikeMultiplier: 1
-  latencySpikeSpeedMultiplier: 200
-  reliableLatency: 200
-  unreliableLoss: 1
-  unreliableLatency: 200
-  unreliableScramble: 1
 --- !u!1 &880719177
 GameObject:
   m_ObjectHideFlags: 0

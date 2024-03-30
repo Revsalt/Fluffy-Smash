@@ -7,6 +7,7 @@ public class PlayerAnimations : MonoBehaviour
 {
     public Animator animator;
     public CinemachineVirtualCamera virtualCamera;
+    public CinemachineVirtualCamera aimVirtualCamera;
     [SerializeField] float FOVmultiplier = .2f;
 
     // Start is called before the first frame update

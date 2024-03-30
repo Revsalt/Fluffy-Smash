@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.Animations.Rigging;
 
 public class PlayerNetworkManager : NetworkBehaviour
 {
@@ -19,9 +20,26 @@ public class PlayerNetworkManager : NetworkBehaviour
 
         if (!isLocalPlayer) return;
 
-        if (Input.GetKeyDown(KeyCode.F))
+        if (flagHook.gameObject.activeInHierarchy == true)
         {
-            SendDropFlag(GetComponent<PlayerAnimations>().virtualCamera.transform.forward);
+            if (Input.GetMouseButtonDown(0))
+            {
+                GetComponent<PlayerAnimations>().animator.SetBool("aimFlag", true);
+                GetComponent<PlayerAnimations>().aimVirtualCamera.gameObject.SetActive(true);
+                GetComponent<Player>().playermodelchild.GetComponent<RigBuilder>().layers[0].active = false;
+                GetComponent<Player>().playermodelchild.GetComponent<RigBuilder>().layers[1].active = true;
+                GetComponent<Player>().lockCamera = true;
+            }
+            else if (Input.GetMouseButtonUp(0))
+            {
+                SendDropFlag(GetComponent<PlayerAnimations>().virtualCamera.transform.forward);
+                GetComponent<PlayerAnimations>().animator.SetBool("aimFlag", false);
+
+                GetComponent<PlayerAnimations>().aimVirtualCamera.gameObject.SetActive(false);
+                GetComponent<Player>().playermodelchild.GetComponent<RigBuilder>().layers[0].active = true;
+                GetComponent<Player>().playermodelchild.GetComponent<RigBuilder>().layers[1].active = false;
+                GetComponent<Player>().lockCamera = false;
+            }
         }
     }
 

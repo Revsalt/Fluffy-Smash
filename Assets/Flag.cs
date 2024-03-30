@@ -4,18 +4,13 @@ using UnityEngine;
 
 public class Flag : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        if (!GetComponent<Rigidbody>().isKinematic)
+        if (!Physics.Raycast(transform.position, Vector3.down, 4))
         {
-            transform.forward = GetComponent<Rigidbody>().velocity;
+            transform.forward =
+                Vector3.Slerp(transform.forward, GetComponent<Rigidbody>().velocity.normalized, Time.deltaTime * 15);
         }
     }
 }

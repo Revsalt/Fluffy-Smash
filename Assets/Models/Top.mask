@@ -6,8 +6,8 @@ AvatarMask:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: TopCat
-  m_Mask: 00000000000000000000000000000000000000000000000001000000000000000100000000000000000000000000000000000000
+  m_Name: Top
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
   m_Elements:
   - m_Path: 
     m_Weight: 1
@@ -18,7 +18,7 @@ AvatarMask:
   - m_Path: cat
     m_Weight: 0
   - m_Path: cat/Spline 1
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/LeftBackLeg
     m_Weight: 0
   - m_Path: cat/Spline 1/LeftBackLeg/LeftForeLeg
@@ -49,30 +49,32 @@ AvatarMask:
     m_Weight: 0
   - m_Path: cat/Spline 1/Spline 2
     m_Weight: 1
+  - m_Path: cat/Spline 1/Spline 2/Cylinder.001
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftIndexFinger
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftIndexFinger/LeftIndexFinger_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftMiddleFinger
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftMiddleFinger/LeftMiddleFinger_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftRingFinger
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftRingFinger/LeftRingFinger_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftThumb.01
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftThumb.01/LeftThumb.02
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/LeftShoulder/LeftBackArm/LeftForeArm/LeftThumb.01/LeftThumb.02/LeftThumb.02_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head
@@ -80,27 +82,27 @@ AvatarMask:
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/HeadSupLeft
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/HeadSupLeft/HeadSupLeft_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/HeadSupRight
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/HeadSupRight/HeadSupRight_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/LeftEar.01
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/LeftEar.01/LeftEar.02
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/LeftEar.01/LeftEar.02/LeftEar.03
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/LeftEar.01/LeftEar.02/LeftEar.03/LeftEar.03_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/RightEar.01
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/RightEar.01/RightEar.02
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/RightEar.01/RightEar.02/RightEar.03
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/Neck/Head/RightEar.01/RightEar.02/RightEar.03/RightEar.03_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/RightShoulder
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/RightShoulder/RightBackArm
@@ -124,7 +126,7 @@ AvatarMask:
   - m_Path: cat/Spline 1/Spline 2/RightShoulder/RightBackArm/RightForeArm/RightThumb.01/RightThumb.02
     m_Weight: 1
   - m_Path: cat/Spline 1/Spline 2/RightShoulder/RightBackArm/RightForeArm/RightThumb.01/RightThumb.02/RightThumb.02_end
-    m_Weight: 0
+    m_Weight: 1
   - m_Path: cat/Spline 1/Tail.01
     m_Weight: 0
   - m_Path: cat/Spline 1/Tail.01/Tail.02
