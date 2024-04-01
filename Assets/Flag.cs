@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class Flag : MonoBehaviour
 {
-    // Update is called once per frame
+    public string Team;
+    [SerializeField] SkinnedMeshRenderer flagMesh;
+
+    private void Start()
+    {
+        flagMesh.material.color = Team == "Red" ? Color.red : Color.blue;
+    }
+
     void FixedUpdate()
     {
         if (!Physics.Raycast(transform.position, Vector3.down, 4))

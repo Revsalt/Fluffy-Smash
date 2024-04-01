@@ -215,9 +215,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 264944302}
-  - component: {fileID: 264944301}
-  - component: {fileID: 264944300}
   - component: {fileID: 264944299}
+  - component: {fileID: 264944300}
+  - component: {fileID: 264944301}
   m_Layer: 0
   m_Name: NetworkManager
   m_TagString: Untagged
@@ -234,11 +234,38 @@ MonoBehaviour:
   m_GameObject: {fileID: 264944298}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Script: {fileID: 11500000, guid: 9fe301eae666bbb44aacf9f8dba32ba7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  offsetX: 0
-  offsetY: 0
+  dontDestroyOnLoad: 1
+  PersistNetworkManagerToOfflineScene: 0
+  runInBackground: 1
+  autoStartServerBuild: 1
+  serverTickRate: 60
+  offlineScene: 
+  onlineScene: 
+  transport: {fileID: 264944300}
+  networkAddress: localhost
+  maxConnections: 100
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 1646360425263456792, guid: 6f71b832f06ab0e4ba3b015b2ea606e2,
+    type: 3}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 0
+  spawnPrefabs:
+  - {fileID: 3271818127981240373, guid: 552e27f1eda6feb49a302ebad9856d98, type: 3}
+  - {fileID: 555757707498637005, guid: ac3f7ab04d8c2d34aa549775556ab484, type: 3}
+  showRoomGUI: 1
+  minPlayers: 1
+  roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
+    type: 3}
+  RoomScene: Assets/Scenes/RoomScene.unity
+  GameplayScene: Assets/Scenes/SampleScene.unity
+  _allPlayersReady: 0
+  roundSystem: {fileID: 555757707498637005, guid: ac3f7ab04d8c2d34aa549775556ab484,
+    type: 3}
+  roomSlots: []
+  clientIndex: 0
 --- !u!114 &264944300
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,38 +300,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 264944298}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 615e6c6589cf9e54cad646b5a11e0529, type: 3}
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dontDestroyOnLoad: 1
-  PersistNetworkManagerToOfflineScene: 0
-  runInBackground: 1
-  autoStartServerBuild: 1
-  serverTickRate: 60
-  offlineScene: 
-  onlineScene: 
-  transport: {fileID: 264944300}
-  networkAddress: localhost
-  maxConnections: 100
-  authenticator: {fileID: 0}
-  playerPrefab: {fileID: 1646360425263456792, guid: 6f71b832f06ab0e4ba3b015b2ea606e2,
-    type: 3}
-  autoCreatePlayer: 1
-  playerSpawnMethod: 1
-  spawnPrefabs:
-  - {fileID: 555757707498637005, guid: ac3f7ab04d8c2d34aa549775556ab484, type: 3}
-  - {fileID: 3271818127981240373, guid: 552e27f1eda6feb49a302ebad9856d98, type: 3}
-  showRoomGUI: 1
-  minPlayers: 1
-  roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd,
-    type: 3}
-  RoomScene: Assets/Scenes/RoomScene.unity
-  GameplayScene: Assets/Scenes/SampleScene.unity
-  _allPlayersReady: 0
-  roundSystem: {fileID: 555757707498637005, guid: ac3f7ab04d8c2d34aa549775556ab484,
-    type: 3}
-  roomSlots: []
-  clientIndex: 0
+  offsetX: 0
+  offsetY: 0
 --- !u!4 &264944302
 Transform:
   m_ObjectHideFlags: 0

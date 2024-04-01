@@ -8,7 +8,7 @@ public class PlayerNetworkManager : NetworkBehaviour
 {
     [SerializeField] Transform flagHook;
     [SerializeField] GameObject flagPrefab;
-    [SyncVar] public string Role = "";
+    [SyncVar] public string Team = "";
 
     public void Update()
     {
