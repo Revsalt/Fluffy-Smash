@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
+using UnityEngine.Events;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -14,6 +15,7 @@ public class PlayerController : NetworkBehaviour
 
     [Header("Default")]
     [SerializeField] public GameObject playerModel;
+    [SerializeField] public GameObject playerModelChild;
     [Header("Camera")]
     [SerializeField]private float sensitvity = 100;
     [Header("Movement")]
@@ -22,6 +24,13 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]private float jumpHeight = 5;
     public LayerMask layerMask = 5;
     [SerializeField] public float gravity = 5;
+    [Header("Other Passives and Ablities")]
+    [SerializeField] float dashForce = 80;
+    [SerializeField] float wallJumpForce = 80;
+    [SerializeField] UnityEvent OnDash;
+    Vector3 wallDirection = Vector3.zero;
+
+    ControllerColliderHit ColidedWithWall = null;
 
     [HideInInspector]
     public float velocity;
@@ -36,18 +45,23 @@ public class PlayerController : NetworkBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
+
+        piviot_M.transform.SetParent(null);
     }
 
     float rotX, rotY;
     public void Update()
     {
-        velocity = playerVelocity.magnitude;
+        if (!isLocalPlayer) return;
 
         Vector3 move = transform.right * Input.GetAxisRaw("Horizontal") +
-            transform.forward * Input.GetAxisRaw("Vertical");
+        transform.forward * Input.GetAxisRaw("Vertical");
 
-        //CameraPosistionAdjustment
-        piviot_M.transform.position = transform.position;
+        if (move != Vector3.zero && !GetDisableMovement())
+        {
+            transform.rotation = Quaternion.Euler(0, piviot_M.transform.eulerAngles.y, 0);
+            playerModelChild.transform.forward = move;
+        }
 
         //Camera Movement
 
@@ -58,39 +72,106 @@ public class PlayerController : NetworkBehaviour
 
         piviot_M.transform.localRotation = Quaternion.Euler(-rotY, rotX, 0f);
 
-        //Movement
+    }
 
-        if (disableMovement)
-            return;
+    private void LateUpdate()
+    {
+        //CameraPosistionAdjustment
+        piviot_M.transform.position = transform.position;
+    }
 
-        if (move != Vector3.zero)
-            transform.rotation = Quaternion.Euler(0,piviot_M.transform.eulerAngles.y , 0);
+    public StatePayload Movement(InputPayload input, float deltaTime)
+    {
+        velocity = playerVelocity.magnitude;
+
+        Vector3 move = input.right * input.inputVector.x +
+            input.forward * input.inputVector.z;
+
+        playerModelChild.transform.forward = move;
+
+
+        if (ColidedWithWall != null)
+        {
+            GrabWall(ColidedWithWall);
+        }
+
+        if (wallDirection != Vector3.zero && input.jump)
+        {
+
+            DisableMovment(false);
+
+            GetComponent<PlayerAnimations>().animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
+            GetComponent<PlayerAnimations>().animator.SetBool("isWallGrab", false);
+
+            //transform.rotation = Quaternion.Euler(Vector3.zero);
+
+            if (Physics.Raycast(transform.position, -wallDirection, 10, layerMask))
+            {
+                if (move != Vector3.zero)
+                {
+                    AddImpact(Vector3.up, wallJumpForce);
+                    AddImpact(wallDirection, 60);
+                }
+                else
+                {
+                    AddImpact(wallDirection, 20);
+                }
+            }
+
+            wallDirection = Vector3.zero;
+        }
+
+        //conditional forces here
+
+        if (input.dash && !disableMovement)
+        {
+            Vector3 direc = move.normalized;
+            direc.y = 0;
+
+            if (move != Vector3.zero)
+                AddImpact(direc, dashForce);
+            else
+                AddImpact(Vector3.up, dashForce);
+
+            OnDash.Invoke();
+        }
 
         //Movement and impact
-
-        Vector3 Result = Vector3.zero;
-
-        if (impact.magnitude > 0.2) Result += impact * Time.deltaTime;
-         impact = Vector3.Lerp(impact, Vector3.zero, 5 * Time.deltaTime);
-        
-
-        if (characterController.isGrounded && playerVelocity.y < 0)
+        if (!disableMovement)
         {
-            playerVelocity.y = 0;
+            Vector3 Result = Vector3.zero;
+
+            if (impact.magnitude > 0.2) Result += impact * deltaTime;
+            impact = Vector3.Lerp(impact, Vector3.zero, 5 * deltaTime);
+
+
+            if (characterController.isGrounded && playerVelocity.y < 0)
+            {
+                playerVelocity.y = 0;
+            }
+
+            if (restricMovment) { move = Vector3.zero; }
+            Result += move * (deltaTime * movementSpeed);
+
+            if (input.jump && isGroundeed())
+            {
+                playerVelocity.y = 0;
+                playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
+            }
+
+            //apply the motion
+
+            playerVelocity.y += gravity * 3 * deltaTime;
+
+
+            characterController.Move(Result + (playerVelocity * deltaTime));
         }
 
-        if (restricMovment) { move = Vector3.zero; }
-        Result += move * Time.deltaTime * movementSpeed;
-
-        if (Input.GetKeyDown(KeyCode.Space) && isGroundeed())
+        return new StatePayload()
         {
-            playerVelocity.y = 0;
-            playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
-        }
-
-        playerVelocity.y += gravity * Time.deltaTime * 3;
-        characterController.Move(Result + (playerVelocity * Time.deltaTime));
-
+            tick = input.tick,
+            position = transform.position,
+        };
     }
 
     void ResetTrasnformValues(Transform trans)
@@ -157,5 +238,67 @@ public class PlayerController : NetworkBehaviour
 
         Gizmos.color = Color.red;
         Gizmos.DrawLine(transform.position, hit.point);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (wallDirection != Vector3.zero)
+            return;
+
+        if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal))
+        {
+            if (characterController.velocity.y < -50)
+            {
+                //animator.SetBool("wallSlide", true);
+                //wallSlide = hit.normal;
+            }
+            else
+            {
+                //GrabWall(hit);
+            }
+
+            ColidedWithWall = hit;
+
+            //GrabWall(hit);
+        }
+    }
+
+    public void GrabWall(ControllerColliderHit hit)
+    {
+        ResetPlayerVelocity();
+        DisableMovment(true);
+        transform.position += hit.normal / 2;
+
+        wallDirection = hit.normal;
+        //transform.rotation = Quaternion.LookRotation(Vector3.up, wallDirection);
+
+        GetComponent<PlayerAnimations>().animator.SetBool("isWallGrab", true);
+
+        ColidedWithWall = null;
+
+    }
+
+    private bool WallHeightIsEnough(Vector3 wallDirection)
+    {
+        bool condition = false;
+
+        for (int i = 0; i < 2; i++)
+        {
+            RaycastHit hit;
+            Physics.Raycast(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, out hit, 1);
+            Debug.DrawRay(transform.position + new Vector3(0, i * .5f, 0), -wallDirection, Color.blue, 5);
+
+            if (hit.collider != null)
+            {
+                condition = true;
+            }
+            else
+            {
+                condition = false;
+                return false;
+            }
+        }
+
+        return condition;
     }
 }

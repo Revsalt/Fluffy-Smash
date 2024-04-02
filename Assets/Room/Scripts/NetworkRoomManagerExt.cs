@@ -1,17 +1,30 @@
 using UnityEngine;
 
+/*
+	Documentation: https://mirror-networking.gitbook.io/docs/components/network-manager
+	API Reference: https://mirror-networking.com/docs/api/Mirror.NetworkManager.html
+*/
+
 namespace Mirror.Examples.NetworkRoom
 {
     [AddComponentMenu("")]
     public class NetworkRoomManagerExt : NetworkRoomManager
     {
+        [Header("Spawner Setup")]
+        [Tooltip("Reward Prefab for the Spawner")]
+        public GameObject rewardPrefab;
+
+        public static new NetworkRoomManagerExt singleton => NetworkManager.singleton as NetworkRoomManagerExt;
+
         /// <summary>
         /// This is called on the server when a networked scene finishes loading.
         /// </summary>
         /// <param name="sceneName">Name of the new scene.</param>
         public override void OnRoomServerSceneChanged(string sceneName)
         {
-
+            // spawn the initial batch of Rewards
+            if (sceneName == GameplayScene)
+                Spawner.InitialSpawn();
         }
 
         /// <summary>
@@ -22,10 +35,10 @@ namespace Mirror.Examples.NetworkRoom
         /// <param name="roomPlayer"></param>
         /// <param name="gamePlayer"></param>
         /// <returns>true unless some code in here decides it needs to abort the replacement</returns>
-        public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer)
+        public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
         {
-            //PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
-            //playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
+            PlayerScore playerScore = gamePlayer.GetComponent<PlayerScore>();
+            playerScore.index = roomPlayer.GetComponent<NetworkRoomPlayer>().index;
             return true;
         }
 
@@ -53,11 +66,14 @@ namespace Mirror.Examples.NetworkRoom
         public override void OnRoomServerPlayersReady()
         {
             // calling the base method calls ServerChangeScene as soon as all players are in Ready state.
-#if UNITY_SERVER
-            base.OnRoomServerPlayersReady();
-#else
-            showStartButton = true;
-#endif
+            if (Utils.IsHeadless())
+            {
+                base.OnRoomServerPlayersReady();
+            }
+            else
+            {
+                showStartButton = true;
+            }
         }
 
         public override void OnGUI()

@@ -2,26 +2,52 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Cinemachine;
+using Mirror;
 
-public class PlayerAnimations : MonoBehaviour
+public class PlayerAnimations : NetworkBehaviour
 {
     public Animator animator;
     public CinemachineVirtualCamera virtualCamera;
     public CinemachineVirtualCamera aimVirtualCamera;
     [SerializeField] float FOVmultiplier = .2f;
 
-    // Start is called before the first frame update
-    void Start()
+    private PlayerController pc;
+
+    private void Start()
     {
-        
+        pc = GetComponent<PlayerController>();
     }
 
-    // Update is called once per frame
+    float timeinAir = 0;
+    [ClientCallback]
     void Update()
     {
-        float newFOV = GetComponent<Player>().velocity * FOVmultiplier;
+        float newFOV = GetComponent<PlayerController>().velocity * FOVmultiplier;
         virtualCamera.m_Lens.FieldOfView = Mathf.Lerp(virtualCamera.m_Lens.FieldOfView , 50 + newFOV, 5 * Time.deltaTime);
 
-        animator.SetFloat("YVelo" , GetComponent<CharacterController>().velocity.y);
+        Vector3 movementDirection = new Vector3(Input.GetAxisRaw("Horizontal"), 0, Input.GetAxisRaw("Vertical"));
+        bool isRunning = movementDirection != Vector3.zero;
+        if (isLocalPlayer)
+        {
+            animator.SetBool("isRun", isRunning);
+            animator.SetBool("isJump", !pc.isGroundeed());
+            animator.SetFloat("runSpeed", pc.movementSpeed / 7);
+            animator.SetFloat("YVelo", GetComponent<CharacterController>().velocity.y);
+
+            if (!pc.isGroundeed())
+            {
+                timeinAir -= Time.deltaTime;
+                if (timeinAir < .1f)
+                {
+                    
+                }
+                animator.SetFloat("timeInAir", timeinAir);
+
+            }
+            else
+            {
+                timeinAir = 1.2f;
+            }
+        }
     }
 }
