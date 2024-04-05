@@ -44,7 +44,7 @@ public class Server : NetworkBehaviour
     [ClientRpc] // change to trg rpc later
     public void SendToClient(StatePayload statePayload, NetworkIdentity target)
     {
-        target.GetComponent<Client>().OnServerMovementState(statePayload);
+            target.GetComponent<Client>().OnServerMovementState(statePayload);
     }
 
     void HandleTick()

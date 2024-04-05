@@ -9,6 +9,7 @@ public class PlayerController : NetworkBehaviour
     [HideInInspector]public CharacterController characterController;
     public GameObject piviot_M;
     public Vector3 playerVelocity = Vector3.zero;
+    [SerializeField] public Vector3 playerVelocityResult = Vector3.zero;
     Vector3 impact = Vector3.zero;
     bool disableMovement = false;
     bool restricMovment = false;
@@ -27,7 +28,6 @@ public class PlayerController : NetworkBehaviour
     [Header("Other Passives and Ablities")]
     [SerializeField] float dashForce = 80;
     [SerializeField] float wallJumpForce = 80;
-    [SerializeField] UnityEvent OnDash;
     Vector3 wallDirection = Vector3.zero;
 
     ControllerColliderHit ColidedWithWall = null;
@@ -80,6 +80,7 @@ public class PlayerController : NetworkBehaviour
         piviot_M.transform.position = transform.position;
     }
 
+    bool harshfall = false;
     public StatePayload Movement(InputPayload input, float deltaTime)
     {
         velocity = playerVelocity.magnitude;
@@ -87,23 +88,37 @@ public class PlayerController : NetworkBehaviour
         Vector3 move = input.right * input.inputVector.x +
             input.forward * input.inputVector.z;
 
-        playerModelChild.transform.forward = move;
-
-
-        if (ColidedWithWall != null)
+        if (playerVelocity.y < -20)
         {
-            GrabWall(ColidedWithWall);
+            Debug.Log("isHarshFall");
+            harshfall = true;
         }
+
+        if (Physics.Raycast(transform.position , Vector3.down , 3f) && harshfall)
+        {
+            Debug.Log("HarshFall");
+            GetComponent<PlayerAnimations>().animator.Play("Roll");  
+        }
+
+        if (isGroundeed())
+        {
+            if (harshfall == true)
+            {
+                AddImpact(move, 50);
+            }
+
+            harshfall = false;
+        }
+
+        if (wallDirection == Vector3.zero && move != Vector3.zero)
+            playerModelChild.transform.forward = move;
 
         if (wallDirection != Vector3.zero && input.jump)
         {
-
             DisableMovment(false);
+            GetComponent<PlayerAnimations>().animator.SetTrigger("EndWallGrab");
 
-            GetComponent<PlayerAnimations>().animator.SetFloat("JumpNumber", Mathf.Round(Random.Range(0, 2)));
-            GetComponent<PlayerAnimations>().animator.SetBool("isWallGrab", false);
-
-            //transform.rotation = Quaternion.Euler(Vector3.zero);
+            transform.rotation = Quaternion.Euler(Vector3.zero);
 
             if (Physics.Raycast(transform.position, -wallDirection, 10, layerMask))
             {
@@ -133,7 +148,7 @@ public class PlayerController : NetworkBehaviour
             else
                 AddImpact(Vector3.up, dashForce);
 
-            OnDash.Invoke();
+            GetComponent<PlayerAnimations>().animator.Play("Dash");
         }
 
         //Movement and impact
@@ -141,17 +156,15 @@ public class PlayerController : NetworkBehaviour
         {
             Vector3 Result = Vector3.zero;
 
-            if (impact.magnitude > 0.2) Result += impact * deltaTime;
-            impact = Vector3.Lerp(impact, Vector3.zero, 5 * deltaTime);
+            Result += move * movementSpeed;
 
+            if (impact.magnitude > 0.2) Result += impact;
+            impact = Vector3.Lerp(impact, Vector3.zero, 5 * deltaTime);
 
             if (characterController.isGrounded && playerVelocity.y < 0)
             {
                 playerVelocity.y = 0;
             }
-
-            if (restricMovment) { move = Vector3.zero; }
-            Result += move * (deltaTime * movementSpeed);
 
             if (input.jump && isGroundeed())
             {
@@ -161,10 +174,16 @@ public class PlayerController : NetworkBehaviour
 
             //apply the motion
 
-            playerVelocity.y += gravity * 3 * deltaTime;
+            playerVelocity.y += gravity;
 
 
-            characterController.Move(Result + (playerVelocity * deltaTime));
+            characterController.Move((Result + playerVelocity) * deltaTime);
+            playerVelocityResult = ((Result + playerVelocity) * deltaTime);
+        }
+
+        if (ColidedWithWall != null)
+        {
+            GrabWall(ColidedWithWall);
         }
 
         return new StatePayload()
@@ -195,6 +214,8 @@ public class PlayerController : NetworkBehaviour
     public void DisableMovment(bool enabled)
     {
         disableMovement = enabled;
+
+        characterController.Move(Vector3.zero);
 
         if (enabled)
             impact = Vector3.zero;
@@ -247,19 +268,7 @@ public class PlayerController : NetworkBehaviour
 
         if ((characterController.collisionFlags & CollisionFlags.Sides) != 0 && DistanceBetweenGround() > 1.5f && WallHeightIsEnough(hit.normal))
         {
-            if (characterController.velocity.y < -50)
-            {
-                //animator.SetBool("wallSlide", true);
-                //wallSlide = hit.normal;
-            }
-            else
-            {
-                //GrabWall(hit);
-            }
-
             ColidedWithWall = hit;
-
-            //GrabWall(hit);
         }
     }
 
@@ -270,9 +279,9 @@ public class PlayerController : NetworkBehaviour
         transform.position += hit.normal / 2;
 
         wallDirection = hit.normal;
-        //transform.rotation = Quaternion.LookRotation(Vector3.up, wallDirection);
+        transform.rotation = Quaternion.LookRotation(Vector3.up, wallDirection);
 
-        GetComponent<PlayerAnimations>().animator.SetBool("isWallGrab", true);
+        GetComponent<PlayerAnimations>().animator.Play("WallGrab");
 
         ColidedWithWall = null;
 
