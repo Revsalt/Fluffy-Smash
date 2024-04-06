@@ -32,23 +32,12 @@ public class RoundSystem : NetworkBehaviour
 
     public override void OnStartServer()
     {
-        NetworkRoomManager.OnServerStopped += CleanUpServer;
-        NetworkRoomManager.OnServerReadied += CheckToStartRound;
+        CheckToStartRound();
     }
 
     public void Win(string winner)
     {
 
-    }
-
-    [ServerCallback]
-    private void OnDestroy() => CleanUpServer();
-
-    [Server]
-    private void CleanUpServer()
-    {
-        NetworkRoomManager.OnServerStopped -= CleanUpServer;
-        NetworkRoomManager.OnServerReadied -= CheckToStartRound;
     }
 
     [ServerCallback]
@@ -58,7 +47,7 @@ public class RoundSystem : NetworkBehaviour
     }
 
     [Server]
-    private void CheckToStartRound(NetworkConnection conn)
+    private void CheckToStartRound()
     {
         Debug.Log(Room.numPlayers + " || " + FindObjectsOfType<Player>().Length);
 

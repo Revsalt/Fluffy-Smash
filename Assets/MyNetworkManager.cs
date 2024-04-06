@@ -6,7 +6,8 @@ using Mirror.Examples.NetworkRoom;
 
 public class MyNetworkManager : NetworkRoomManager
 {
-    public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnection conn, GameObject roomPlayer, GameObject gamePlayer)
+
+    public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
     {
         gamePlayer.GetComponent<PlayerNetworkManager>().Team = roomPlayer.GetComponent<NetworkRoomPlayerExt>().Team;
 

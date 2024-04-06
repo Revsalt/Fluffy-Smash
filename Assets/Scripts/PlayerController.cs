@@ -3,8 +3,25 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 
+public struct PlayerInput
+{
+    public double timestamp;
+    public Vector2 Input;
+    public Vector3 movedirection;
+
+    public PlayerInput(double timestamp, Vector2 input, Vector3 movedirection)
+    {
+        this.timestamp = timestamp;
+        this.Input = input;
+        this.movedirection = movedirection;
+    }
+}
+
 public class PlayerController : NetworkBehaviour
 {
+    public int inputHistorySize = 64;
+    readonly SortedList<double, PlayerInput> inputs = new SortedList<double, PlayerInput>();
+
     [HideInInspector]public CharacterController characterController;
     public GameObject piviot_M;
     public Vector3 playerVelocity = Vector3.zero;
@@ -39,7 +56,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     float rotX, rotY;
-    public void Update()
+    private void Update()
     {
         velocity = playerVelocity.magnitude;
 
@@ -58,12 +75,17 @@ public class PlayerController : NetworkBehaviour
 
         piviot_M.transform.localRotation = Quaternion.Euler(-rotY, rotX, 0f);
 
+    }
+
+    public void Movement(PlayerInput p_input)
+    {
+
         //Movement
 
         if (disableMovement)
             return;
 
-        if (move != Vector3.zero)
+        if (p_input.movedirection != Vector3.zero)
             transform.rotation = Quaternion.Euler(0,piviot_M.transform.eulerAngles.y , 0);
 
         //Movement and impact
@@ -79,14 +101,16 @@ public class PlayerController : NetworkBehaviour
             playerVelocity.y = 0;
         }
 
-        if (restricMovment) { move = Vector3.zero; }
-        Result += move * Time.deltaTime * movementSpeed;
+        if (restricMovment) { p_input.movedirection = Vector3.zero; }
+        Result += p_input.movedirection * Time.deltaTime * movementSpeed;
 
+        /*
         if (Input.GetKeyDown(KeyCode.Space) && isGroundeed())
         {
             playerVelocity.y = 0;
             playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
         }
+        */
 
         playerVelocity.y += gravity * Time.deltaTime * 3;
         characterController.Move(Result + (playerVelocity * Time.deltaTime));
