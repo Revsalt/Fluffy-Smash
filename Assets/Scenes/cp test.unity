@@ -189,7 +189,7 @@ MonoBehaviour:
   autoConnectClientBuild: 0
   offlineScene: Assets/Scenes/cp test.unity
   onlineScene: Assets/Scenes/cp test.unity
-  transport: {fileID: 0}
+  transport: {fileID: 56945102}
   networkAddress: localhost
   maxConnections: 100
   disconnectInactiveConnections: 0

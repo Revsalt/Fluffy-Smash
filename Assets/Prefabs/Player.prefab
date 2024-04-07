@@ -4922,8 +4922,8 @@ GameObject:
   - component: {fileID: 8906889053359027489}
   - component: {fileID: 9211235235469290453}
   - component: {fileID: 3471041542642419667}
-  - component: {fileID: -6624678349552163355}
   - component: {fileID: 4247658085794902774}
+  - component: {fileID: -8617796219257138269}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -5101,7 +5101,23 @@ MonoBehaviour:
   virtualCamera: {fileID: 1646360426184249717}
   aimVirtualCamera: {fileID: 7335323761784074176}
   FOVmultiplier: 20
---- !u!114 &-6624678349552163355
+--- !u!114 &4247658085794902774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1646360425263456792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79c6ff7781e8c4174b07ea7e905f62b2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  inputHistorySize: 64
+--- !u!114 &-8617796219257138269
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5120,23 +5136,7 @@ MonoBehaviour:
   lagCompensationSettings:
     historyLimit: 6
     captureInterval: 0.1
-  historyColor: {r: 1, g: 1, b: 1, a: 1}
---- !u!114 &4247658085794902774
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1646360425263456792}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 79c6ff7781e8c4174b07ea7e905f62b2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  syncDirection: 0
-  syncMode: 0
-  syncInterval: 0
-  inputHistorySize: 64
+  historyColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!1 &1646360425379016323
 GameObject:
   m_ObjectHideFlags: 0
