@@ -2,16 +2,16 @@ using Mirror;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEngine.Rendering.DebugUI;
 
 [System.Serializable]
 public struct InputPayload
 {
     public int tick;
-    public bool jump;
-    public bool dash;
-    public Vector3 inputVector;
-    public Vector3 forward;
-    public Vector3 right;
+    public byte bools;
+    public float x;
+    public float y;
+    public float z;
 }
 
 [System.Serializable]
@@ -28,7 +28,7 @@ public class Client : NetworkBehaviour
     private int currentTick;
     private float minTimeBetweenTicks;
     private const float SERVER_TICK_RATE = 60f;
-    private const int BUFFER_SIZE = 1024;
+    private const int BUFFER_SIZE = 2048;
 
     // Client specific
     private StatePayload[] stateBuffer;
@@ -51,6 +51,7 @@ public class Client : NetworkBehaviour
 
     bool isJumpPressed = false;
     bool isDashPressed = false;
+
     void Update()
     {
         horizontalInput = Input.GetAxisRaw("Horizontal");
@@ -81,10 +82,10 @@ public class Client : NetworkBehaviour
         latestServerState = serverState;
     }
 
-    [Command]
-    public void SendToServer(NetworkIdentity ntd , InputPayload inputPayload)
+    [Command(channel = Channels.Unreliable)]
+    public void SendToServer(InputPayload inputPayload , NetworkConnectionToClient sender = null)
     {
-        ntd.GetComponent<Server>().OnClientInput(inputPayload);
+        sender.identity.GetComponent<Server>().OnClientInput(inputPayload);
     }
 
     void HandleTick()
@@ -100,23 +101,35 @@ public class Client : NetworkBehaviour
 
         // Add payload to inputBuffer
         InputPayload inputPayload = new InputPayload();
-        inputPayload.jump = isJumpPressed;
-        inputPayload.dash = isDashPressed;
-        inputPayload.forward = transform.forward;
-        inputPayload.right = transform.right;
         inputPayload.tick = currentTick;
-        inputPayload.inputVector = new Vector3(horizontalInput, 0, verticalInput);
+        Vector3 direc = horizontalInput * transform.right + verticalInput * transform.forward;
+
+        inputPayload.x = RoundOff(direc.x);
+        inputPayload.y = RoundOff(direc.y);
+        inputPayload.z = RoundOff(direc.z);
+
+        Debug.Log(inputPayload.x);
+        Debug.Log(inputPayload.y);
+        Debug.Log(inputPayload.z);
+
         inputBuffer[bufferIndex] = inputPayload;
+
+        int bits = (isJumpPressed ? 1 : 0) | (isDashPressed ? 2 : 0);
+        inputPayload.bools = (byte)bits;
 
         // Add payload to stateBuffer
         stateBuffer[bufferIndex] = GetComponent<PlayerController>().Movement(inputPayload , minTimeBetweenTicks);
 
         // Send input to server
-        SendToServer(GetComponent<NetworkIdentity>() , inputPayload);
-
+        if (!isServer) SendToServer(inputPayload);
 
         isJumpPressed = false; // rest jump press bec this is a differet tick rate
         isDashPressed = false; // rest dash press bec this is a differet tick rate
+    }
+
+    public float RoundOff(float i)
+    {
+        return Mathf.Round(i * 10) / 10;
     }
 
     void HandleServerReconciliation()
@@ -132,7 +145,7 @@ public class Client : NetworkBehaviour
             GameObject k = (GameObject)Instantiate(Resources.Load("myClientPos"), stateBuffer[serverStateBufferIndex].position, Quaternion.identity, null);
             Destroy(g, 20);
             Destroy(k, 20);
-            Debug.Log("We have to reconcile bro");
+            Debug.Log("We have to reconcile");
             // Rewind & Replay
             GetComponent<CharacterController>().enabled = false;
             transform.position = latestServerState.position;

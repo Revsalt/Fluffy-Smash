@@ -26,8 +26,8 @@ public class Player : PlayerController
     [Header("Other")]
     [SerializeField] CinemachineVirtualCamera cinemachineVirtualCamera;
     [SerializeField] AudioPlayer audioPlayer;
-    [SerializeField] float wallJumpForce = 80;
-    [SerializeField] float dashForce = 80;
+    //[SerializeField] float wallJumpForce = 80;
+    //[SerializeField] float dashForce = 80;
     [SerializeField] Animator animator;
     public GameObject playermodelchild;
     [SerializeField] GameObject playerModelIkTarget;
@@ -174,6 +174,7 @@ public class Player : PlayerController
 
         base.Update();
 
+
         //sprinting
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -198,10 +199,10 @@ public class Player : PlayerController
             Vector3 direc = piviot_M.transform.TransformDirection(movementDirection.normalized);
             direc.y = 0;
 
-            if (isRunning)
-                AddImpact(direc, dashForce);
-            else
-                AddImpact(Vector3.up, dashForce);
+            //if (isRunning)
+                //AddImpact(direc, dashForce);
+            //else
+                //AddImpact(Vector3.up, dashForce);
 
             animator.SetTrigger("isDash");
 
@@ -262,7 +263,7 @@ public class Player : PlayerController
             {
                 if (isRunning)
                 {
-                    AddImpact(Vector3.up, wallJumpForce);
+                    //AddImpact(Vector3.up, wallJumpForce);
                     AddImpact(wallDirection, 60);
                 }
                 else
@@ -292,7 +293,7 @@ public class Player : PlayerController
             {
                 if (isRunning)
                 {
-                    AddImpact(Vector3.up, wallJumpForce);
+                    //AddImpact(Vector3.up, wallJumpForce);
                     AddImpact(wallSlide, 60);
                 }
                 else

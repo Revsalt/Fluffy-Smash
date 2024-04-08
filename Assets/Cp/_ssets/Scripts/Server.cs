@@ -9,7 +9,7 @@ public class Server : NetworkBehaviour
     private int currentTick;
     public float minTimeBetweenTicks;
     private const float SERVER_TICK_RATE = 60f;
-    private const int BUFFER_SIZE = 1024;
+    private const int BUFFER_SIZE = 2048;
 
     private StatePayload[] stateBuffer;
     private Queue<InputPayload> inputQueue;
@@ -41,10 +41,16 @@ public class Server : NetworkBehaviour
         inputQueue.Enqueue(inputPayload);
     }
 
-    [ClientRpc] // change to trg rpc later
-    public void SendToClient(StatePayload statePayload, NetworkIdentity target)
+    [TargetRpc(channel = Channels.Unreliable)] // change to trg rpc later
+    public void SendToClient(StatePayload statePayload)
     {
-            target.GetComponent<Client>().OnServerMovementState(statePayload);
+        NetworkClient.localPlayer.GetComponent<Client>().OnServerMovementState(statePayload);
+    }
+
+    [ClientRpc(includeOwner = false , channel = Channels.Unreliable)]
+    public void SendToClients(NetworkIdentity target , Vector3 newPostion)
+    {
+        target.transform.position = newPostion;
     }
 
     void HandleTick()
@@ -63,7 +69,9 @@ public class Server : NetworkBehaviour
 
         if (bufferIndex != -1)
         {
-            SendToClient(stateBuffer[bufferIndex], GetComponent<NetworkIdentity>());
+             SendToClient(stateBuffer[bufferIndex]);
         }
+
+        SendToClients(GetComponent<NetworkIdentity>() , transform.position);
     }
 }

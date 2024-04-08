@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
+using static UnityEngine.Rendering.DebugUI;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -27,6 +28,8 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] public float gravity = 5;
     [Header("Other Passives and Ablities")]
     [SerializeField] float dashForce = 80;
+    [SerializeField] float dashCooldown = 2;
+    float currentDashCooldown = 0;
     [SerializeField] float wallJumpForce = 80;
     Vector3 wallDirection = Vector3.zero;
 
@@ -85,8 +88,7 @@ public class PlayerController : NetworkBehaviour
     {
         velocity = playerVelocity.magnitude;
 
-        Vector3 move = input.right * input.inputVector.x +
-            input.forward * input.inputVector.z;
+        Vector3 move = new Vector3(input.x , input.y , input.z);
 
         if (playerVelocity.y < -20)
         {
@@ -113,7 +115,7 @@ public class PlayerController : NetworkBehaviour
         if (wallDirection == Vector3.zero && move != Vector3.zero)
             playerModelChild.transform.forward = move;
 
-        if (wallDirection != Vector3.zero && input.jump)
+        if (wallDirection != Vector3.zero && (input.bools & 1) != 0)
         {
             DisableMovment(false);
             GetComponent<PlayerAnimations>().animator.SetTrigger("EndWallGrab");
@@ -138,17 +140,23 @@ public class PlayerController : NetworkBehaviour
 
         //conditional forces here
 
-        if (input.dash && !disableMovement)
+        if ((input.bools & 2) != 0 && !disableMovement && currentDashCooldown <= 0)
         {
+            currentDashCooldown = dashCooldown;
             Vector3 direc = move.normalized;
             direc.y = 0;
 
-            if (move != Vector3.zero)
+            if (move != Vector3.zero) 
                 AddImpact(direc, dashForce);
             else
                 AddImpact(Vector3.up, dashForce);
 
             GetComponent<PlayerAnimations>().animator.Play("Dash");
+        }
+
+        if (currentDashCooldown > 0)
+        {
+            currentDashCooldown -= 1 * deltaTime;
         }
 
         //Movement and impact
@@ -166,7 +174,7 @@ public class PlayerController : NetworkBehaviour
                 playerVelocity.y = 0;
             }
 
-            if (input.jump && isGroundeed())
+            if ((input.bools & 1) != 0 && isGroundeed())
             {
                 playerVelocity.y = 0;
                 playerVelocity.y += Mathf.Sqrt(jumpHeight * -3.0f * gravity);
@@ -184,6 +192,16 @@ public class PlayerController : NetworkBehaviour
         if (ColidedWithWall != null)
         {
             GrabWall(ColidedWithWall);
+        }
+
+        Collider[] colliders = Physics.OverlapSphere(transform.position, 2);
+
+        foreach (var item in colliders)
+        {
+            if (item.GetComponent<PlayerController>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer)
+            {
+                Debug.Log("stunPlayer");
+            }
         }
 
         return new StatePayload()
