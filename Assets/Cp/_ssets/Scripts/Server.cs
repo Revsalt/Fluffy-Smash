@@ -9,9 +9,9 @@ public class Server : NetworkBehaviour
     private int currentTick;
     public float minTimeBetweenTicks;
     private const float SERVER_TICK_RATE = 60f;
-    private const int BUFFER_SIZE = 2048;
+    public const int BUFFER_SIZE = 2048;
 
-    private StatePayload[] stateBuffer;
+    public StatePayload[] stateBuffer;
     private Queue<InputPayload> inputQueue;
 
     void Start()
@@ -41,7 +41,7 @@ public class Server : NetworkBehaviour
         inputQueue.Enqueue(inputPayload);
     }
 
-    [TargetRpc(channel = Channels.Unreliable)] // change to trg rpc later
+    [TargetRpc(channel = Channels.Unreliable)]
     public void SendToClient(StatePayload statePayload)
     {
         NetworkClient.localPlayer.GetComponent<Client>().OnServerMovementState(statePayload);

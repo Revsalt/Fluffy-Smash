@@ -108,10 +108,6 @@ public class Client : NetworkBehaviour
         inputPayload.y = RoundOff(direc.y);
         inputPayload.z = RoundOff(direc.z);
 
-        Debug.Log(inputPayload.x);
-        Debug.Log(inputPayload.y);
-        Debug.Log(inputPayload.z);
-
         inputBuffer[bufferIndex] = inputPayload;
 
         int bits = (isJumpPressed ? 1 : 0) | (isDashPressed ? 2 : 0);
@@ -121,7 +117,7 @@ public class Client : NetworkBehaviour
         stateBuffer[bufferIndex] = GetComponent<PlayerController>().Movement(inputPayload , minTimeBetweenTicks);
 
         // Send input to server
-        if (!isServer) SendToServer(inputPayload);
+        SendToServer(inputPayload);
 
         isJumpPressed = false; // rest jump press bec this is a differet tick rate
         isDashPressed = false; // rest dash press bec this is a differet tick rate

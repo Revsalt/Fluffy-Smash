@@ -4,6 +4,7 @@ using UnityEngine;
 using Mirror;
 using UnityEngine.Events;
 using static UnityEngine.Rendering.DebugUI;
+using System.Linq;
 
 public class PlayerController : NetworkBehaviour
 {
@@ -84,6 +85,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     bool harshfall = false;
+    List<Collider> oldColliders = new List<Collider>();
     public StatePayload Movement(InputPayload input, float deltaTime)
     {
         velocity = playerVelocity.magnitude;
@@ -194,14 +196,24 @@ public class PlayerController : NetworkBehaviour
             GrabWall(ColidedWithWall);
         }
 
-        Collider[] colliders = Physics.OverlapSphere(transform.position, 2);
-
-        foreach (var item in colliders)
+        if (isClient && (input.bools & 2) != 0)
         {
-            if (item.GetComponent<PlayerController>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer)
+            Collider[] colliders = Physics.OverlapSphere(transform.position, 2);
+
+            foreach (var item in colliders)
             {
-                Debug.Log("stunPlayer");
+                if (!oldColliders.Contains(item))
+                {
+                    Debug.Log("not in Clided");
+                    if (item.GetComponent<PlayerController>() && !item.GetComponent<NetworkIdentity>().isLocalPlayer)
+                    {
+                        Debug.Log("Clided");
+                        OnCollisonOnClient(input.tick , item.GetComponent<NetworkIdentity>());
+                    }
+                }
             }
+
+            oldColliders = colliders.ToList();
         }
 
         return new StatePayload()
@@ -209,6 +221,31 @@ public class PlayerController : NetworkBehaviour
             tick = input.tick,
             position = transform.position,
         };
+    }
+
+    [Command(channel = Channels.Reliable , requiresAuthority = false)]
+    public void OnCollisonOnClient(int timestamp , NetworkIdentity otherPlayer , NetworkConnectionToClient sender = null)
+    {
+        int bufferIndex = timestamp % Server.BUFFER_SIZE; //align the time stap with all client predcition , dont forget to bbackup
+
+        if (Vector3.Distance(sender.identity.GetComponent<Server>().stateBuffer[bufferIndex].position , 
+            otherPlayer.GetComponent<Server>().stateBuffer[bufferIndex].position)
+            <= 2)
+        {
+            otherPlayer.GetComponent<CharacterController>().enabled = false;
+            otherPlayer.transform.position = FindObjectOfType<NetworkStartPosition>().transform.position;
+            otherPlayer.GetComponent<CharacterController>().enabled = true;
+        }
+        else
+        {
+            Debug.Log("not In range");
+        }
+
+        GameObject g = (GameObject)Instantiate(Resources.Load("MyPlayer"), sender.identity.GetComponent<Server>().stateBuffer[bufferIndex].position, Quaternion.identity, null);
+        GameObject x = (GameObject)Instantiate(Resources.Load("OtherPlayer"), otherPlayer.GetComponent<Server>().stateBuffer[bufferIndex].position, Quaternion.identity, null);
+
+        Destroy(x, 20);
+        Destroy(g, 20);
     }
 
     void ResetTrasnformValues(Transform trans)
