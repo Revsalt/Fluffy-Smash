@@ -5007,7 +5007,7 @@ CharacterController:
   m_Height: 2
   m_Radius: 0.5
   m_SlopeLimit: 45
-  m_StepOffset: 0.5
+  m_StepOffset: 0.9
   m_SkinWidth: 0.1
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 0, z: 0}
@@ -5041,7 +5041,6 @@ MonoBehaviour:
   gravity: -0.5
   dashForce: 100
   dashCooldown: 1
-  currentDashCooldown: 0
   wallJumpForce: 120
   velocity: 0
 --- !u!114 &1373193218838475886
@@ -5110,6 +5109,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0
   minTimeBetweenTicks: 0
+  stateBuffer: []
 --- !u!114 &9211235235469290453
 MonoBehaviour:
   m_ObjectHideFlags: 0
