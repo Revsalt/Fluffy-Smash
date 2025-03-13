@@ -92,7 +92,7 @@ public class PlayerController : NetworkBehaviour
 
         Vector3 move = new Vector3(input.x , input.y , input.z);
 
-        if (playerVelocity.y < -20)
+        if (playerVelocity.y < Mathf.Abs(gravity) * -40)
         {
             Debug.Log("isHarshFall");
             harshfall = true;
