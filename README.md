@@ -1,3 +1,4 @@
+<img width="460" height="215" alt="header (2)" src="https://github.com/user-attachments/assets/8f37cfac-d5a5-458c-90f8-0aa6ff004d1d" />
 # Fluffy Smash
 
 Fluffy Smash is a multiplayer 3D arena combat game developed in Unity. Players select from a roster of unique characters and compete in fast-paced deathmatch encounters across a variety of combat arenas.
