@@ -10630,7 +10630,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 51
-  gravity: -4
+  gravity: -2
   Cameras:
   - {fileID: 3814039662561590340}
   - {fileID: 3814039664436481325}

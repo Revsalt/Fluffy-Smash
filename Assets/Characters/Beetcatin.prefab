@@ -1147,7 +1147,7 @@ MonoBehaviour:
   layerMask:
     serializedVersion: 2
     m_Bits: 51
-  gravity: -4
+  gravity: -2
   Cameras:
   - {fileID: 8206218322169739880}
   - {fileID: 8206218320823569153}
@@ -1631,7 +1631,7 @@ MonoBehaviour:
   priority: 0
   blendDistance: 0
   weight: 1
-  sharedProfile: {fileID: 11400000, guid: 39aab53096bf6a44b9b487e30d9fc0c6, type: 2}
+  sharedProfile: {fileID: 0}
 --- !u!1 &8206218321147802896
 GameObject:
   m_ObjectHideFlags: 0
